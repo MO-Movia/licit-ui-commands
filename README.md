@@ -1,2 +1,2 @@
-# Common-UI-Command-Parts
+# licit-ui-components
 Support module of commonly used files for licit editor and plugins
