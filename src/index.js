@@ -39,4 +39,3 @@ export { default as preventEventDefault } from './ui/preventEventDefault.js';
 export { fromHTMlElement, fromXY, isIntersected } from './ui/rects.js';
 export { default as isInsideListItem } from './isInsideListItem.js';
 export { clearMarks, clearHeading } from './clearMarks.js';
-export { default as uuid } from './ui/uuid.js';
