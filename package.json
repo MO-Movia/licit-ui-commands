@@ -17,7 +17,7 @@
     "build:dist": "npm run build:clean && npm run webpack && npm run build:babel && npm run build:css && npm run build:flow",
     "webpack": "webpack",
     "flow": "flow --show-all-errors",
-	"lint:js": "eslint \"src/**/*.js\"",
+    "lint:js": "eslint \"src/**/*.js\"",
     "lint:css": "stylelint \"**/*.css\"",
     "prepare": "npm run build:dist",
     "test": "jest --coverage",
@@ -88,6 +88,8 @@
     "prosemirror-transform": "^1.2.9",
     "prosemirror-utils": "0.9.6",
     "prosemirror-view": "^1.17.3",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
     "style-loader": "^1.2.1",
     "uuid": "8.2.0",
     "webfontloader": "1.6.28"
