@@ -9,6 +9,9 @@
     "type": "git",
     "url": "git+https://github.com/MO-Movia/licit-doc-attrs-step.git"
   },
+  "bundleDependencies": [
+    "prosemirror-utils"
+  ],
   "scripts": {
     "build:clean": "rm -rf dist/ && rm -f modusoperandi-licit-ui-commands-*.*.*.tgz",
     "build:babel": "babel src --out-dir dist",
