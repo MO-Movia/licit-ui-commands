@@ -23,7 +23,7 @@
     "lint:js": "eslint \"src/**/*.js\"",
     "lint:css": "stylelint \"**/*.css\"",
     "prepare": "npm run build:dist",
-    "test": "jest --coverage",
+    "test": "jest --coverage --passWithNoTests",
     "debug": "node --debug-brk --inspect ./node_modules/.bin/jest -i"
   },
   "devDependencies": {
