@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import * as React from 'react';
 import preventEventDefault from './preventEventDefault';
+import { EditorView } from 'prosemirror-view';
 
 export type PointerSurfaceProps = {
   active?: boolean;
@@ -12,7 +13,7 @@ export type PointerSurfaceProps = {
   onMouseEnter?: (val, e: React.SyntheticEvent) => void;
   style?: Record<string, unknown>;
   title?: string;
-  value?: string | number;
+  value?: string | number | Record<string, unknown> | EditorView;
 };
 
 class PointerSurface extends React.PureComponent {
