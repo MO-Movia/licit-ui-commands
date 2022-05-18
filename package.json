@@ -8,6 +8,9 @@
     "type": "git",
     "url": "git+https://github.com/MO-Movia/licit-ui-components.git"
   },
+   "bundleDependencies": [
+    "prosemirror-utils"
+  ],
   "scripts": {
     "build:clean": "rm -rf dist/ && rm -f modusoperandi-licit-ui-commands-*.*.*.tgz",
     "build:ts": "tsc -p tsconfig.json",
