@@ -1,4 +1,4 @@
-import {Node} from 'prosemirror-model';
+import { Node } from 'prosemirror-model';
 
 import isBulletListNode from './isBulletListNode';
 import isOrderedListNode from './isOrderedListNode';

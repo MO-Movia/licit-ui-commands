@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ColorEditor from './ui/ColorEditor';
-import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 import applyMark from './applyMark';
 import createPopUp from './ui/createPopUp';
 import findNodesWithSameMark from './findNodesWithSameMark';
@@ -15,7 +15,7 @@ class TextHighlightCommand extends UICommand {
   _popUp = null;
   _color = '';
 
-  constructor(color: string | undefined) {
+  constructor(color?: string) {
     super();
     this._color = color;
   }
@@ -25,10 +25,10 @@ class TextHighlightCommand extends UICommand {
 
   waitForUserInput = (
     state: EditorState,
-    _dispatch: (tr: Transform) => void | undefined,
-    _view: EditorView | undefined,
-    event: React.SyntheticEvent | undefined
-  ): Promise<unknown> => {
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    event?: React.SyntheticEvent
+  ): Promise<undefined> => {
     if (this._popUp) {
       return Promise.resolve(undefined);
     }
@@ -37,16 +37,16 @@ class TextHighlightCommand extends UICommand {
       return Promise.resolve(undefined);
     }
 
-    const {doc, selection, schema} = state;
+    const { doc, selection, schema } = state;
     const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
-    const {from, to} = selection;
+    const { from, to } = selection;
     const result = findNodesWithSameMark(doc, from, to, markType);
     const hex = result ? result.mark.attrs.highlightColor : null;
     const anchor = event ? event.currentTarget : null;
     return new Promise((resolve) => {
       this._popUp = createPopUp(
         ColorEditor,
-        {hex},
+        { hex },
         {
           anchor,
           onClose: (val) => {
@@ -62,17 +62,17 @@ class TextHighlightCommand extends UICommand {
 
   executeWithUserInput = (
     state: EditorState,
-    dispatch: (trX: Transform) => void | undefined,
-    _view: EditorView | undefined,
-    color: string | undefined
+    dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    color?: string
   ): boolean => {
     if (dispatch && color !== undefined) {
-      const {schema} = state;
-      let {tr} = state;
+      const { schema } = state;
+      let { tr } = state;
       const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
-      const attrs = color ? {highlightColor: color} : null;
+      const attrs = color ? { highlightColor: color } : null;
       // tr = applyMark(tr.setSelection(state.selection), schema, markType, attrs);
-      tr = applyMark(tr, schema, markType, attrs) as Transaction;
+      (tr as Transform) = applyMark(tr, schema, markType, attrs);
       if (tr.docChanged || tr.storedMarksSet) {
         // If selection is empty, the color is added to `storedMarks`, which
         // works like `toggleMark`

@@ -1,11 +1,12 @@
-import {EditorState} from 'prosemirror-state';
-import {Transform} from 'prosemirror-transform';
-import {findParentNodeOfType} from 'prosemirror-utils';
-import {EditorView} from 'prosemirror-view';
+import { EditorState } from 'prosemirror-state';
+import { Transform } from 'prosemirror-transform';
+import { ContentNodeWithPos, findParentNodeOfType } from 'prosemirror-utils';
+import { EditorView } from 'prosemirror-view';
 
-import {HEADING} from './NodeNames';
+import { HEADING } from './NodeNames';
+import noop from './noop';
 import toggleHeading from './toggleHeading';
-import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 
 class HeadingCommand extends UICommand {
   _level: number;
@@ -21,10 +22,10 @@ class HeadingCommand extends UICommand {
 
   execute = (
     state: EditorState,
-    dispatch: (tr: Transform) => void | undefined,
-    _view: EditorView | undefined
+    dispatch?: (tr: Transform) => void,
+    _view?: EditorView
   ): boolean => {
-    const {schema, selection} = state;
+    const { schema, selection } = state;
     const tr = toggleHeading(
       state.tr.setSelection(selection),
       schema,
@@ -38,9 +39,9 @@ class HeadingCommand extends UICommand {
     }
   };
 
-  _findHeading(state: EditorState): Record<string, unknown> {
+  _findHeading(state: EditorState): ContentNodeWithPos | void {
     const heading = state.schema.nodes[HEADING];
-    const fn = heading ? findParentNodeOfType(heading) : null;
+    const fn = heading ? findParentNodeOfType(heading) : noop;
     return fn(state.selection);
   }
 }

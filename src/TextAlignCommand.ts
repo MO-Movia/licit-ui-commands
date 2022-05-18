@@ -5,23 +5,23 @@ import {
   TextSelection,
   Transaction,
 } from 'prosemirror-state';
-import {Transform} from 'prosemirror-transform';
-import {EditorView} from 'prosemirror-view';
+import { Transform } from 'prosemirror-transform';
+import { EditorView } from 'prosemirror-view';
 
-import {BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
-import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
+import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 
 export function setTextAlign(
   tr: Transform,
   schema: Schema,
-  alignment: string | undefined
+  alignment?: string
 ): Transform {
-  const {selection, doc} = tr as Transaction;
+  const { selection, doc } = tr as Transaction;
   if (!selection || !doc) {
     return tr;
   }
-  const {from, to} = selection;
-  const {nodes} = schema;
+  const { from, to } = selection;
+  const { nodes } = schema;
 
   const blockquote = nodes[BLOCKQUOTE];
   const listItem = nodes[LIST_ITEM];
@@ -51,8 +51,8 @@ export function setTextAlign(
   }
 
   tasks.forEach((job) => {
-    const {node, pos, nodeType} = job;
-    let {attrs} = node;
+    const { node, pos, nodeType } = job;
+    let { attrs } = node;
     if (alignment) {
       attrs = {
         ...attrs,
