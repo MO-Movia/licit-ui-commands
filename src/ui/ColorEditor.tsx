@@ -11,7 +11,7 @@ function generateGreyColors(count: number): Array<Color> {
   const interval = cc / count;
   const colors = [];
   while (cc > 0) {
-    const color = Color({r: cc, g: cc, b: cc});
+    const color = Color({ r: cc, g: cc, b: cc });
     cc -= interval;
     cc = Math.floor(cc);
     colors.unshift(color);
@@ -44,7 +44,7 @@ class ColorEditor extends React.PureComponent {
     hex?: string;
   };
 
-  render(): React.ReactNode {
+  render(): React.ReactElement<CustomButton> {
     const renderColor = this._renderColor;
     const selectedColor = this.props.hex;
     return (
@@ -74,10 +74,13 @@ class ColorEditor extends React.PureComponent {
     );
   }
 
-  _renderColor = (color: Color, index: number): React.ReactNode => {
+  _renderColor = (
+    color: Color,
+    index: number
+  ): React.ReactElement<CustomButton> => {
     const selectedColor = this.props.hex;
     const hex = color.hex().toLowerCase();
-    const style = {backgroundColor: hex};
+    const style = { backgroundColor: hex };
     const active = selectedColor && selectedColor.toLowerCase() === hex;
     return (
       <CustomButton

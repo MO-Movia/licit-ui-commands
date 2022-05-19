@@ -4,7 +4,13 @@
     "target": "es6",
     "module": "commonjs",
     "moduleResolution": "node",
-    "lib": ["es2017", "dom", "dom.Iterable"],
+    "lib": [
+      "es5",
+      "es6",
+      "es2017",
+      "dom",
+      "dom.iterable"
+    ],
     "outDir": "dist",
     "pretty": false,
     "esModuleInterop": true,

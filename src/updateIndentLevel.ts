@@ -9,16 +9,16 @@ import {
   TextSelection,
   Transaction,
 } from 'prosemirror-state';
-import {BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
-import {Fragment, Schema} from 'prosemirror-model';
+import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
+import { Fragment, Schema } from 'prosemirror-model';
 // import { MAX_INDENT_LEVEL, MIN_INDENT_LEVEL } from './ParagraphNodeSpec';
-import {Transform} from 'prosemirror-transform';
-import {EditorView} from 'prosemirror-view';
+import { Transform } from 'prosemirror-transform';
+import { EditorView } from 'prosemirror-view';
 
 const MIN_INDENT_LEVEL = 0;
 const MAX_INDENT_LEVEL = 7;
 
-type IndentLevel = {
+type UpdateIntendType = {
   tr: Transform;
   docChanged: boolean;
 };
@@ -29,20 +29,20 @@ export default function updateIndentLevel(
   schema: Schema,
   delta: number,
   view: EditorView
-): IndentLevel {
-  const {doc, selection} = tr as Transaction;
+): UpdateIntendType {
+  const { doc, selection } = tr as Transaction;
   if (!doc || !selection) {
-    return {tr, docChanged: false};
+    return { tr, docChanged: false };
   }
 
   if (
     !(selection instanceof TextSelection || selection instanceof AllSelection)
   ) {
-    return {tr, docChanged: false};
+    return { tr, docChanged: false };
   }
 
-  const {nodes} = schema;
-  const {from, to} = selection;
+  const { nodes } = schema;
+  const { from, to } = selection;
   const listNodePoses = [];
   const blockquote = nodes[BLOCKQUOTE];
   const heading = nodes[HEADING];
@@ -66,11 +66,11 @@ export default function updateIndentLevel(
   });
 
   if (!listNodePoses.length) {
-    return {tr, docChanged: true};
+    return { tr, docChanged: true };
   }
 
   tr = transformAndPreserveTextSelection(tr, schema, (memo) => {
-    const {schema} = memo;
+    const { schema } = memo;
     let tr2 = memo.tr;
     listNodePoses
       .sort(compareNumber)
@@ -82,7 +82,7 @@ export default function updateIndentLevel(
     return tr2;
   });
 
-  return {tr, docChanged: true};
+  return { tr, docChanged: true };
 }
 
 function setListNodeIndent(
@@ -97,7 +97,7 @@ function setListNodeIndent(
     return tr;
   }
 
-  const {doc, selection} = tr as Transaction;
+  const { doc, selection } = tr as Transaction;
   if (!doc) {
     return tr;
   }
@@ -116,7 +116,7 @@ function setListNodeIndent(
     return tr;
   }
 
-  const {from, to} = selection;
+  const { from, to } = selection;
 
   // [FS] IRAD-947 2020-05-19
   // Fix for Multi-level lists lose multi-levels when indenting/de-indenting
@@ -124,7 +124,7 @@ function setListNodeIndent(
   // It wont satisfy the list hve childrens
 
   if (from <= pos && to >= pos) {
-    return setNodeIndentMarkup(state, tr, pos, delta, undefined).tr;
+    return setNodeIndentMarkup(state, tr, pos, delta).tr;
   }
 
   const listNodeType = listNode.type;
@@ -195,29 +195,29 @@ function setNodeIndentMarkup(
   tr: Transform,
   pos: number,
   delta: number,
-  _view: EditorView
-): IndentLevel {
+  _view?: EditorView
+): UpdateIntendType {
   const retVal = true;
   if (!tr.doc) {
-    // return tr;
-    return {tr, docChanged: false};
+    return { tr, docChanged: false };
   }
   const node = tr.doc.nodeAt(pos);
   if (!node) {
-    return {tr, docChanged: retVal};
+    return { tr, docChanged: retVal };
   }
   const indent = clamp(
     MIN_INDENT_LEVEL,
     (node.attrs.indent || 0) + delta,
     MAX_INDENT_LEVEL
   );
+
   if (indent === node.attrs.indent) {
-    return {tr, docChanged: false};
+    return { tr, docChanged: false };
   }
   const nodeAttrs = {
     ...node.attrs,
     indent,
   };
   tr = tr.setNodeMarkup(pos, node.type, nodeAttrs, node.marks);
-  return {tr, docChanged: true};
+  return { tr, docChanged: true };
 }

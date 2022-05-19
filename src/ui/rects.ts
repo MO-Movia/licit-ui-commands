@@ -9,11 +9,7 @@ export function isCollapsed(rect: Rect): boolean {
   return rect.w === 0 || rect.h === 0;
 }
 
-export function isIntersected(
-  r1: Rect,
-  r2: Rect,
-  padding: number | undefined
-): boolean {
+export function isIntersected(r1: Rect, r2: Rect, padding?: number): boolean {
   const pp = padding || 0;
   return !(
     r2.x - pp > r1.x + r1.w + pp ||
@@ -23,11 +19,7 @@ export function isIntersected(
   );
 }
 
-export function fromXY(
-  x: number,
-  y: number,
-  padding: number | undefined
-): Rect {
+export function fromXY(x: number, y: number, padding?: number): Rect {
   padding = padding || 0;
   return {
     x: x - padding,

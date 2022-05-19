@@ -19,8 +19,8 @@ class IndentCommand extends UICommand {
 
   execute = (
     state: EditorState,
-    dispatch: (tr: Transform) => void | undefined,
-    view: EditorView | undefined
+    dispatch?: (tr: Transform) => void,
+    view?: EditorView
   ): boolean => {
     const {selection, schema} = state;
     let {tr} = state;

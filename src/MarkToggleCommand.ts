@@ -25,10 +25,10 @@ class MarkToggleCommand extends UICommand {
 
   execute = (
     state: EditorState,
-    dispatch: (tr: Transform) => void | undefined,
-    _view: EditorView | undefined
+    dispatch?: (tr: Transform) => void,
+    _view?: EditorView
   ): boolean => {
-    const {schema, selection, tr} = state;
+    const { schema, selection, tr } = state;
     const markType = schema.marks[this._markName];
     if (!markType) {
       return false;

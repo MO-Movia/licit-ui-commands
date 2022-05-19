@@ -138,17 +138,17 @@ class TextLineSpacingCommand extends UICommand {
 
   execute = (
     state: EditorState,
-    dispatch: (tr: Transform) => void | undefined,
-    _view: EditorView | undefined
+    dispatch?: (tr: Transform) => void,
+    _view?: EditorView
   ): boolean => {
-    const {schema, selection} = state;
+    const { schema, selection } = state;
     const tr = setTextLineSpacing(
       state.tr.setSelection(selection),
       schema,
       this._lineSpacing
     );
     if (tr.docChanged) {
-      dispatch && dispatch(tr);
+      dispatch && dispatch(tr as Transaction);
       return true;
     } else {
       return false;

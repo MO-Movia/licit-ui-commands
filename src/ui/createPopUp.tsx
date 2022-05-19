@@ -1,7 +1,7 @@
 import './czi-vars.css';
 import './czi-pop-up.css';
 
-import type {PopUpParams, ViewProps} from './PopUp';
+import type { PopUpParams, ViewProps } from './PopUp';
 
 import PopUp from './PopUp';
 // eslint-disable-next-line no-unused-vars
@@ -20,7 +20,7 @@ let popUpsCount = 0;
 const Z_INDEX_BASE = 9999;
 const MODAL_MASK_ID = 'pop-up-modal-mask-' + uuid();
 
-function showModalMask(IsChildDialog: boolean | undefined): void {
+function showModalMask(IsChildDialog?: boolean): void {
   const root = document.body || document.documentElement;
   let element = document.getElementById(MODAL_MASK_ID);
   if (!element) {
@@ -46,6 +46,7 @@ function showModalMask(IsChildDialog: boolean | undefined): void {
   if (root && !element.parentElement) {
     root.appendChild(element);
   }
+  const style = element.style;
 
   const selector = '.czi-pop-up-element[data-pop-up-modal]';
   const zIndex = Array.from(document.querySelectorAll(selector)).reduce(
@@ -53,7 +54,7 @@ function showModalMask(IsChildDialog: boolean | undefined): void {
     0
   );
 
-  element.style.zIndex = (zIndex - 1).toString();
+  style.zIndex = String(zIndex - 1);
 }
 
 function hideModalMask(): void {
@@ -66,8 +67,8 @@ function hideModalMask(): void {
 function getRootElement(
   id: string,
   forceCreation: boolean,
-  popUpParams: PopUpParams | undefined
-): HTMLElement {
+  popUpParams?: PopUpParams
+): HTMLElement | null {
   const root =
     (popUpParams && popUpParams.container) ||
     document.body ||
@@ -93,9 +94,10 @@ function getRootElement(
   }
 
   element.id = id;
+  const style = element.style;
   const modalZIndexOffset = popUpParams && popUpParams.modal ? 1 : 0;
   if (!(popUpParams && popUpParams.container)) {
-    element.style.zIndex = (Z_INDEX_BASE + popUpsCount * 3 + modalZIndexOffset).toString();
+    style.zIndex = String(Z_INDEX_BASE + popUpsCount * 3 + modalZIndexOffset);
   }
 
   // Populates the default ARIA attributes here.
@@ -110,7 +112,7 @@ function getRootElement(
 
 function renderPopUp(
   rootId: string,
-  close: (val) => void,
+  close: () => void,
   View: typeof React.PureComponent,
   viewProps: ViewProps,
   popUpParams: PopUpParams
@@ -136,7 +138,7 @@ function renderPopUp(
 }
 
 function unrenderPopUp(rootId: string): void {
-  const rootNode = getRootElement(rootId, false, undefined);
+  const rootNode = getRootElement(rootId, false);
   if (rootNode) {
     ReactDOM.unmountComponentAtNode(rootNode);
     rootNode.parentElement && rootNode.parentElement.removeChild(rootNode);
@@ -148,7 +150,7 @@ function unrenderPopUp(rootId: string): void {
 }
 
 export default function createPopUp(
-  View: unknown, //to do
+  View: typeof React.PureComponent,
   viewProps?: ViewProps,
   popUpParams?: PopUpParams
 ): PopUpHandle {

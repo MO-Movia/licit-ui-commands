@@ -47,6 +47,7 @@ module.exports = {
     Event: false,
     Element: false,
     HTMLElement: false,
+    HTMLDivElement: false,
     MouseEvent: false,
     cancelAnimationFrame: false,
     document: false,

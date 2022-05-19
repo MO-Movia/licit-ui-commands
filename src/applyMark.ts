@@ -1,5 +1,5 @@
-import {Transaction} from '@remirror/pm/state';
-import {MarkType, Schema} from 'prosemirror-model';
+import { Transaction } from '@remirror/pm/state';
+import { MarkType, Schema } from 'prosemirror-model';
 import {TextSelection} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
 
@@ -45,7 +45,7 @@ export default function applyMark(
 
   let has = false;
   for (let i = 0; !has && i < ranges.length; i++) {
-    const {$from, $to} = ranges[i];
+    const { $from, $to } = ranges[i];
     has = tr.doc.rangeHasMark($from.pos, $to.pos, markType);
   }
   for (let i = 0; i < ranges.length; i++) {

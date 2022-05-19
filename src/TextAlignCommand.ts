@@ -94,7 +94,7 @@ class TextAlignCommand extends UICommand {
   };
 
   isEnabled = (state: EditorState): boolean => {
-    const {selection} = state;
+    const { selection } = state;
     return (
       selection instanceof TextSelection || selection instanceof AllSelection
     );
@@ -102,8 +102,8 @@ class TextAlignCommand extends UICommand {
 
   execute = (
     state: EditorState,
-    dispatch: (tr: Transform) => void | undefined,
-    _view: EditorView | undefined
+    dispatch?: (tr: Transform) => void,
+    _view?: EditorView
   ): boolean => {
     const {schema, selection} = state;
     const tr = setTextAlign(

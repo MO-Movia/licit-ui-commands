@@ -34,6 +34,7 @@ export {getLineSpacingValue} from './ui/toCSSLineSpacing';
 export { PointerSurface} from './ui/PointerSurface';
 export { TooltipSurface } from './ui/TooltipSurface';
 export type {PointerSurfaceProps} from './ui/PointerSurface';
+export type {PopUpHandle} from './ui/PopUp';
 export {default as preventEventDefault} from './ui/preventEventDefault';
 export {fromHTMlElement, fromXY, isIntersected} from './ui/rects';
 export {default as isInsideListItem} from './isInsideListItem';
