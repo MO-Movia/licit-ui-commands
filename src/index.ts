@@ -11,6 +11,7 @@ export {setTextLineSpacing} from './TextLineSpacingCommand';
 export {default as HeadingCommand} from './HeadingCommand';
 export {default as createPopUp} from './ui/createPopUp';
 export {default as applyMark} from './applyMark';
+export {default as uuid} from './ui/uuid';
 export {default as consolidateListNodes} from './consolidateListNodes';
 export {default as CustomButton} from './ui/CustomButton';
 export {default as ColorEditor} from './ui/ColorEditor';
