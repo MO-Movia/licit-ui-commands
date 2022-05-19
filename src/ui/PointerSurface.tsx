@@ -16,7 +16,7 @@ export type PointerSurfaceProps = {
   value?: string | number | Record<string, unknown> | EditorView;
 };
 
-class PointerSurface extends React.PureComponent {
+export class PointerSurface extends React.PureComponent {
   props: PointerSurfaceProps;
 
   _clicked = false;
@@ -129,4 +129,4 @@ class PointerSurface extends React.PureComponent {
   };
 }
 
-export default PointerSurface;
+// export default PointerSurface;

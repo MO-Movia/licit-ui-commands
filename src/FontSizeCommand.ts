@@ -1,4 +1,4 @@
-import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 import applyMark from './applyMark';
 import isTextStyleMarkCommandEnabled from './isTextStyleMarkCommandEnabled';
 import {Transaction, EditorState, TextSelection} from 'prosemirror-state';
@@ -12,7 +12,7 @@ function setFontSize(tr: Transform, schema: Schema, pt: number): Transform {
   if (!markType) {
     return tr;
   }
-  const attrs = pt ? {pt} : null;
+  const attrs = pt ? { pt } : null;
   tr = applyMark(tr, schema, markType, attrs);
   return tr;
 }
@@ -32,10 +32,10 @@ class FontSizeCommand extends UICommand {
 
   execute = (
     state: EditorState,
-    dispatch: (tr: Transform) => void | undefined,
-    _view: EditorView
+    dispatch?: (tr: Transform) => void
+    // view?: EditorView
   ): boolean => {
-    const {schema} = state;
+    const { schema } = state;
     // commnted selection because selection removes the storedMarks;
     // {selection}
     // const tr = setFontSize(state.tr.setSelection(selection), schema, this._pt);

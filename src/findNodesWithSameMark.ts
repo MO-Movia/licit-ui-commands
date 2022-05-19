@@ -1,4 +1,4 @@
-import {Mark, MarkType, Node} from 'prosemirror-model';
+import { Mark, MarkType, Node } from 'prosemirror-model';
 
 type Result = {
   mark: Mark;
@@ -19,7 +19,7 @@ export default function findNodesWithSameMark(
   from: number,
   to: number,
   markType: MarkType
-): Result {
+): Result | null {
   let ii = from;
   const finder = (mark) => mark.type === markType;
   let firstMark = null;

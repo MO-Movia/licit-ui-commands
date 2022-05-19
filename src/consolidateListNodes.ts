@@ -1,8 +1,8 @@
 import isOrderedListNode from './isOrderedListNode';
 import isListNode from './isListNode';
-import {Fragment, Node} from 'prosemirror-model';
-import {Transform} from 'prosemirror-transform';
-import {Transaction} from 'prosemirror-state';
+import { Fragment, Node } from 'prosemirror-model';
+import { Transform } from 'prosemirror-transform';
+import { Transaction } from 'prosemirror-state';
 
 type JointInfo = {
   content: Fragment;
@@ -34,25 +34,25 @@ type JointInfo = {
 // List nodes with the same list type and indent level among the same Lists
 // Island will be joined into one list node.
 // Note that this transform may change the current user selection.
-export default function consolidateListNodes(tr: Transform): Transform {
-  if ((tr as Transaction).getMeta('dryrun')) {
+export default function consolidateListNodes(tr: Transaction): Transform {
+  if (tr.getMeta('dryrun')) {
     // This transform is potentially expensive to perform, so skip it if
     // the transform is performed as "dryrun".
     return tr;
   }
 
   let prevJointInfo;
-  const continueLoop = true;
+
   // Keep the loop running until there's no more list nodes that can be joined.
-  while (continueLoop) {
+  while (true) {
     const jointInfo = traverseDocAndFindJointInfo(tr.doc, prevJointInfo);
     if (jointInfo) {
-      const {deleteFrom, deleteTo, insertAt, content} = jointInfo;
+      const { deleteFrom, deleteTo, insertAt, content } = jointInfo;
       tr = tr.delete(deleteFrom, deleteTo);
       tr = tr.insert(insertAt, content);
       prevJointInfo = jointInfo;
     } else {
-      tr = linkOrderedListCounters(tr);
+      (tr as Transform) = linkOrderedListCounters(tr);
       break;
     }
   }
@@ -104,7 +104,7 @@ function linkOrderedListCounters(tr: Transform): Transform {
       willTraverseNodeChildren = false;
       const indent = node.attrs.indent || 0;
       const start = node.attrs.start || 1;
-      const {name, following} = node.attrs;
+      const { name, following } = node.attrs;
       if (name) {
         namedLists.add(name);
       }
@@ -175,7 +175,7 @@ function linkOrderedListCounters(tr: Transform): Transform {
           tr = setCounterLinked(tr, pos, counterIsLinked);
         }
       }
-      listsBefore.unshift({parentNode, indent, node});
+      listsBefore.unshift({ parentNode, indent, node });
     } else {
       // Not traversing within any list node. No lists need to be updated.
       listsBefore = null;
@@ -194,7 +194,7 @@ function setCounterLinked(
   const currentValue = node.attrs.counterReset || null;
   const nextValue = linked ? 'none' : null;
   if (nextValue !== currentValue) {
-    const nodeAttrs = {...node.attrs, counterReset: nextValue};
+    const nodeAttrs = { ...node.attrs, counterReset: nextValue };
     tr = tr.setNodeMarkup(pos, node.type, nodeAttrs, node.marks);
   }
   return tr;
@@ -202,8 +202,8 @@ function setCounterLinked(
 
 function traverseDocAndFindJointInfo(
   doc: Node,
-  prevJointInfo: JointInfo | undefined
-): JointInfo {
+  prevJointInfo?: JointInfo
+): JointInfo | null {
   const minFrom = 1;
 
   const from = prevJointInfo
@@ -253,9 +253,9 @@ function traverseDocAndFindJointInfo(
 function resolveJointInfo(
   node: Node,
   pos: number,
-  prevNode: Node | undefined,
-  firstListNodePos: number
-): JointInfo {
+  prevNode?: Node,
+  firstListNodePos?: number
+): JointInfo | null {
   if (!prevNode || !canJoinListNodes(node, prevNode)) {
     return null;
   }

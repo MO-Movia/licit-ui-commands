@@ -6,7 +6,7 @@ import createPopUp from './createPopUp';
 import {atAnchorBottomCenter} from './PopUpPosition';
 import uuid from './uuid';
 
-class TooltipView extends React.PureComponent {
+export class TooltipView extends React.PureComponent {
   props: {
     tooltip: string;
   };
@@ -74,4 +74,4 @@ class TooltipSurface extends React.PureComponent {
   };
 }
 
-export default TooltipSurface;
+//export default TooltipSurface;
