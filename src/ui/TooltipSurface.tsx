@@ -18,7 +18,7 @@ export class TooltipView extends React.PureComponent {
   }
 }
 
-class TooltipSurface extends React.PureComponent {
+export class TooltipSurface extends React.PureComponent {
   _id = uuid();
   _popUp = null;
 

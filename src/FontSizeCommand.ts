@@ -2,7 +2,6 @@ import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 import applyMark from './applyMark';
 import isTextStyleMarkCommandEnabled from './isTextStyleMarkCommandEnabled';
 import {Transaction, EditorState, TextSelection} from 'prosemirror-state';
-import {EditorView} from 'prosemirror-view';
 import {MARK_FONT_SIZE} from './MarkNames';
 import {Schema} from 'prosemirror-model';
 import {Transform} from 'prosemirror-transform';

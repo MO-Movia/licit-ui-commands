@@ -78,7 +78,7 @@ export default function updateIndentLevel(
       .forEach((pos) => {
         tr2 = setListNodeIndent(state, tr2, schema, pos, delta);
       });
-    tr2 = consolidateListNodes(tr2);
+    tr2 = consolidateListNodes(tr2 as Transaction);
     return tr2;
   });
 

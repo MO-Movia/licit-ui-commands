@@ -42,9 +42,9 @@ export default function consolidateListNodes(tr: Transaction): Transform {
   }
 
   let prevJointInfo;
-
+  const continueLoop = true;
   // Keep the loop running until there's no more list nodes that can be joined.
-  while (true) {
+  while (continueLoop) {
     const jointInfo = traverseDocAndFindJointInfo(tr.doc, prevJointInfo);
     if (jointInfo) {
       const { deleteFrom, deleteTo, insertAt, content } = jointInfo;
