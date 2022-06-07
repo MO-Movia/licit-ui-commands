@@ -154,7 +154,7 @@ export default function createPopUp(
   viewProps?: ViewProps,
   popUpParams?: PopUpParams
 ): PopUpHandle {
-  const rootId = uuid();
+  const rootId = popUpParams.popUpId ? popUpParams.popUpId : uuid();
 
   let handle = null;
   let currentViewProps = viewProps;

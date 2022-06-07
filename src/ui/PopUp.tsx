@@ -19,6 +19,7 @@ export type PopUpParams = {
   onClose?: (val) => void;
   position?: PositionHandler;
   IsChildDialog?: boolean;
+  popUpId?: string;
 };
 
 export type PopUpProps = {
@@ -60,7 +61,7 @@ class PopUp extends React.PureComponent<PopUpProps> {
 
   _getDetails = (): PopUpDetails => {
     const { close, popUpParams } = this.props;
-    const { anchor, autoDismiss, position, modal } = popUpParams;
+    const { anchor, autoDismiss, position, modal, popUpId } = popUpParams;
     return {
       anchor,
       autoDismiss: autoDismiss === false ? false : true,
@@ -68,6 +69,7 @@ class PopUp extends React.PureComponent<PopUpProps> {
       close,
       modal: modal === true,
       position: position || (modal ? atViewportCenter : atAnchorBottomLeft),
+      popupId: popUpId ? popUpId : null
     };
   };
 }

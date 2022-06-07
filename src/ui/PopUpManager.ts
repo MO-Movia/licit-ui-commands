@@ -1,6 +1,5 @@
 import clamp from './clamp';
 import { fromHTMlElement, fromXY, isIntersected } from './rects';
-
 import type { PositionHandler } from './PopUpPosition';
 import type { Rect } from './rects';
 
@@ -13,6 +12,7 @@ export type PopUpDetails = {
   close: (val) => void;
   modal: boolean;
   position: PositionHandler;
+  popupId: string;
 };
 
 export type PopUpBridge = {
@@ -85,14 +85,52 @@ class PopUpManager {
   _onClick = (e: MouseEvent): void => {
     const now = Date.now();
     let detailsWithModalToDismiss;
+    let IsCustom = false;
     for (const [bridge, registeredAt] of this._bridges) {
       if (now - registeredAt > CLICK_INTERVAL) {
         const details = bridge.getDetails();
         if (details.modal && details.autoDismiss) {
           detailsWithModalToDismiss = details;
         }
+        if (details.autoDismiss && details.popupId) {
+          if (this._bridges.size > 1) {
+            const targetName = (e.target as HTMLElement).className;
+            if (targetName === 'czi-icon format_line_spacing' ||
+              targetName === 'czi-icon format_color_text' ||
+              targetName === 'czi-icon border_color') {
+              return;
+            } else {
+              IsCustom = true;
+            }
+          }
+          else {
+            detailsWithModalToDismiss = details;
+            const { close } = detailsWithModalToDismiss;
+            close();
+            detailsWithModalToDismiss = null;
+          }
+
+        }
       }
     }
+    if (IsCustom) {
+      let arrOpenPopups = [];
+      let hasModel = false;
+      for (const [bridge] of this._bridges) {
+        const details = bridge.getDetails();
+        arrOpenPopups.push(details);
+        if (details.modal) {
+          hasModel = true;
+        }
+      }
+      if (!hasModel) {
+        arrOpenPopups.forEach(element => {
+          const { close } = element;
+          close();
+        });
+      }
+    }
+
     if (!detailsWithModalToDismiss) {
       return;
     }
@@ -134,10 +172,10 @@ class PopUpManager {
       if (body && bodyRect && this._positions.get(bridge) !== positionKey) {
         const ax = anchorRect
           ? clamp(
-              0,
-              anchorRect.x - x + anchorRect.w / 2,
-              bodyRect.w - anchorRect.w / 2
-            )
+            0,
+            anchorRect.x - x + anchorRect.w / 2,
+            bodyRect.w - anchorRect.w / 2
+          )
           : 0;
         this._positions.set(bridge, positionKey);
         const bodyStyle = body.style;
@@ -191,7 +229,9 @@ class PopUpManager {
           now - registeredAt > CLICK_INTERVAL &&
           !hoveredAnchors.has(anchor)
         ) {
-          close();
+          if (this._bridges.size < 2) {
+            close();
+          }
         }
       }
     }

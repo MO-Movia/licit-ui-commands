@@ -6,10 +6,10 @@ import createPopUp from './ui/createPopUp';
 import findNodesWithSameMark from './findNodesWithSameMark';
 import isTextStyleMarkCommandEnabled from './isTextStyleMarkCommandEnabled';
 import nullthrows from 'nullthrows';
-import {EditorState, TextSelection, Transaction} from 'prosemirror-state';
-import {EditorView} from 'prosemirror-view';
-import {MARK_TEXT_COLOR} from './MarkNames';
-import {Transform} from 'prosemirror-transform';
+import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
+import { MARK_TEXT_COLOR } from './MarkNames';
+import { Transform } from 'prosemirror-transform';
 
 class TextColorCommand extends UICommand {
   _popUp = null;
@@ -49,6 +49,7 @@ class TextColorCommand extends UICommand {
         { hex },
         {
           anchor,
+          popUpId: 'mo-menuList-child',
           onClose: (val) => {
             if (this._popUp) {
               this._popUp = null;
@@ -89,9 +90,9 @@ class TextColorCommand extends UICommand {
     from: number,
     to: number
   ): Transform => {
-    const {schema} = state;
+    const { schema } = state;
     const markType = schema.marks[MARK_TEXT_COLOR];
-    const attrs = {color: this._color};
+    const attrs = { color: this._color };
     const storedmarks = (tr as Transaction).storedMarks;
     // [FS] IRAD-1043 2020-10-27
     // Issue fix on removing the  custom style if user click on the same style menu multiple times
