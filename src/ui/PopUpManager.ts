@@ -218,12 +218,12 @@ class PopUpManager {
     }
 
     const now = Date.now();
-    const tempArray = [];
+    // const tempArray = [];
     for (const [bridge, registeredAt] of this._bridges) {
       const details = bridgeToDetails.get(bridge);
       if (details) {
         const { autoDismiss, anchor, close, modal } = details;
-        tempArray.push(details);
+        // tempArray.push(details);
         if (
           autoDismiss &&
           // Modal is handled separately at `onClick`
@@ -240,11 +240,7 @@ class PopUpManager {
         }
       }
     }
-  //   tempArray.forEach(element => {
-  //     if (!element.popupId && this._bridges.size > 1) {
-  //     }
-  //   });
-  // };
+  };
 }
 
 const instance = new PopUpManager();
