@@ -114,7 +114,7 @@ class PopUpManager {
       }
     }
     if (IsCustom) {
-      let arrOpenPopups = [];
+      const arrOpenPopups = [];
       let hasModel = false;
       for (const [bridge] of this._bridges) {
         const details = bridge.getDetails();
@@ -218,10 +218,12 @@ class PopUpManager {
     }
 
     const now = Date.now();
+    const tempArray = [];
     for (const [bridge, registeredAt] of this._bridges) {
       const details = bridgeToDetails.get(bridge);
       if (details) {
         const { autoDismiss, anchor, close, modal } = details;
+        tempArray.push(details);
         if (
           autoDismiss &&
           // Modal is handled separately at `onClick`
@@ -232,10 +234,17 @@ class PopUpManager {
           if (this._bridges.size < 2) {
             close();
           }
+          if (this._bridges.size >= 3 && null === details.popupId) {
+            close();
+          }
         }
       }
     }
-  };
+  //   tempArray.forEach(element => {
+  //     if (!element.popupId && this._bridges.size > 1) {
+  //     }
+  //   });
+  // };
 }
 
 const instance = new PopUpManager();
