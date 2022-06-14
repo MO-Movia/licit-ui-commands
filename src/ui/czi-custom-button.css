@@ -11,6 +11,7 @@
 
 .czi-custom-button {
   background-clip: padding-box;
+  background-color: #fff;
   border: var(--czi-border-grey);
   border-radius: 5px;
   box-sizing: border-box;
@@ -22,6 +23,7 @@
   font-weight: normal;
   line-height: 1.2em;
   overflow: hidden;
+  padding-bottom: 6px;
   padding-left: 12px;
   padding-right: 12px;
   padding-top: 6px;
@@ -34,6 +36,7 @@
 
 .czi-custom-button.use-icon {
   border-color: transparent;
+  padding: 0;
 }
 
 .czi-custom-button:focus,
