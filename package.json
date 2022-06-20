@@ -1,6 +1,6 @@
 {
   "name": "@modusoperandi/licit-ui-commands",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Module that extend Step, overriding the apply, invert, map, getMap and fromJSON methods, and registering your class with a unique JSON-serialization identifier using Step.jsonID.",
   "main": "dist/index.js",
   "style": "dist/styles.css",
@@ -41,7 +41,7 @@
     "@babel/plugin-transform-runtime": "^7.15.0",
     "@babel/plugin-transform-typescript": "^7.15.4",
     "@babel/preset-env": "^7.15.6",
-    "@babel/preset-react": "^7.14.5",
+    "@babel/preset-react": "^7.16.0",
     "@babel/preset-typescript": "^7.15.0",
     "@types/node": "^16.9.1",
     "@typescript-eslint/eslint-plugin": "^4.31.1",
@@ -56,7 +56,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-jest": "^24.4.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "7.25.1",
+    "eslint-plugin-react": "7.27.0",
     "file-loader": "^6.2.0",
     "husky": "^7.0.2",
     "identity-obj-proxy": "^3.0.0",
@@ -77,8 +77,8 @@
   },
   "dependencies": {
     "@modusoperandi/licit-doc-attrs-step": "^0.1.1",
-    "@types/react": "^16.9.9",
-    "@types/react-dom": "^16.9.9",
+    "@types/react": "^17.0.35",
+    "@types/react-dom": "^17.0.11",
     "browserkeymap": "2.0.2",
     "classnames": "2.3.1",
     "color": "3.1.2",
@@ -89,16 +89,16 @@
     "prosemirror-transform": "^1.3.2",
     "prosemirror-utils": "^1.0.0-0",
     "prosemirror-view": "^1.20.1",
-    "react": "^16.9.9",
-    "react-dom": "^16.9.9",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "style-loader": "^3.2.1",
     "typescript": "^4.4.3",
     "uuid": "8.3.2",
     "webfontloader": "1.6.28"
   },
   "overrides": {
-    "@types/react": "^16.9.9",
-    "@types/react-dom": "^16.9.9"
+    "@types/react": "^17.0.35",
+    "@types/react-dom": "^17.0.11"
   },
   "importSort": {
     ".js": {
