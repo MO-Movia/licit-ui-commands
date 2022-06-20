@@ -317,7 +317,7 @@ function wrapItemsWithListInternal(
 function unwrapNodesFromSelection(
   tr: Transform,
   listNodePos: number,
-  nodes: { [x: string]: NodeType<Schema> },
+  nodes: { [x: string]: NodeType },
   from: number,
   to: number,
   unwrapParagraphNode?: (Node) => Node
