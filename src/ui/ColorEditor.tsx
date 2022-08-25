@@ -1,4 +1,4 @@
-import Color from 'color';
+import  Color  from 'color';
 import * as React from 'react';
 
 import CustomButton from './CustomButton';
