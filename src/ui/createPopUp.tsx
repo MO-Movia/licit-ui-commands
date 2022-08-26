@@ -57,148 +57,149 @@ function showModalMask(IsChildDialog?: boolean): void {
   if ('' === style.zIndex) {
     style.zIndex = String(zIndex - 1);
   }
+}
 
-  function hideModalMask(): void {
-    const element = document.getElementById(MODAL_MASK_ID);
-    if (element && element.parentElement) {
-      element.parentElement.removeChild(element);
-    }
+function hideModalMask(): void {
+  const element = document.getElementById(MODAL_MASK_ID);
+  if (element && element.parentElement) {
+    element.parentElement.removeChild(element);
+  }
+}
+
+function getRootElement(
+  id: string,
+  forceCreation: boolean,
+  popUpParams?: PopUpParams
+): HTMLElement | null {
+  const root =
+    (popUpParams && popUpParams.container) ||
+    document.body ||
+    document.documentElement;
+  let element = document.getElementById(id);
+  if (!element && forceCreation) {
+    element = document.createElement('div');
   }
 
-  function getRootElement(
-    id: string,
-    forceCreation: boolean,
-    popUpParams?: PopUpParams
-  ): HTMLElement | null {
-    const root =
-      (popUpParams && popUpParams.container) ||
-      document.body ||
-      document.documentElement;
-    let element = document.getElementById(id);
-    if (!element && forceCreation) {
-      element = document.createElement('div');
-    }
-
-    if (!element) {
-      return null;
-    }
-
-    if (popUpParams && popUpParams.modal) {
-      element.setAttribute('data-pop-up-modal', 'y');
-    }
-    // [FS] IRAD-1048 2020-10-07
-    // To handle child dialog window
-    if (popUpParams && popUpParams.IsChildDialog) {
-      element.className = 'czi-pop-up-element child-modal czi-vars';
-    } else {
-      element.className = 'czi-pop-up-element czi-vars';
-    }
-
-    element.id = id;
-    const style = element.style;
-    const modalZIndexOffset = popUpParams && popUpParams.modal ? 1 : 0;
-    if (!(popUpParams && popUpParams.container)) {
-      style.zIndex = String(Z_INDEX_BASE + popUpsCount * 3 + modalZIndexOffset);
-    }
-
-    // Populates the default ARIA attributes here.
-    // http://accessibility.athena-ict.com/aria/examples/dialog.shtml
-    element.setAttribute('role', 'dialog');
-    element.setAttribute('aria-modal', 'true');
-    if (root && !element.parentElement) {
-      root.appendChild(element);
-    }
-    return element;
+  if (!element) {
+    return null;
   }
 
-  function renderPopUp(
-    rootId: string,
-    close: () => void,
-    View: typeof React.PureComponent,
-    viewProps: ViewProps,
-    popUpParams: PopUpParams
-  ): void {
-    const rootNode = getRootElement(rootId, true, popUpParams);
-    if (rootNode) {
-      const component = (
-        <PopUp
-          View={View}
-          close={close}
-          popUpParams={popUpParams}
-          viewProps={viewProps}
-        />
-      );
-      ReactDOM.render(component, rootNode);
-    }
-
-    if (modalsCount > 0) {
-      showModalMask(popUpParams.IsChildDialog);
-    } else {
-      hideModalMask();
-    }
+  if (popUpParams && popUpParams.modal) {
+    element.setAttribute('data-pop-up-modal', 'y');
+  }
+  // [FS] IRAD-1048 2020-10-07
+  // To handle child dialog window
+  if (popUpParams && popUpParams.IsChildDialog) {
+    element.className = 'czi-pop-up-element child-modal czi-vars';
+  } else {
+    element.className = 'czi-pop-up-element czi-vars';
   }
 
-  function unrenderPopUp(rootId: string): void {
-    const rootNode = getRootElement(rootId, false);
-    if (rootNode) {
-      ReactDOM.unmountComponentAtNode(rootNode);
-      rootNode.parentElement && rootNode.parentElement.removeChild(rootNode);
-    }
-
-    if (modalsCount === 0) {
-      hideModalMask();
-    }
+  element.id = id;
+  const style = element.style;
+  const modalZIndexOffset = popUpParams && popUpParams.modal ? 1 : 0;
+  if (!(popUpParams && popUpParams.container)) {
+    style.zIndex = String(Z_INDEX_BASE + popUpsCount * 3 + modalZIndexOffset);
   }
 
-  export default function createPopUp(
-    View: typeof React.PureComponent,
-    viewProps?: ViewProps,
-    popUpParams?: PopUpParams
-  ): PopUpHandle {
-    const rootId = popUpParams.popUpId ? popUpParams.popUpId : uuid();
+  // Populates the default ARIA attributes here.
+  // http://accessibility.athena-ict.com/aria/examples/dialog.shtml
+  element.setAttribute('role', 'dialog');
+  element.setAttribute('aria-modal', 'true');
+  if (root && !element.parentElement) {
+    root.appendChild(element);
+  }
+  return element;
+}
 
-    let handle = null;
-    let currentViewProps = viewProps;
+function renderPopUp(
+  rootId: string,
+  close: () => void,
+  View: typeof React.PureComponent,
+  viewProps: ViewProps,
+  popUpParams: PopUpParams
+): void {
+  const rootNode = getRootElement(rootId, true, popUpParams);
+  if (rootNode) {
+    const component = (
+      <PopUp
+        View={View}
+        close={close}
+        popUpParams={popUpParams}
+        viewProps={viewProps}
+      />
+    );
+    ReactDOM.render(component, rootNode);
+  }
 
-    viewProps = viewProps || {};
-    popUpParams = popUpParams || {};
+  if (modalsCount > 0) {
+    showModalMask(popUpParams.IsChildDialog);
+  } else {
+    hideModalMask();
+  }
+}
 
-    const modal = popUpParams.modal || !popUpParams.anchor;
-    popUpParams.modal = modal;
+function unrenderPopUp(rootId: string): void {
+  const rootNode = getRootElement(rootId, false);
+  if (rootNode) {
+    ReactDOM.unmountComponentAtNode(rootNode);
+    rootNode.parentElement && rootNode.parentElement.removeChild(rootNode);
+  }
 
-    popUpsCount++;
+  if (modalsCount === 0) {
+    hideModalMask();
+  }
+}
+
+export default function createPopUp(
+  View: typeof React.PureComponent,
+  viewProps?: ViewProps,
+  popUpParams?: PopUpParams
+): PopUpHandle {
+  const rootId = popUpParams.popUpId ? popUpParams.popUpId : uuid();
+
+  let handle = null;
+  let currentViewProps = viewProps;
+
+  viewProps = viewProps || {};
+  popUpParams = popUpParams || {};
+
+  const modal = popUpParams.modal || !popUpParams.anchor;
+  popUpParams.modal = modal;
+
+  popUpsCount++;
+  if (modal) {
+    modalsCount++;
+  }
+
+  const closePopUp = (value) => {
+    if (!handle) {
+      return;
+    }
+
     if (modal) {
-      modalsCount++;
+      modalsCount--;
     }
+    popUpsCount--;
 
-    const closePopUp = (value) => {
-      if (!handle) {
-        return;
-      }
+    handle = null;
+    unrenderPopUp(rootId);
 
-      if (modal) {
-        modalsCount--;
-      }
-      popUpsCount--;
+    const onClose = popUpParams && popUpParams.onClose;
+    onClose && onClose(value);
+  };
 
-      handle = null;
-      unrenderPopUp(rootId);
+  const render = renderPopUp.bind(null, rootId, closePopUp, View);
+  const emptyObj = {};
 
-      const onClose = popUpParams && popUpParams.onClose;
-      onClose && onClose(value);
-    };
+  handle = {
+    close: closePopUp,
+    update: (nextViewProps) => {
+      currentViewProps = nextViewProps;
+      render(currentViewProps || emptyObj, popUpParams || emptyObj);
+    },
+  };
 
-    const render = renderPopUp.bind(null, rootId, closePopUp, View);
-    const emptyObj = {};
-
-    handle = {
-      close: closePopUp,
-      update: (nextViewProps) => {
-        currentViewProps = nextViewProps;
-        render(currentViewProps || emptyObj, popUpParams || emptyObj);
-      },
-    };
-
-    render(currentViewProps || emptyObj, popUpParams);
-    return handle;
-  }
+  render(currentViewProps || emptyObj, popUpParams);
+  return handle;
+}
