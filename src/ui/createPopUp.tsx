@@ -54,7 +54,9 @@ function showModalMask(IsChildDialog?: boolean): void {
     0
   );
 
-  style.zIndex = String(zIndex - 1);
+  if ('' === style.zIndex) {
+    style.zIndex = String(zIndex - 1);
+  }
 }
 
 function hideModalMask(): void {
