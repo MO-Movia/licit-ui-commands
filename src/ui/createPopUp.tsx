@@ -73,7 +73,7 @@ function getRootElement(
 ): HTMLElement | null {
   const root =
     (popUpParams && popUpParams.container) ||
-    document.body ||
+    (document.getElementsByClassName("czi-editor-frameset") && document.getElementsByClassName("czi-editor-frameset")[0]) ||
     document.documentElement;
   let element = document.getElementById(id);
   if (!element && forceCreation) {
