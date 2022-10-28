@@ -5,7 +5,7 @@
   opacity: 0.6;
 }
 
-@keyframes cziAnimationFadeIn {
+@keyframes czi-animation-fade-in {
   0% {
     opacity: 0;
   }
