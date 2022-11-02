@@ -13,7 +13,7 @@ type CustomButtonProps = PointerSurfaceProps & {
 
 class CustomButton extends React.PureComponent<CustomButtonProps> {
 props: CustomButtonProps;
-  render(): React.ReactElement {
+  render(): React.ReactNode {
     const {icon, label, className, title, ...pointerProps} = this.props;
     const klass = cx(className, 'czi-custom-button', {
       'use-icon': !!icon,
