@@ -30,7 +30,7 @@ class IndentCommand extends UICommand {
       dispatch && dispatch(trx.tr);
       return true;
     } else {
-      return false;
+      return true;
     }
   };
   // [FS] IRAD-1087 2020-11-11

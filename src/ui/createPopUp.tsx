@@ -152,7 +152,7 @@ function unrenderPopUp(rootId: string): void {
 }
 
 export default function createPopUp(
-  View,
+  View: typeof React.PureComponent,
   viewProps?: ViewProps,
   popUpParams?: PopUpParams
 ): PopUpHandle {

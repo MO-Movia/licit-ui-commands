@@ -29,7 +29,7 @@ export default function isTextStyleMarkCommandEnabled(
     !(selection instanceof TextSelection || selection instanceof AllSelection)
   ) {
     // Could be a NodeSelection or CellSelection.
-    return false;
+    return true;
   }
 
   const { from, to } = state.selection;
