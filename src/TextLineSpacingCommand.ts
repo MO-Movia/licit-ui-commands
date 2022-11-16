@@ -1,7 +1,5 @@
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 import {
-  AllSelection,
-  TextSelection,
   Transaction,
   EditorState,
 } from 'prosemirror-state';
@@ -23,13 +21,6 @@ export function setTextLineSpacing(
 ): Transform {
   const { selection, doc } = tr as Transaction;
   if (!selection || !doc) {
-    return tr;
-  }
-
-  if (
-    !(selection instanceof TextSelection) &&
-    !(selection instanceof AllSelection)
-  ) {
     return tr;
   }
 

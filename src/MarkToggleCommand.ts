@@ -34,9 +34,7 @@ class MarkToggleCommand extends UICommand {
       return false;
     }
 
-    if (selection.empty && !(selection instanceof TextSelection)) {
-      return false;
-    }
+
 
     const {from, to} = selection;
     if (tr && to === from + 1) {

@@ -5,8 +5,6 @@ import isListNode from './isListNode';
 import transformAndPreserveTextSelection from './transformAndPreserveTextSelection';
 import {
   EditorState,
-  AllSelection,
-  TextSelection,
   Transaction,
 } from 'prosemirror-state';
 import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
@@ -32,12 +30,6 @@ export default function updateIndentLevel(
 ): UpdateIntendType {
   const { doc, selection } = tr as Transaction;
   if (!doc || !selection) {
-    return { tr, docChanged: false };
-  }
-
-  if (
-    !(selection instanceof TextSelection || selection instanceof AllSelection)
-  ) {
     return { tr, docChanged: false };
   }
 

@@ -1,6 +1,5 @@
 import { Schema } from 'prosemirror-model';
 import {
-  AllSelection,
   TextSelection,
   EditorState,
   Transaction,
@@ -19,12 +18,7 @@ function setFontType(tr: Transform, schema: Schema, name: string): Transform {
   if (!markType) {
     return tr;
   }
-  const { selection } = tr as Transaction;
-  if (
-    !(selection instanceof TextSelection || selection instanceof AllSelection)
-  ) {
-    return tr;
-  }
+
   const attrs = name ? { name } : null;
   tr = applyMark(tr, schema, markType, attrs);
   return tr;
@@ -49,11 +43,7 @@ class FontTypeCommand extends UICommand {
 
   isEnabled = (state: EditorState): boolean => {
     const { schema, selection, tr } = state;
-    if (
-      !(selection instanceof TextSelection || selection instanceof AllSelection)
-    ) {
-      return false;
-    }
+
     const markType = schema.marks[MARK_FONT_TYPE];
     if (!markType) {
       return false;

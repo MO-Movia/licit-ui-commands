@@ -1,6 +1,5 @@
-import {Schema} from 'prosemirror-model';
+import { Schema } from 'prosemirror-model';
 import {
-  AllSelection,
   EditorState,
   TextSelection,
   Transaction,
@@ -79,8 +78,8 @@ class TextAlignCommand extends UICommand {
   }
 
   isActive = (state: EditorState): boolean => {
-    const {selection, doc} = state;
-    const {from, to} = selection;
+    const { selection, doc } = state;
+    const { from, to } = selection;
     let keepLooking = true;
     let active = false;
     doc.nodesBetween(from, to, (node, _pos) => {
@@ -94,10 +93,11 @@ class TextAlignCommand extends UICommand {
   };
 
   isEnabled = (state: EditorState): boolean => {
-    const { selection } = state;
-    return (
-      selection instanceof TextSelection || selection instanceof AllSelection
-    );
+
+    if (state) {
+      return true;
+    }
+    return false;
   };
 
   execute = (
@@ -105,7 +105,7 @@ class TextAlignCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    const {schema, selection} = state;
+    const { schema, selection } = state;
     const tr = setTextAlign(
       state.tr.setSelection(selection),
       schema,
@@ -126,7 +126,7 @@ class TextAlignCommand extends UICommand {
     from: number,
     to: number
   ): Transform => {
-    const {schema} = state;
+    const { schema } = state;
     tr = setTextAlign(
       (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),
       schema,
