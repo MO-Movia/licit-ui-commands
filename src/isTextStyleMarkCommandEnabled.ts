@@ -1,6 +1,6 @@
 import isNodeSelectionForNodeType from './isNodeSelectionForNodeType';
 import {MATH} from './NodeNames';
-import {AllSelection, EditorState, TextSelection} from 'prosemirror-state';
+import {EditorState} from 'prosemirror-state';
 import {MARK_FONT_SIZE, MARK_TEXT_COLOR} from './MarkNames';
 
 const VALID_MATH_MARK_NAMES = new Set([MARK_FONT_SIZE, MARK_TEXT_COLOR]);
@@ -25,12 +25,12 @@ export default function isTextStyleMarkCommandEnabled(
     return true;
   }
 
-  if (
-    !(selection instanceof TextSelection || selection instanceof AllSelection)
-  ) {
-    // Could be a NodeSelection or CellSelection.
-    return true;
-  }
+  // if (
+  //   !(selection instanceof TextSelection || selection instanceof AllSelection)
+  // ) {
+  //   // Could be a NodeSelection or CellSelection.
+  //   return true;
+  // }
 
   const { from, to } = state.selection;
 
