@@ -36,9 +36,9 @@ export default function transformAndPreserveTextSelection(
     return tr;
   }
 
-  if (!(selection instanceof TextSelection)) {
-    return tr;
-  }
+  // if (!(selection instanceof TextSelection)) {
+  //   return tr;
+  // }
 
   const { from, to } = selection;
 
