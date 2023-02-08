@@ -234,9 +234,10 @@ class PopUpManager {
           if (this._bridges.size < 2) {
             close();
           }
-          if (this._bridges.size >= 3 && null === details.popupId) {
-            close();
-          }
+          //this is a temporary fix for not able to select sub content menu items
+          // if (this._bridges.size >= 3 && null === details.popupId) {
+          //   close();
+          // }
         }
       }
     }
