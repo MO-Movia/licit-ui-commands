@@ -1,6 +1,6 @@
 {
   "name": "@modusoperandi/licit-ui-commands",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "Module that extend Step, overriding the apply, invert, map, getMap and fromJSON methods, and registering your class with a unique JSON-serialization identifier using Step.jsonID.",
   "main": "dist/index.js",
   "style": "dist/styles.css",
@@ -74,7 +74,7 @@
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "write-file-webpack-plugin": "^4.5.1"
-  },  
+  },
   "dependencies": {
     "@modusoperandi/licit-doc-attrs-step": "^0.1.5",
     "@types/color": "^3.0.3",
@@ -91,7 +91,7 @@
     "prosemirror-utils": "1.0.0-0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "style-loader": "^3.3.1",    
+    "style-loader": "^3.3.1",
     "webfontloader": "1.6.28",
     "uuid": "9.0.0"
   },
