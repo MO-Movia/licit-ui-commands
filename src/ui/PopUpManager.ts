@@ -146,7 +146,11 @@ class PopUpManager {
     this._rafID = 0;
 
     const bridgeToDetails = new Map();
-    for (const [bridge] of this._bridges) {
+    for (const [
+      bridge,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      registeredAt,
+    ] of this._bridges) {
       const details = bridge.getDetails();
       bridgeToDetails.set(bridge, details);
       const { anchor, body } = details;
@@ -196,10 +200,14 @@ class PopUpManager {
         }
       }
     }
-    const continueLoop = true;
-    while (continueLoop) {
+    /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
+    while (true) {
       const size = hoveredAnchors.size;
-      for (const [details] of bridgeToDetails) {
+      for (const [
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        bridge,
+        details,
+      ] of bridgeToDetails) {
         const { anchor, body } = details;
         for (const ha of hoveredAnchors) {
           if (
@@ -218,12 +226,10 @@ class PopUpManager {
     }
 
     const now = Date.now();
-    // const tempArray = [];
     for (const [bridge, registeredAt] of this._bridges) {
       const details = bridgeToDetails.get(bridge);
       if (details) {
         const { autoDismiss, anchor, close, modal } = details;
-        // tempArray.push(details);
         if (
           autoDismiss &&
           // Modal is handled separately at `onClick`
@@ -231,13 +237,7 @@ class PopUpManager {
           now - registeredAt > CLICK_INTERVAL &&
           !hoveredAnchors.has(anchor)
         ) {
-          if (this._bridges.size < 2) {
-            close();
-          }
-          //this is a temporary fix for not able to select sub content menu items
-          // if (this._bridges.size >= 3 && null === details.popupId) {
-          //   close();
-          // }
+          close();
         }
       }
     }
