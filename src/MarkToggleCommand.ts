@@ -1,5 +1,5 @@
 import {toggleMark} from 'prosemirror-commands';
-import {EditorState, TextSelection} from 'prosemirror-state';
+import {EditorState} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
 import {EditorView} from 'prosemirror-view';
 import findNodesWithSameMark from './findNodesWithSameMark';
@@ -57,20 +57,20 @@ class MarkToggleCommand extends UICommand {
     tr: Transform,
     posfrom: number,
     posto: number
-  ): boolean => {
-    const {schema, selection} = state;
+  ): any => {
+    const {schema} = state;
     const markType = schema.marks[this._markName];
     if (!markType) {
       return false;
     }
 
-    if (selection.empty && !(selection instanceof TextSelection)) {
-      return false;
-    }
+    // if (selection.empty && !(selection instanceof TextSelection)) {
+    //   return false;
+    // }
 
-    const {from, to} = selection;
-    if (tr && to === from + 1) {
-      const node = tr.doc.nodeAt(from);
+    // const {from, to} = selection;
+    if (tr && posto === posfrom + 1) {
+      const node = tr.doc.nodeAt(posfrom);
       if (node.isAtom && !node.isText && node.isLeaf) {
         // An atomic node (e.g. Image) is selected.
         return false;
