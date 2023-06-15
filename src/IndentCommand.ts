@@ -4,6 +4,7 @@ import {EditorView} from 'prosemirror-view';
 
 import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
 import updateIndentLevel from './updateIndentLevel';
+import noop from './noop';
 
 class IndentCommand extends UICommand {
   _delta: number;
@@ -13,41 +14,40 @@ class IndentCommand extends UICommand {
     this._delta = delta;
   }
 
-  isActive = (_state: EditorState): boolean => {
+  isActive(): boolean {
     return false;
-  };
+  }
 
-  execute = (
+  execute(
     state: EditorState,
     dispatch?: (tr: Transform) => void,
     view?: EditorView
-  ): boolean => {
+  ): boolean {
+    dispatch = dispatch || noop;
     const {selection, schema} = state;
     let {tr} = state;
     tr = tr.setSelection(selection);
     const trx = updateIndentLevel(state, tr, schema, this._delta, view);
     if (trx.docChanged) {
-      dispatch && dispatch(trx.tr);
-      return true;
-    } else {
-      return true;
+      dispatch(trx.tr);
     }
-  };
+    return true;
+  }
   // [FS] IRAD-1087 2020-11-11
   // New method to execute new styling implementation for indent
-  executeCustom = (
+  executeCustom(
     state: EditorState,
     tr: Transform,
     from: number,
     to: number
-  ): Transform => {
+  ): Transform {
     const {schema} = state;
     tr = (tr as Transaction).setSelection(
       TextSelection.create(tr.doc, from, to)
     );
     const trx = updateIndentLevel(state, tr, schema, this._delta, null);
     return trx.tr;
-  };
+  }
 }
 
 export default IndentCommand;

@@ -64,15 +64,7 @@ export default function toggleList(
 
   if (result) {
     tr = unwrapNodesFromList(tr, schema, result.pos);
-  } else if (paragraph && p) {
-    tr = wrapNodesWithList(
-      tr,
-      schema,
-      listNodeType,
-      listStyleType,
-      newselection
-    );
-  } else if (heading && h) {
+  } else if ((paragraph && p) || (heading && h)) {
     tr = wrapNodesWithList(
       tr,
       schema,
@@ -81,6 +73,7 @@ export default function toggleList(
       newselection
     );
   }
+
   return tr;
 }
 
@@ -171,12 +164,12 @@ function wrapNodesWithListInternal(
       items = items || [];
       items.push({ node, pos });
     } else {
-      items && items.length && lists.push(items);
+      items?.length && lists.push(items);
       items = null;
     }
     return true;
   });
-  items && items.length && lists.push(items);
+  items?.length && lists.push(items);
 
   lists = lists.filter((items) => items.length > 0);
   if (!lists.length) {
@@ -439,7 +432,7 @@ function unwrapNodesFromListInternal(
     return tr;
   }
   // Unwraps all selected list
-  listNodePoses
+  [...listNodePoses]
     .sort(compareNumber)
     .reverse()
     .forEach((pos) => {

@@ -9,7 +9,6 @@ import {
 } from 'prosemirror-state';
 import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { Fragment, Schema } from 'prosemirror-model';
-// import { MAX_INDENT_LEVEL, MIN_INDENT_LEVEL } from './ParagraphNodeSpec';
 import { Transform } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
 
@@ -64,7 +63,7 @@ export default function updateIndentLevel(
   tr = transformAndPreserveTextSelection(tr, schema, (memo) => {
     const { schema } = memo;
     let tr2 = memo.tr;
-    listNodePoses
+    [...listNodePoses]
       .sort(compareNumber)
       .reverse()
       .forEach((pos) => {
@@ -85,17 +84,8 @@ function setListNodeIndent(
   delta: number
 ): Transform {
   const listItem = schema.nodes[LIST_ITEM];
-  if (!listItem) {
-    return tr;
-  }
-
-  const { doc, selection } = tr as Transaction;
-  if (!doc) {
-    return tr;
-  }
-
-  const listNode = doc.nodeAt(pos);
-  if (!listNode) {
+  const listNode = tr?.doc?.nodeAt(pos);
+  if (!listItem || !listNode) {
     return tr;
   }
 
@@ -108,7 +98,7 @@ function setListNodeIndent(
     return tr;
   }
 
-  const { from, to } = selection;
+  const { from, to } = (tr as Transaction).selection;
 
   // [FS] IRAD-947 2020-05-19
   // Fix for Multi-level lists lose multi-levels when indenting/de-indenting
@@ -126,28 +116,24 @@ function setListNodeIndent(
   const itemsSelected = [];
   const itemsAfter = [];
 
-  doc.nodesBetween(pos, pos + listNode.nodeSize, (itemNode, itemPos) => {
-    if (itemNode.type === listNodeType) {
+  tr.doc.nodesBetween(pos, pos + listNode.nodeSize, (itemNode, itemPos) => {
+    if (itemNode.type === listNodeType || itemNode.type !== listItem) {
       return true;
     }
 
-    if (itemNode.type === listItem) {
-      const listItemNode = listItem.create(
-        itemNode.attrs,
-        itemNode.content,
-        itemNode.marks
-      );
-      if (itemPos + itemNode.nodeSize <= from) {
-        itemsBefore.push(listItemNode);
-      } else if (itemPos > to) {
-        itemsAfter.push(listItemNode);
-      } else {
-        itemsSelected.push(listItemNode);
-      }
-      return false;
+    const listItemNode = listItem.create(
+      itemNode.attrs,
+      itemNode.content,
+      itemNode.marks
+    );
+    if (itemPos + itemNode.nodeSize <= from) {
+      itemsBefore.push(listItemNode);
+    } else if (itemPos > to) {
+      itemsAfter.push(listItemNode);
+    } else {
+      itemsSelected.push(listItemNode);
     }
-
-    return true;
+    return false;
   });
 
   tr = tr.delete(pos, pos + listNode.nodeSize);

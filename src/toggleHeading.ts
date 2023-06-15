@@ -51,7 +51,7 @@ export default function toggleHeading(
     return !isListNode(node);
   });
   // Update from the bottom to avoid disruptive changes in pos.
-  poses
+  [...poses]
     .sort(compareNumber)
     .reverse()
     .forEach((pos) => {

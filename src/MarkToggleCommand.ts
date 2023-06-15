@@ -57,18 +57,13 @@ class MarkToggleCommand extends UICommand {
     tr: Transform,
     posfrom: number,
     posto: number
-  ): any => {
+  ) => {
     const {schema} = state;
     const markType = schema.marks[this._markName];
     if (!markType) {
       return false;
     }
 
-    // if (selection.empty && !(selection instanceof TextSelection)) {
-    //   return false;
-    // }
-
-    // const {from, to} = selection;
     if (tr && posto === posfrom + 1) {
       const node = tr.doc.nodeAt(posfrom);
       if (node.isAtom && !node.isText && node.isLeaf) {

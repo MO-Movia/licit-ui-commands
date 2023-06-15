@@ -36,10 +36,6 @@ export default function transformAndPreserveTextSelection(
     return tr;
   }
 
-  // if (!(selection instanceof TextSelection)) {
-  //   return tr;
-  // }
-
   const { from, to } = selection;
 
   // Mark current selection so that we could resume the selection later
@@ -105,7 +101,7 @@ export default function transformAndPreserveTextSelection(
     let markFrom = 0;
     let markTo = 0;
     tr.doc.descendants((node, pos) => {
-      if (node.marks && node.marks.find(findMark)) {
+      if (node?.marks.find(findMark)) {
         markFrom = markFrom === 0 ? pos : markFrom;
         markTo = pos + node.nodeSize;
       }

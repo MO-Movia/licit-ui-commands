@@ -13,6 +13,7 @@ import {
   LINE_SPACING_115,
   LINE_SPACING_150,
 } from './ui/toCSSLineSpacing';
+import noop from './noop';
 
 export function setTextLineSpacing(
   tr: Transform,
@@ -124,7 +125,7 @@ class TextLineSpacingCommand extends UICommand {
   };
 
   isEnabled = (state: EditorState): boolean => {
-    return this.isActive(state) || this.execute(state, undefined, undefined);
+    return this.isActive(state) || this.execute(state);
   };
 
   execute = (
@@ -132,6 +133,7 @@ class TextLineSpacingCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
+    dispatch = dispatch || noop;
     const { schema, selection } = state;
     const tr = setTextLineSpacing(
       state.tr.setSelection(selection),
@@ -139,7 +141,7 @@ class TextLineSpacingCommand extends UICommand {
       this._lineSpacing
     );
     if (tr.docChanged) {
-      dispatch && dispatch(tr as Transaction);
+      dispatch(tr as Transaction);
       return true;
     } else {
       return false;

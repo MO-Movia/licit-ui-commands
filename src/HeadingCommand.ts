@@ -25,6 +25,7 @@ class HeadingCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
+    dispatch = dispatch || noop;
     const { schema, selection } = state;
     const tr = toggleHeading(
       state.tr.setSelection(selection),
@@ -32,7 +33,7 @@ class HeadingCommand extends UICommand {
       this._level
     );
     if (tr.docChanged) {
-      dispatch && dispatch(tr);
+      dispatch(tr);
       return true;
     } else {
       return false;
