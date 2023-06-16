@@ -76,7 +76,7 @@ export default {
     'js',
     //   "jsx",
     'ts',
-    //   "tsx",
+    'tsx',
     //   "json",
     //   "node"
   ],

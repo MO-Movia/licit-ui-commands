@@ -24,7 +24,6 @@ export class PointerSurface extends React.PureComponent {
   _clicked = false;
   _mul = false;
   _pressedTarget = null;
-  _unmounted = false;
 
   state = { pressed: false };
 
@@ -61,7 +60,6 @@ export class PointerSurface extends React.PureComponent {
   }
 
   componentWillUnmount(): void {
-    this._unmounted = true;
     if (this._mul) {
       this._mul = false;
       document.removeEventListener('mouseup', this._onMouseUpCapture, true);
@@ -129,5 +127,3 @@ export class PointerSurface extends React.PureComponent {
     this.setState({ pressed: false });
   };
 }
-
-// export default PointerSurface;
