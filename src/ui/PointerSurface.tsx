@@ -16,6 +16,7 @@ export type PointerSurfaceProps = {
   target?: string;
   title?: string;
   value?: string | number | Record<string, unknown> | EditorView;
+  hasChild?: boolean;
 };
 
 export class PointerSurface extends React.PureComponent {

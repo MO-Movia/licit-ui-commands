@@ -8,7 +8,7 @@
   --czi-border-red: solid 1px #f00;
   --czi-button-hover-background-color: rgb(0 0 0 / 50%);
   --czi-button-radius: 5px;
-  --czi-button-text-color: #666;
+  --czi-button-text-color: #dedede;
   --czi-color-grey-200: rgb(0 0 0 / 46%);
   --czi-font-family: helvetica;
   --czi-font-size-small: 12px;
@@ -29,6 +29,7 @@
   --czi-doc-width-a4-landscape: 297mm;
   --czi-doc-width-us-desktop-screen-4-3: 120vh;
   --czi-doc-width-us-desktop-screen-16-9: 142vh;
+  --czi-button-bg: #4d4d4d;
 
   /* content styles */
   --czi-content-body-background-color: #fff;
