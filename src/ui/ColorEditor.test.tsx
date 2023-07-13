@@ -7,7 +7,7 @@ import React from 'react';
 configure({ adapter: new Adapter() });
 
 describe('ColorEditor', () => {
-  
+
   it('should call close callback when a color is selected', () => {
     const closeMock = jest.fn();
     const props = {

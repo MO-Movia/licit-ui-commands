@@ -22,5 +22,5 @@ describe('TooltipSurface', () => {
     fireEvent.mouseLeave(tooltipSurface);
     expect(queryByText(tooltip)).toBeDefined();
   });
-  
+
 });

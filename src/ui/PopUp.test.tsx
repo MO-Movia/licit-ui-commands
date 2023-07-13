@@ -8,19 +8,19 @@ describe('PopUp', () => {
     let popUpManager;
     let mockRegister;
     let mockUnregister;
-  
+
     beforeEach(() => {
         popUpManager = instance;
         mockRegister = jest.spyOn(popUpManager, 'register');
         mockUnregister = jest.spyOn(popUpManager, 'unregister');
- 
+
     });
 
     afterEach(() => {
         popUpManager = null;
         mockRegister.mockRestore();
         mockUnregister.mockRestore();
-  
+
     });
   const MockView = jest.fn(() => <div>Mock View</div>);
   const mockClose = jest.fn();
@@ -42,7 +42,7 @@ describe('PopUp', () => {
   let wrapper;
 
   beforeEach(() => {
-   
+
     wrapper = shallow(
       <PopUp
         View={MockView}
@@ -58,7 +58,7 @@ describe('PopUp', () => {
   });
 
   it('renders the component correctly', () => {
-   
+
     expect(wrapper.find(MockView).exists()).toBe(true);
     expect(wrapper.find(MockView).props()).toEqual({
       ...mockViewProps,
@@ -118,8 +118,8 @@ describe('PopUp', () => {
       position: null,
       popupId: null,
     };
-    instance._getDetails()
-    expect(instance).toBeDefined()
+    instance._getDetails();
+    expect(instance).toBeDefined();
   });
   it('should return the correct details from _getDetails', () => {
     const closeMock = jest.fn();
@@ -151,5 +151,5 @@ describe('PopUp', () => {
 
     expect(instance._getDetails()).toEqual(expectedDetails);
   });
-  
+
 });

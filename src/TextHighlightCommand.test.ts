@@ -1,11 +1,197 @@
+import { MARK_TEXT_COLOR, MARK_TEXT_HIGHLIGHT } from './MarkNames';
 import TextHighlightCommand from './TextHighlightCommand';
+import { EditorView } from 'prosemirror-view';
+import * as applymark from './applyMark';
+import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
+import { Transform } from 'prosemirror-transform';
+import * as ismarkcommandenabled from './isTextStyleMarkCommandEnabled';
+import * as isNodeSelectionForNodeType from './isNodeSelectionForNodeType'
+import { MATH } from './NodeNames';
 
 describe('TextHighlightCommand', () => {
+    
     let plugin!: TextHighlightCommand;
+    
+
     beforeEach(() => {
         plugin = new TextHighlightCommand('yellow');
+       
     });
     it('should create', () => {
         expect(plugin).toBeTruthy();
     });
+
+    it('', () => {
+        const state = {
+            plugins: [],
+            schema: { marks: { 'mark-text-highlight': MARK_TEXT_HIGHLIGHT } },
+            tr: { doc: { nodeAt: (x) => { return { isAtom: true, isLeaf: true, isText: false }; } } },
+        } as unknown as EditorState;
+
+        const test = plugin.executeWithUserInput(state)
+        expect(test).toBeFalsy()
+    })
+
+    it('', () => {
+        const state = {
+            plugins: [],
+            schema: { marks: { 'mark-text-highlight': MARK_TEXT_HIGHLIGHT } },
+            tr: { doc: { nodeAt: (x) => { return { isAtom: true, isLeaf: true, isText: false }; } } },
+        } as unknown as EditorState;
+
+        const editorview = {} as unknown as EditorView
+
+
+        jest.spyOn(applymark, 'default').mockReturnValue({ docChanged: true } as unknown as Transform);
+        const test = plugin.executeWithUserInput(state, (x) => { return 'red' }, editorview, 'red');
+
+
+        expect(test).toBeTruthy()
+    })
+    it('', () => {
+        const state = {
+            plugins: [],
+            schema: { marks: { 'mark-text-highlight': MARK_TEXT_HIGHLIGHT } },
+            tr: { doc: { nodeAt: (x) => { return { isAtom: true, isLeaf: true, isText: false }; } } },
+        } as unknown as EditorState;
+
+        const editorview = {} as unknown as EditorView
+
+
+        jest.spyOn(applymark, 'default').mockReturnValue({ storedMarksSet: true } as unknown as Transform);
+        const test = plugin.executeWithUserInput(state, (x) => { return 'red' }, editorview, 'red');
+
+
+        expect(test).toBeTruthy()
+    })
+
+
+    it('', () => {
+        const state = {
+            plugins: [],
+            schema: { marks: { 'mark-text-highlight': MARK_TEXT_HIGHLIGHT, } },
+
+        } as unknown as EditorState;
+
+        const tr = { doc: { nodeAt: (x) => { return { isAtom: true, isLeaf: true, isText: false }; }, resolve: () => { return 1 } }, storedMarks: [], setSelection: () => { return '' } } as unknown as Transform;
+
+        const editorview = {} as unknown as EditorView;
+        // jest.spyOn(Transaction, ).mockReturnValue({}as unknown as TextSelection)
+        jest.spyOn(TextSelection, 'create').mockReturnValue({} as unknown as TextSelection)
+
+        jest.spyOn(applymark, 'default').mockReturnValue({ storedMarks: [] } as unknown as Transform);
+        const test = plugin.executeCustom(state, tr, 2, 2);
+
+
+        expect(test).toStrictEqual({ "storedMarks": [] })
+    })
+
+
+    it('should call when executeCustom function return false', () => {
+
+        const mock = jest.spyOn(ismarkcommandenabled, 'default');
+        const state = {
+            plugins: [],
+            schema: { marks: { 'mark-text-highlight': undefined } },
+        } as unknown as EditorState;
+
+        const test = plugin.isEnabled(state);
+        expect(mock).toHaveBeenLastCalledWith(state, 'mark-text-highlight');
+        expect(test).toBe(false);
+
+    });
+
+    it('should call when executeCustom function return false', () => {
+
+        const mock = jest.spyOn(ismarkcommandenabled, 'default');
+        const state = {
+            selection:{to:2, from:1},
+            schema: { marks: { 'mark-text-highlight': MARK_TEXT_HIGHLIGHT }, nodes: {'math':MATH} },
+            tr:{doc:{nodeAt:(x)=>{return {isAtom:true,isLeaf:true,isText:false};}}},
+        } as unknown as EditorState;
+
+        const test = plugin.isEnabled(state);
+        expect(mock).toHaveBeenLastCalledWith(state, 'mark-text-highlight');
+        expect(test).toBeFalsy;
+
+    });
+
+    it('should call when executeCustom function return true', () => {
+
+        const mock = jest.spyOn(ismarkcommandenabled, 'default');
+        const state = {
+            selection:{to:2, from:1},
+            schema: { marks: { 'mark-text-highlight': MARK_TEXT_HIGHLIGHT }, nodes: {'math':MATH} },
+            tr:{doc:{nodeAt:(x)=>{return {isAtom:false,isLeaf:true,isText:false};}}},
+        } as unknown as EditorState;
+
+        const test = plugin.isEnabled(state);
+        expect(mock).toHaveBeenLastCalledWith(state, 'mark-text-highlight');
+        jest.spyOn(isNodeSelectionForNodeType, 'default').mockReturnValue(true)
+        expect(test).toBeTruthy;
+
+    });
+    it('', () => {
+        const state = {
+          plugins: [],
+          selection: { from: 1, to: 2 },
+          schema: { marks: { 'mark-text-color': MARK_TEXT_COLOR, } },
+          doc: { nodeAt: (x) => { return { isAtom: true, isLeaf: true, isText: false }; } },
+        } as unknown as EditorState;
+    
+        const _dispatch = jest.fn();
+        const event_ = {
+          currentTarget: document.createElement('div'),
+        } as unknown as React.SyntheticEvent;
+    
+        const editorview = {} as unknown as EditorView
+    
+        const result = plugin.waitForUserInput(state, _dispatch, editorview, event_);
+    
+        expect(result).toBeDefined();
+      })
+    
+      it('should resolve with undefined when event is not defined or currentTarget is not an HTMLElement', async () => {
+        // Arrange
+        const state = {
+          plugins: [],
+          selection:{from:1, to:2},
+          schema: {marks:{ 'mark-text-color': MARK_TEXT_COLOR,}},
+        doc:{nodeAt:(x)=>{return {isAtom:true,isLeaf:true,isText:false};}},
+        } as unknown as EditorState;
+    
+        const _dispatch = jest.fn();
+        const editorview = {} as unknown as EditorView
+        const event_ = {
+          currentTarget: 'not an HTMLElement',
+        } as unknown as React.SyntheticEvent;
+        // Act
+        const result = await plugin.waitForUserInput(state, _dispatch, editorview, event_);
+    
+        // Assert
+        expect(result).toBeUndefined();
+      });
+    
+      it('should resolve with undefined when event is not defined or currentTarget is not an HTMLElement', async () => {
+        // Arrange
+    
+        const _popUp = true; // Set _popUp to "ss"
+        const state = {
+          
+        } as unknown as EditorState;
+    
+        const _dispatch = jest.fn();
+        const editorview = {} as unknown as EditorView
+        const event_ = {
+          currentTarget: 'not an HTMLElement',
+        } as unknown as React.SyntheticEvent;
+        // Act
+        const result = await plugin.waitForUserInput(state, _dispatch, editorview, event_);
+    
+        // Assert
+        expect(result).toBeUndefined();
+      });
+    
+ 
 });
+
