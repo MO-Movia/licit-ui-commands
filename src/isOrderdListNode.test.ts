@@ -1,5 +1,4 @@
 import { schema } from 'prosemirror-schema-basic';
-import { Node } from 'prosemirror-model';
 import isOrderedListNode from './isOrderedListNode';
 
 describe('isOrderedListNode', () => {

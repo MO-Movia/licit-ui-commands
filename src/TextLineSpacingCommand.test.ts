@@ -1,21 +1,29 @@
 import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import TextLineSpacingCommand from './TextLineSpacingCommand';
-import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
-import * as setTextLineSpacing from './TextLineSpacingCommand';
-import { Transform } from 'prosemirror-transform';
-const { schema } = require('prosemirror-schema-basic');
-const { Schema } = require('prosemirror-model');
+import { EditorState} from 'prosemirror-state';
+import { schema } from 'prosemirror-schema-basic';
+import { Schema } from 'prosemirror-model';
 
 describe('TextLineSpacingCommand', () => {
+
     let plugin!: TextLineSpacingCommand;
+    let schema1;
+    let command: TextLineSpacingCommand;
+    let dispatch: jest.Mock;
     beforeEach(() => {
         plugin = new TextLineSpacingCommand('tab');
+        schema1 = new Schema({
+          nodes: schema.spec.nodes,
+          marks: schema.spec.marks,
+      });
+      command = new TextLineSpacingCommand('right');
+      dispatch = jest.fn();
     });
     it('should create', () => {
         expect(plugin).toBeTruthy();
     });
 
-   
+
     const mySchema = new Schema({
       nodes: {
         doc: {
@@ -52,7 +60,7 @@ describe('TextLineSpacingCommand', () => {
         },
       },
     });
-    
+
     // Create a dummy document using the defined schema
     const dummyDoc = mySchema.node('doc', null, [
       mySchema.node('heading',{ lineSpacing: 'test' }, [
@@ -82,79 +90,104 @@ describe('TextLineSpacingCommand', () => {
 
 
 
+
+
+
+
+    it('should enable the command when text align is enabled', () => {
+      const state = EditorState.create({ schema: schema1 });
+      const isEnabled = command.isActive(state);
+      expect(isEnabled).toBe(false);
+  });
+
+  it('execute ', () => {
+      const state = EditorState.create({ schema: schema1 });
+      command.execute(state, dispatch);
+  });
+
+
+
+
+
+
+
+
+
+
+
     it('should be check condition !selection',()=>{
         const state = {
             selection:{to:2, from:1},
             schema: {nodes: {'heading':HEADING, 'paragraph': PARAGRAPH } },
-            doc:{nodesBetween:(x,y,z:(a,b)=>{return})=>{return }},
-            tr:{setSelection:(selection)=>{return true}}
+            doc:{nodesBetween:(_x,_y,_z:(a,b)=>{return})=>{return; }},
+            tr:{setSelection:(_selection)=>{return true;}}
         } as unknown as EditorState;
-         
+
         const test = plugin.isEnabled(state);
 
-        expect(test).toBeFalsy()
-    })
+        expect(test).toBeFalsy();
+    });
 
-    
-    
+
+
 
     it('should be check condition !doc',()=>{
         const state = {
             selection:{to:2, from:1},
             schema: {nodes: {'heading':undefined, 'paragraph': undefined, 'list_item':undefined, 'blockquote':undefined } },
-            doc:{nodesBetween:(x,y,z:(a,b)=>{return})=>{return }},
-            tr:{setSelection:(selection)=>{return {doc:{nodesBetween:(x,y,z:(a,b)=>{return})=>{return }},selection:{from:1, to:2}}}}
+            doc:{nodesBetween:(_x,_y,_z:(a,b)=>{return})=>{return; }},
+            tr:{setSelection:(_selection)=>{return {doc:{nodesBetween:(_x,_y,_z:(a,b)=>{return})=>{return; }},selection:{from:1, to:2}};}}
         } as unknown as EditorState;
-         
+
         const test = plugin.isEnabled(state);
 
-        expect(test).toBe(false)
-    })
+        expect(test).toBe(false);
+    });
 
     it('should be check the condition docChanged:false',()=>{
-        
-       
+
+
         const state = {
             selection:{to:2, from:1},
             schema: {nodes: {'heading':HEADING, 'paragraph': PARAGRAPH, 'list_item':LIST_ITEM, 'blockquote':BLOCKQUOTE } },
-            doc:{nodesBetween:(x,y,z:(a,b)=>{return})=>{return }},
-            tr:{setSelection:(selection)=>{return {doc:dummyDoc,selection:{from:1, to:2}}}}
+            doc:{nodesBetween:(_x,_y,_z:(a,b)=>{return})=>{return; }},
+            tr:{setSelection:(_selection)=>{return {doc:dummyDoc,selection:{from:1, to:2}};}}
         } as unknown as EditorState;
-         
+
         const test = plugin.isEnabled(state);
 
-        expect(test).toBeFalsy()
-    })
+        expect(test).toBeFalsy();
+    });
 
 
     it('should be check the condition docChanged:true',()=>{
 
-       
+
         const state = {
             selection:{to:2, from:1},
             schema: {nodes: {'heading':HEADING, 'paragraph': PARAGRAPH } },
             doc:dummyDoc,
-            tr:{setSelection:(selection)=>{return {docChanged:true}}}
+            tr:{setSelection:(_selection)=>{return {docChanged:true};}}
         } as unknown as EditorState;
-         
+
         const test = plugin.isEnabled(state);
 
-        expect(test).toBeTruthy()
-    })
+        expect(test).toBeTruthy();
+    });
 
     xit('',()=>{
 
-       
+
         const state = {
             selection:{to:2, from:1},
             schema: {nodes: {'heading':HEADING, 'paragraph': PARAGRAPH } },
             doc:dummyDoc,
-            tr:{setSelection:(selection)=>{return true}}
+            tr:{setSelection:(_selection)=>{return true;}}
         } as unknown as EditorState;
-         
+
         const test = plugin.isEnabled(state);
 
-        expect(test).toBeFalsy()
-    })
+        expect(test).toBeFalsy();
+    });
 
 });

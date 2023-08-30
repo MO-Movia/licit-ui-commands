@@ -4,6 +4,16 @@ import PopUp from './PopUp';
 import instance from './PopUpManager';
 import Enzyme, { shallow } from 'enzyme';
 Enzyme.configure({ adapter: new Adapter() });
+
+
+
+declare let beforeEach: jest.Lifecycle;
+declare let afterEach: jest.Lifecycle;
+declare let describe: jest.Describe;
+declare let it: jest.It;
+declare const expect: jest.Expect;
+
+
 describe('PopUp', () => {
     let popUpManager;
     let mockRegister;
@@ -66,14 +76,6 @@ describe('PopUp', () => {
     });
   });
   it('should register the bridge on componentDidMount', () => {
-    const closeMock = jest.fn();
-    const props = {
-      View: () => <div />,
-      close: closeMock,
-      popUpParams: {},
-      viewProps: {},
-    };
-    const wrapper = shallow(<PopUp {...props} />);
 
     expect(mockRegister).toHaveBeenCalledWith(expect.objectContaining({ getDetails: expect.any(Function) }));
   });
@@ -109,15 +111,6 @@ describe('PopUp', () => {
     const wrapper = shallow(<PopUp {...props} />);
     const instance = wrapper.instance();
 
-    const expectedDetails = {
-      anchor: popUpParams.anchor,
-      autoDismiss: false,
-      body: null,
-      close: closeMock,
-      modal: false,
-      position: null,
-      popupId: null,
-    };
     instance._getDetails();
     expect(instance).toBeDefined();
   });

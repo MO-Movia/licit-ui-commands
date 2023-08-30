@@ -197,7 +197,7 @@ function wrapNodesWithListInternal(
   return tr;
 }
 
-function wrapItemsWithListInternal(
+export function wrapItemsWithListInternal(
   tr: Transform,
   schema: Schema,
   listNodeType: NodeType,

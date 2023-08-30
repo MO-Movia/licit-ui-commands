@@ -1,43 +1,23 @@
 import toggleHeading from './toggleHeading';
-import { doc, p } from 'prosemirror-test-builder';
-import { Fragment, Node, NodeType, Schema, NodeSpec } from 'prosemirror-model';
-import { TextSelection, Transaction, EditorState } from 'prosemirror-state';
+import { Node, Schema } from 'prosemirror-model';
 import { Transform } from 'prosemirror-transform';
-import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH, TEXT } from './NodeNames';
-import * as isListNode from './isListNode'
-import * as isInsideListItem from './isInsideListItem'
+import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
+import * as isListNode from './isListNode';
+import * as isInsideListItem from './isInsideListItem';
+import {setHeadingNode} from './toggleHeading';
 
 describe('toggleHeading', () => {
-    let schema;
-    let doc;
-    let state;
     let trr;
-    let schemaa: Schema;
-    let listNodeType: NodeType;
+
 
     beforeEach(() => {
 
-        schema = new Schema({
-            nodes: {
-                doc: { content: 'text*' },
-                text: {},
-            },
-            marks: {
-                bold: {},
-            },
-
-        });
-
-
-        doc = schema.node('doc', {}, [schema.text('Hello world')]);
-        state = EditorState.create({ schema, doc });
-
-        trr = document.createElement("tr");
+        trr = document.createElement('tr');
         // Add some descendant nodes for testing
-        trr.innerHTML = "<td>Cell 1</td><td>Cell 2</td><td>Cell 3</td>";
+        trr.innerHTML = '<td>Cell 1</td><td>Cell 2</td><td>Cell 3</td>';
     });
 
-    
+
     const mySchema = new Schema({
         nodes: {
           doc: {
@@ -74,7 +54,7 @@ describe('toggleHeading', () => {
           },
         },
       });
-      
+
       // Create a dummy document using the defined schema
       const dummyDoc = mySchema.node('doc', null, [
         mySchema.node('heading',{ lineSpacing: 'test' }, [
@@ -108,68 +88,69 @@ describe('toggleHeading', () => {
 
 
         const tr = {} as unknown as Transform;
-        const sc = {nodes :{"blockquote":BLOCKQUOTE,'heading':HEADING, 'paragraph':PARAGRAPH,'list_item':LIST_ITEM}} as unknown as Schema
+        const sc = {nodes :{'blockquote':BLOCKQUOTE,'heading':HEADING, 'paragraph':PARAGRAPH,'list_item':LIST_ITEM}} as unknown as Schema;
 
         const test = toggleHeading(tr,sc,1);
-        expect(test).toStrictEqual({})
+        expect(test).toStrictEqual({});
 
-    })
+    });
 
     it('should be check the condition nodeType === blockquote',()=>{
 
         const tr = {selection:{from:2, to:4} ,doc:dummyDoc} as unknown as Transform;
-        const sc = {nodes :{"blockquote":BLOCKQUOTE,'heading':HEADING, 'paragraph':PARAGRAPH,'list_item':LIST_ITEM}} as unknown as Schema
+        const sc = {nodes :{'blockquote':BLOCKQUOTE,'heading':HEADING, 'paragraph':PARAGRAPH,'list_item':LIST_ITEM}} as unknown as Schema;
 
         const test = toggleHeading(tr,sc,1);
-        expect(test).toBeDefined() 
+        expect(test).toBeDefined();
 
-    })
+    });
 
- 
+
 
     it('should be check the condition isInsideListItem(tr.doc, pos)',()=>{
 
-        const tr = {selection:{from:2, to:4} ,doc:dummyDoc,nodeAt:(a)=>{return undefined}} as unknown as Transform;
-        const sc = {nodes :{'heading': HEADING,"blockquote":BLOCKQUOTE,'paragraph':PARAGRAPH,'list_item':LIST_ITEM}} as unknown as Schema;
-        jest.spyOn(isListNode, 'default').mockReturnValueOnce(false ).mockReturnValueOnce(true ) as unknown as Node
+        const tr = {selection:{from:2, to:4} ,doc:dummyDoc,nodeAt:(_a)=>{return undefined;}} as unknown as Transform;
+        const sc = {nodes :{'heading': HEADING,'blockquote':BLOCKQUOTE,'paragraph':PARAGRAPH,'list_item':LIST_ITEM}} as unknown as Schema;
+        jest.spyOn(isListNode, 'default').mockReturnValueOnce(false ).mockReturnValueOnce(true ) as unknown as Node;
 
-        jest.spyOn(isInsideListItem, 'default').mockReturnValue(true)as unknown as Node
+        jest.spyOn(isInsideListItem, 'default').mockReturnValue(true)as unknown as Node;
 
         const test = toggleHeading(tr,sc,0);
-        expect(test).toBeDefined() 
+        expect(test).toBeDefined();
 
-    })
+    });
     it('should be check the condition level !== null',()=>{
-
-        const tr = {selection:{from:2, to:4} ,doc:dummyDoc,nodeAt:(a)=>{return undefined},getMeta: (a) => { return 'dryrun'}} as unknown as Transform;
-        const sc = {nodes :{'heading': HEADING,"blockquote":BLOCKQUOTE,'paragraph':PARAGRAPH,'list_item':LIST_ITEM}} as unknown as Schema;
-        jest.spyOn(isInsideListItem, 'default').mockReturnValue(false)as unknown as Node
-        jest.spyOn(isListNode, 'default').mockReturnValue(true ).mockReturnValue(true )as unknown as Node
-
-
-
+       const tr = {selection:{from:2, to:4} ,doc:dummyDoc,nodeAt:(_a)=>{return undefined;},getMeta: (_a) => { return 'dryrun';}} as unknown as Transform;
+        const sc = {nodes :{'heading': HEADING,'blockquote':BLOCKQUOTE,'paragraph':PARAGRAPH,'list_item':LIST_ITEM}} as unknown as Schema;
+        jest.spyOn(isInsideListItem, 'default').mockReturnValue(false)as unknown as Node;
+        jest.spyOn(isListNode, 'default').mockReturnValue(true ).mockReturnValue(true )as unknown as Node;
         const test = toggleHeading(tr,sc,0);
-        expect(test).toBeDefined() 
+        expect(test).toBeDefined();
 
-    })
+    });
 
-    // xit('should be check the condition level !== null',()=>{
+   it('should be check the condition (pos >= tr.doc.content.size) inside the setHeadingNode() function',()=>{
+    const tr = {doc:{content:{size:1}}} as unknown as Transform;
+    const sc = {nodes:{'heading':HEADING,'paragraph':PARAGRAPH,'blockquote ':BLOCKQUOTE}} as unknown as Schema;
+    const test = setHeadingNode(tr,sc,1);
+    expect(test).toBeTruthy();
+   });
 
-    //     const tr = {selection:{from:2, to:4} ,doc:dummyDoc,nodeAt:(a)=>{return undefined}} as unknown as Transform;
-    //     const sc = {nodes :{'text':TEXT,'heading': HEADING,"blockquote":BLOCKQUOTE,'paragraph':PARAGRAPH,'list_item':LIST_ITEM}} as unknown as Schema;
-     
-    //     const test = toggleHeading(tr,sc,0);
-    //     expect(test).toBeDefined() 
+   it('should be check the condition (!node || !heading || !paragraph || !blockquote) inside the setHeadingNode() function',()=>{
+    const tr = {doc:{content:{size:2},nodeAt:(_a)=>{return undefined;}}} as unknown as Transform;
+    const sc = {nodes:{'heading':undefined,'paragraph':undefined,'blockquote ':undefined}} as unknown as Schema;
+    const test = setHeadingNode(tr,sc,1);
+    expect(test).toBeTruthy();
+   });
+   xit('',()=>{
+    jest.spyOn(isInsideListItem, 'default').mockReturnValue(false)as unknown as Node;
+    jest.spyOn(isListNode, 'default').mockReturnValue(true) as unknown as Node;
+    const tr = {doc:{content:{size:2},nodeAt:(_a)=>{return true;}}} as unknown as Transform;
+    const sc = {nodes:{'heading':HEADING,'paragraph':PARAGRAPH,'blockquote ':BLOCKQUOTE}} as unknown as Schema;
+    const test = setHeadingNode(tr,sc,1,5);
+    expect(test).toBeTruthy();
+   });
 
-    // })
-
-    // xit('should be check the condition !selection',()=>{
-    //     const tr = {doc:dummyDoc,getMeta: (x) => { return 'dryrun' },delete:()=>{}} as unknown as Transform;
-    //     const sc = {nodes:{'paragraph':PARAGRAPH, 'heading':HEADING,'blockquote':BLOCKQUOTE,'list_item':LIST_ITEM}} as unknown as Schema;
-    //     const test = toggleHeading(tr,sc,0);
-    //     expect(test).toBeDefined() 
-    // })
-  
 
 
-})
+});

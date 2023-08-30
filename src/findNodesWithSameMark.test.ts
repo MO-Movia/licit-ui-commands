@@ -11,6 +11,7 @@ describe('findNodesWithSameMark', () => {
     expect(result).toBeNull();
   });
 
+
   it('should return null if nodes within the range have different marks', () => {
     const textNode = schema.text('Hello, World!');
     const node = schema.nodes.paragraph.create({}, [textNode]);
@@ -39,7 +40,7 @@ describe('findNodesWithSameMark', () => {
         },
       ],
     });
-    const from = 1;
+    const from = 2;
     const to = 5;
     const markType = schema.marks.strong;
     const result = findNodesWithSameMark(doc, from, to, markType);

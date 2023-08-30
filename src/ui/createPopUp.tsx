@@ -20,7 +20,7 @@ let popUpsCount = 0;
 const Z_INDEX_BASE = 9999;
 const MODAL_MASK_ID = 'pop-up-modal-mask-' + uuid();
 
-function showModalMask(IsChildDialog?: boolean): void {
+export function showModalMask(IsChildDialog?: boolean): void {
   const root = document.body || document.documentElement;
   let element = document.getElementById(MODAL_MASK_ID);
   if (!element) {
@@ -59,7 +59,7 @@ function showModalMask(IsChildDialog?: boolean): void {
   }
 }
 
-function hideModalMask(): void {
+export function hideModalMask(): void {
   const element = document.getElementById(MODAL_MASK_ID);
   if (element && element.parentElement) {
     element.parentElement.removeChild(element);
@@ -139,7 +139,7 @@ function renderPopUp(
   }
 }
 
-function unrenderPopUp(rootId: string): void {
+ export function unrenderPopUp(rootId: string): void {
   const rootNode = getRootElement(rootId, false);
   if (rootNode) {
     ReactDOM.unmountComponentAtNode(rootNode);

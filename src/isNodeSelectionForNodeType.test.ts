@@ -1,5 +1,5 @@
 import {Selection, NodeSelection} from 'prosemirror-state';
-import {NodeType, Schema, DOMParser} from 'prosemirror-model';
+import {Schema} from 'prosemirror-model';
 import isNodeSelectionForNodeType from './isNodeSelectionForNodeType';
 
 describe('isNodeSelectionForNodeType', () => {
@@ -9,7 +9,7 @@ describe('isNodeSelectionForNodeType', () => {
         doc: {content: 'paragraph+'},
         paragraph: {
           content: 'text*',
-          toDOM(node) {
+          toDOM() {
             return ['p', 0];
           },
         },
@@ -34,7 +34,7 @@ describe('isNodeSelectionForNodeType', () => {
         doc: {content: 'paragraph+'},
         paragraph: {
           content: 'text*',
-          toDOM(node) {
+          toDOM() {
             return ['p', 0];
           },
         },

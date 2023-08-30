@@ -3,6 +3,7 @@ import compareNumber from './compareNumber';
 import consolidateListNodes from './consolidateListNodes';
 import isListNode from './isListNode';
 import transformAndPreserveTextSelection from './transformAndPreserveTextSelection';
+
 import {
   EditorState,
   Transaction,
@@ -76,7 +77,7 @@ export default function updateIndentLevel(
   return { tr, docChanged: true };
 }
 
-function setListNodeIndent(
+export function setListNodeIndent(
   state: EditorState,
   tr: Transform,
   schema: Schema,
@@ -168,7 +169,7 @@ function setListNodeIndent(
   return tr;
 }
 
-function setNodeIndentMarkup(
+export function setNodeIndentMarkup(
   _state: EditorState,
   tr: Transform,
   pos: number,

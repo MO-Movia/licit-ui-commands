@@ -1,29 +1,52 @@
 import IndentCommand from './IndentCommand';
-import {EditorState, TextSelection} from 'prosemirror-state';
-import {Schema} from 'prosemirror-model';
-import {schema, builders} from 'prosemirror-test-builder';
-import {Transform} from 'prosemirror-transform';
+import { EditorState, TextSelection } from 'prosemirror-state';
+import { Schema } from 'prosemirror-model';
+import { schema} from 'prosemirror-test-builder';
+import { Transform } from 'prosemirror-transform';
+import { MARK_EM } from './MarkNames';
 
 describe('IndentCommand', () => {
-    let plugin!: IndentCommand;
-    beforeEach(() => {
-        plugin = new IndentCommand(1);
+  let schema1;
+  let command: IndentCommand;
+  beforeEach(() => {
+    schema1 = new Schema({
+      nodes: schema.spec.nodes,
+      marks: schema.spec.marks,
     });
-    it('should create', () => {
-        expect(plugin).toBeTruthy();
-    });
+    command = new IndentCommand(1);
+  });
 
-    it('should call when isActive function return false',()=>{
-      const test = plugin.isActive();
-      expect(test).toBe(false)
-    })
+  it('should create', () => {
+    expect(command).toBeTruthy();
+  });
 
+  it('should enable the command when text style mark is enabled', () => {
+    const state = EditorState.create({ schema: schema1 });
+    const isEnabled = command.isActive(state);
+    expect(isEnabled).toBe(true);
+  });
 
-    it('',()=>{
-      const test = plugin.isActive();
-      expect(test).toBeFalsy;
-    })
+  it('execute without dispatch', () => {
+    const state = EditorState.create({ schema: schema1 });
+    command.execute(state);
+  });
 
+  it('should handle executecustom', () => {
+    jest.spyOn(TextSelection, 'create').mockReturnValue({} as unknown as TextSelection);
+    const state = {
+
+      selection: {
+        node: null,
+        anchor: 0,
+        head: 0,
+      },
+      plugins: [],
+      schema: { marks: { 'em': MARK_EM, } },
+      tr: { doc: { nodeAt: () => { return { isAtom: true, isLeaf: true, isText: false }; } } },
+    } as unknown as EditorState;
+    const tr = { setSelection: () => { return {}; }, doc: {} } as unknown as Transform;
+    expect(command.executeCustom(state, tr, 0, 1)).toBeDefined();
+  });
 });
 
 
@@ -50,31 +73,3 @@ describe('IndentCommand', () => {
 
 
 
-
-describe('IndentCommand', () => {
-    let schema1;
-    let command: IndentCommand;
-    let dispatch: jest.Mock;
-
-    beforeEach(() => {
-      schema1 = new Schema({
-        nodes: schema.spec.nodes,
-        marks: schema.spec.marks,
-      });
-      command = new IndentCommand(1);
-      dispatch = jest.fn();
-    });
-
-    it('should enable the command when text style mark is enabled', () => {
-      const isEnabled = command.isActive();
-      expect(isEnabled).toBe(false);
-    });
-
-    it('should apply the font size mark to the current selection', () => {
-      const state = EditorState.create({schema: schema1});
-      command.execute(state, dispatch);
-     // const transform = new Transform(schema);
-      // command.executeCustom(state, transform, 1, 2);
-      //expect(dispatch).not.toHaveBeenCalledWith(expect.any(transform));
-    });
-  });

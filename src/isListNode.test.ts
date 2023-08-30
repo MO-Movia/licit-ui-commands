@@ -11,7 +11,7 @@ describe('isListNode', () => {
         doc: {content: 'paragraph+'},
         paragraph: {
           content: 'text*',
-          toDOM(node) {
+          toDOM() {
             return ['p', 0];
           },
         },
@@ -39,7 +39,7 @@ describe('isListNode', () => {
         doc: {content: 'paragraph+'},
         paragraph: {
           content: 'text*',
-          toDOM(node) {
+          toDOM() {
             return ['p', 0];
           },
         },

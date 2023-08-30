@@ -5,6 +5,13 @@ import {configure} from 'enzyme';
 import {PointerSurface} from './PointerSurface';
 
 configure({adapter: new Adapter()});
+
+
+declare let describe: jest.Describe;
+declare let it: jest.It;
+declare const expect: jest.Expect;
+
+
 describe('PointerSurface', () => {
   it('renders without crashing', () => {
     shallow(<PointerSurface />);
@@ -75,7 +82,6 @@ describe('PointerSurface', () => {
 
   it('should call _onMouseUpCapture on mouse leave event', () => {
     const _onMouseUpCaptureMock = jest.fn();
-    const value = 'test value';
 
     const wrapper = shallow(<PointerSurface />);
     const instance = wrapper.instance();
@@ -94,7 +100,6 @@ describe('PointerSurface', () => {
   it('should set pressed state, pressed target, and attach mouseup event listener on mouse down event', () => {
     const addEventListenerMock = jest.spyOn(document, 'addEventListener');
     const setCurrentTargetMock = jest.fn();
-    const value = 'test value';
 
     const wrapper = shallow(<PointerSurface />);
     const instance = wrapper.instance();
@@ -142,7 +147,6 @@ describe('PointerSurface', () => {
   it('should remove event listener, update clicked flag, and reset pressed state on mouse up capture event', () => {
     const removeEventListenerMock = jest.spyOn(document, 'removeEventListener');
     const containsMock = jest.fn(() => true);
-    const value = 'test value';
 
     const wrapper = shallow(<PointerSurface />);
     const instance = wrapper.instance();
@@ -163,3 +167,5 @@ describe('PointerSurface', () => {
     expect(instance.state.pressed).toBe(false);
   });
 });
+
+

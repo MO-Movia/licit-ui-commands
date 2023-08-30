@@ -1,4 +1,4 @@
-import { Node, Schema } from 'prosemirror-model';
+import { Schema } from 'prosemirror-model';
 import isInsideListItem from './isInsideListItem';
 
 describe('isInsideListItem', () => {

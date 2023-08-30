@@ -79,7 +79,7 @@ class MarkToggleCommand extends UICommand {
 // [FS] IRAD-1042 2020-09-30
 // Fix: overrided the toggleMarks for custom style implementation
 // Return Transform object
-function toggleCustomStyle(
+export function toggleCustomStyle(
   markType,
   attrs,
   state,

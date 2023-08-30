@@ -3,7 +3,6 @@ import isTextStyleMarkCommandEnabled from './isTextStyleMarkCommandEnabled';
 import {Schema} from 'prosemirror-model';
 import {schema, builders} from 'prosemirror-test-builder';
 import {EditorView} from 'prosemirror-view';
-import {MARK_FONT_SIZE, MARK_TEXT_COLOR} from './MarkNames';
 import {MATH} from './NodeNames';
 describe('isTextStyleMarkCommandEnabled', () => {
   it('should return true if a math node is selected and the mark name is valid', () => {

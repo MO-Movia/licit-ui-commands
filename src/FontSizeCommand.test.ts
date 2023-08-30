@@ -1,17 +1,17 @@
 import FontSizeCommand from './FontSizeCommand';
-import {EditorState, TextSelection} from 'prosemirror-state';
-import { MARK_FONT_SIZE, MARK_FONT_TYPE } from './MarkNames';
+import {EditorState} from 'prosemirror-state';
+import { MARK_FONT_SIZE } from './MarkNames';
 import {Schema} from 'prosemirror-model';
-import {schema, builders} from 'prosemirror-test-builder';
+import {schema} from 'prosemirror-test-builder';
 import {Transform} from 'prosemirror-transform';
 import * as applymark from './applyMark';
-import { Node } from 'prosemirror-model';
 import * as ismarkcommandenabled from './isTextStyleMarkCommandEnabled';
 
 describe('FontSizeCommand', () => {
     let plugin!: FontSizeCommand;
     beforeEach(() => {
         plugin = new FontSizeCommand(12);
+
     });
     it('should create', () => {
         expect(plugin).toBeTruthy();
@@ -39,21 +39,21 @@ describe('FontSizeCommand', () => {
         },
         plugins: [],
         schema: {marks:{  'mark-font-size': MARK_FONT_SIZE,}},
-        tr:{doc:{nodeAt:(x)=>{return {isAtom:true,isLeaf:true,isText:false};}}},
+        tr:{doc:{nodeAt:(_x)=>{return {isAtom:true,isLeaf:true,isText:false};}}},
       } as unknown as EditorState;
 
 
 
     it('should call when execute function return false',()=>{
 
-        const test = plugin.execute(state,(x)=>{return '';});
+        const test = plugin.execute(state,(_x)=>{return '';});
         expect(test).toBe(false);
       });
       it('should call when execute function return true',()=>{
 
         jest.spyOn(applymark,'default').mockReturnValue({docChanged:true} as unknown as Transform);
 
-          const test = plugin.execute(state,(x)=>{return '';});
+          const test = plugin.execute(state,(_x)=>{return '';});
           expect(test).toBe(true);
         });
 
@@ -62,31 +62,12 @@ describe('FontSizeCommand', () => {
 
           jest.spyOn(applymark,'default').mockReturnValue({docChanged:false,storedMarksSet:true} as unknown as Transform);
 
-            const test = plugin.execute(state,(x)=>{return '';});
+            const test = plugin.execute(state,(_x)=>{return '';});
             expect(test).toBe(true);
           });
 
 
-          xit('should call when executeCustom function return tr',()=>{
-            const tr =  {doc:{resolve:()=>{return {};}}} as unknown as Transform;
-            // const from = 1;
-            // const to = 2;
-            const mockTransaction = {
 
-              };
-
-              // Call the method with the mock transaction
-              const from = 0;
-              const to = 5;
-             // mockTransaction.setSelection(TextSelection.create(mockTransaction.doc, from, to));
-
-             Transaction.setSelection = jest.fn().mockReturnValue({
-                doc: 'dummy document',
-                selection: 'dummy selection',
-              });
-            const test = plugin.executeCustom(state, Transaction as unknown as Transform, from, to);
-            expect(test).toBe(mockTransaction);
-          });
 
           it('should call when executeCustom function return false',()=>{
 
@@ -122,6 +103,7 @@ describe('FontSizeCommand', () => {
               expect(test).toBe(false);
 
           });
+
 });
 
 describe('FontSizeCommand', () => {
@@ -151,4 +133,8 @@ describe('FontSizeCommand', () => {
     // command.executeCustom(state, transform, 1, 2);
     expect(dispatch).not.toHaveBeenCalledWith(expect.any(transform));
   });
+  it('execute without dispatch', () => {
+    const state = EditorState.create({ schema: schema1 });
+    command.execute(state);
+});
 });

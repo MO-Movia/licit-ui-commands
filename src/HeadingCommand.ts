@@ -1,9 +1,6 @@
 import { EditorState } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
-import { ContentNodeWithPos, findParentNodeOfType } from 'prosemirror-utils';
 import { EditorView } from 'prosemirror-view';
-
-import { HEADING } from './NodeNames';
 import noop from './noop';
 import toggleHeading from './toggleHeading';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
@@ -39,12 +36,6 @@ class HeadingCommand extends UICommand {
       return false;
     }
   };
-
-  _findHeading(state: EditorState): ContentNodeWithPos | void {
-    const heading = state.schema.nodes[HEADING];
-    const fn = heading ? findParentNodeOfType(heading) : noop;
-    return fn(state.selection);
-  }
 }
 
 export default HeadingCommand;

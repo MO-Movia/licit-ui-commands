@@ -3,6 +3,11 @@ import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { TooltipSurface } from './TooltipSurface';
 
+
+declare let describe: jest.Describe;
+declare let it: jest.It;
+declare const expect: jest.Expect;
+
 describe('TooltipSurface', () => {
   it('renders the tooltip when hovered', () => {
     const tooltip = 'Example tooltip';
@@ -14,7 +19,7 @@ describe('TooltipSurface', () => {
     expect(tooltipSurface).toBeDefined();
 
     fireEvent.mouseEnter(tooltipSurface);
-    const tooltipView = queryByText((content, element) =>
+    const tooltipView = queryByText((_content, element) =>
       element?.textContent === tooltip
     );
     expect(tooltipView).toBeDefined();

@@ -3,10 +3,17 @@ import { MarkType, Node, Schema } from 'prosemirror-model';
 import {SelectionRange, TextSelection} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
 
+interface MyNode {
+  inlineContent: boolean; // Assuming inlineContent is of type boolean
+  type: {
+    allowsMarkType: (type: MarkType) => boolean; // Assuming allowsMarkType returns a boolean
+  };
+}
+
 function markApplies(doc: Node, ranges: readonly SelectionRange[], type: MarkType) {
   for (const { $from, $to } of ranges) {
-    let can = $from.depth == 0 ? doc.type.allowsMarkType(type) : false;
-    doc.nodesBetween($from.pos, $to.pos, (node: { inlineContent: any; type: { allowsMarkType: (arg0) => any; }; }) => {
+    let can = $from.depth === 0 ? doc.type.allowsMarkType(type) : false;
+    doc.nodesBetween($from.pos, $to.pos, (node: MyNode) => {
       if (can) {
         return false;
       }

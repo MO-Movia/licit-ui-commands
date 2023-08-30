@@ -65,7 +65,7 @@ export default function toggleHeading(
   return tr;
 }
 
-function setHeadingNode(
+export function setHeadingNode(
   tr: Transform,
   schema: Schema,
   pos: number,

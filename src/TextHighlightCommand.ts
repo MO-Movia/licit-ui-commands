@@ -42,7 +42,7 @@ class TextHighlightCommand extends UICommand {
     const { from, to } = selection;
     const result = findNodesWithSameMark(doc, from, to, markType);
     const hex = result ? result.mark.attrs.highlightColor : null;
-    const anchor = event ? event.currentTarget : null;
+    const anchor =  event?.currentTarget;
     return new Promise((resolve) => {
       this._popUp = createPopUp(
         ColorEditor,

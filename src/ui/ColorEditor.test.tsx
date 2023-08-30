@@ -6,6 +6,9 @@ import React from 'react';
 
 configure({ adapter: new Adapter() });
 
+declare let describe: jest.Describe;
+declare let it: jest.It;
+
 describe('ColorEditor', () => {
 
   it('should call close callback when a color is selected', () => {

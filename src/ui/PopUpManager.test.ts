@@ -29,20 +29,9 @@ describe('PopUpManager', () => {
   });
 
   it('closes pop-up when autoDismiss is true and intersects with body', () => {
-    const mockBody = document.createElement('div');
     const mockCloseFn = jest.fn();
 
-    const mockDetails = {
-      autoDismiss: true,
-      modal: false,
-      body: mockBody,
-      position: jest.fn().mockReturnValue({x: 100, y: 200}),
-      close: mockCloseFn,
-    };
 
-    const mockBridge = {
-      getDetails: jest.fn().mockReturnValue(mockDetails),
-    };
     const mockEvent = new MouseEvent('click', {
       bubbles: true,
       clientX: 100,
@@ -92,11 +81,6 @@ describe('PopUpManager', () => {
     const mockBridge = {
       getDetails: jest.fn().mockReturnValue(mockDetails),
     };
-    const mockEvent = new MouseEvent('click', {
-      bubbles: true,
-      clientX: 500,
-      clientY: 500,
-    });
 
     const targetClassName = 'czi-icon format_line_spacing';
 
@@ -141,26 +125,9 @@ describe('PopUpManager', () => {
   });
 
   it('should set IsCustom value to true ', () => {
-    const mockBody = document.createElement('div');
     const mockCloseFn = jest.fn();
 
-    const mockDetails = {
-      autoDismiss: true,
-      modal: false,
-      body: mockBody,
-      popupId: '1',
-      position: jest.fn().mockReturnValue({x: 100, y: 200}),
-      close: mockCloseFn,
-    };
 
-    const mockBridge = {
-      getDetails: jest.fn().mockReturnValue(mockDetails),
-    };
-    const mockEvent = new MouseEvent('click', {
-      bubbles: true,
-      clientX: 500,
-      clientY: 500,
-    });
 
     const targetClassName = 'not-a-vaild-class';
 

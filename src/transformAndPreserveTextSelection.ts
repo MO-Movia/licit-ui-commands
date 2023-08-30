@@ -53,7 +53,7 @@ export default function transformAndPreserveTextSelection(
     const currentNode = tr.doc.nodeAt(from);
     const prevNode = tr.doc.nodeAt(from - 1);
     const nextNode = tr.doc.nodeAt(from + 1);
-    
+
     if (
       !currentNode &&
       prevNode &&

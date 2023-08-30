@@ -17,7 +17,7 @@ describe('consolidateListNodes', () => {
         doc: { content: 'paragraph+' },
         paragraph: {
           content: 'text*',
-          toDOM(node) {
+          toDOM() {
             return ['p', 0];
           },
         },
@@ -27,8 +27,6 @@ describe('consolidateListNodes', () => {
         },
       },
     });
-    const customNodeType = schema1.nodes.ordered_list;
-    const customNode = customNodeType.create({});
 
     const state = EditorState.create({
       doc: doc(p('hello world')),
@@ -43,7 +41,7 @@ describe('consolidateListNodes', () => {
 
 
   it('should handle linkOrderedListCounters', () => {
-    const tr = { doc: { nodeSize: 2 }, getMeta: () => { return null } } as unknown as Transaction
+    const tr = { doc: { nodeSize: 2 }, getMeta: () => { return null; } } as unknown as Transaction;
     expect(consolidateListNodes(tr)).toBeDefined();
   });
 
@@ -101,7 +99,6 @@ describe('consolidateListNodes', () => {
     const { tr } = state;
 
     const pos = 1; // Position of the list node in the document
-    const linked = true; // Counter should be linked
 
     const transformedTr = consolidateListNodes(tr);
 
@@ -123,14 +120,14 @@ describe('consolidateListNodes', () => {
       ),
       schema: schema,
     });
-  
+
     const { tr } = state;
-  
+
     const transformedTr = consolidateListNodes(tr);
-  
+
     // Assert that list nodes are consolidated
     expect(transformedTr.doc.content.childCount).toBe(3);
-  
+
     // Assert that the counterReset attribute of the consolidated list node is set to 'none'
     const consolidatedListNode = transformedTr.doc.content.firstChild;
     expect(consolidatedListNode?.attrs.counterReset).toBe(undefined);

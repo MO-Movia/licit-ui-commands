@@ -1,12 +1,15 @@
-import { render } from 'enzyme';
 import FontTypeCommand from './FontTypeCommand';
-import * as ismarkcommandenabled from './isTextStyleMarkCommandEnabled';
 import {EditorState, TextSelection} from 'prosemirror-state';
 import {Schema} from 'prosemirror-model';
-import {schema, builders} from 'prosemirror-test-builder';
-import React from 'react';
+import {schema} from 'prosemirror-test-builder';
 import * as applymark from './applyMark';
 import {Transform} from 'prosemirror-transform';
+
+
+declare let beforeEach: jest.Lifecycle;
+declare let describe: jest.Describe;
+declare let it: jest.It;
+declare const expect: jest.Expect;
 
 describe('FontSizeCommand', () => {
   let schema1;
@@ -38,7 +41,7 @@ describe('FontSizeCommand', () => {
     expect(dispatch).not.toHaveBeenCalledWith(expect.any(transform));
   });
 
-  
+
   it('should apply the font size mark to the current selection', () => {
     const state = EditorState.create({schema: schema1});
     command.execute(state, null);
@@ -72,20 +75,6 @@ describe('FontTypeCommand', () => {
 
 
     it('should call isEnabled when mark-font-size undefined',()=>{
-      const MARK_FONT_TYPE = {
-        attrs: {
-          fontType: { default: 'Arial' },
-        },
-        parseDOM: [
-          {
-            style: 'font-family',
-            getAttrs: (value) => ({ fontType: value }),
-          },
-        ],
-        toDOM: (mark) => ['span', { style: `font-family: ${mark.attrs.fontType}` }, 0],
-      };
-
-        const mock = jest.spyOn(ismarkcommandenabled,'default');
 
         const state = {
             doc: {
@@ -121,9 +110,6 @@ describe('FontTypeCommand', () => {
 
     it('should call isEnabled when mark-font-size value is aviable',()=>{
 
-
-        const mock_call = jest.spyOn(ismarkcommandenabled,'default');
-
         const state = {
             doc: {
               type: 'doc',
@@ -147,7 +133,7 @@ describe('FontTypeCommand', () => {
               to: 2,
             } ,
             plugins: [],
-            tr:{doc:{nodeAt:(x)=>{return {isAtom:true,isLeaf:true,isText:false};}}},
+            tr:{doc:{nodeAt:(_x)=>{return {isAtom:true,isLeaf:true,isText:false};}}},
             schema: {marks:{ 'mark-font-type': MARK_FONT_TYPE,}},
           } as unknown as EditorState;
 
@@ -189,39 +175,6 @@ describe('FontTypeCommand', () => {
     });
 
 
-    it("should call when renderLabel function return 'null' ",()=>{
-      const state = {
-        doc: {
-          type: 'doc',
-          content: [
-            {
-              type: 'paragraph',
-              content: [
-                {
-                  type: 'text',
-                  text: 'This is a mock Prosemirror state.',
-                },
-              ],
-            },
-          ],
-        },
-        selection: {
-          node: null,
-          anchor: 0,
-          head: 0,
-        },
-        plugins: [],
-        schema: {marks:{ 'mark-font-type': MARK_FONT_TYPE,}},
-      } as unknown as EditorState;
-
-      const test = plugin.renderLabel(state);
-
-      const htmlElement = '<span style={{"fontFamily": "Arielle"}}>Arielle</span>' as unknown as HTMLElement;
-     // expect(test).toBe(htmlElement) TODO
-
-    });
-
-
     it('should call when execute function return false',()=>{
 
 
@@ -247,15 +200,15 @@ describe('FontTypeCommand', () => {
         },
         plugins: [],
         schema: {marks:{ 'mark-font-type': MARK_FONT_TYPE,}},
-        tr:{doc:{nodeAt:(x)=>{return {isAtom:true,isLeaf:true,isText:false};}}},
+        tr:{doc:{nodeAt:(_x)=>{return {isAtom:true,isLeaf:true,isText:false};}}},
       } as unknown as EditorState;
 
 
-      const test = plugin.execute(state,(x)=>{return '';});
+      const test = plugin.execute(state,(_x)=>{return '';});
       expect(test).toBe(false);
     });
 
-    
+
     it('should call when execute function return true',()=>{
       jest.spyOn(applymark,'default').mockReturnValue({docChanged:true} as unknown as Transform);
         const state = {
@@ -267,11 +220,11 @@ describe('FontTypeCommand', () => {
           },
           plugins: [],
           schema: {marks:{ 'mark-font-type': MARK_FONT_TYPE,}},
-          tr:{doc:{nodeAt:(x)=>{return {isAtom:true,isLeaf:true,isText:false};}}},
+          tr:{doc:{nodeAt:(_x)=>{return {isAtom:true,isLeaf:true,isText:false};}}},
         } as unknown as EditorState;
 
 
-        const test = plugin.execute(state,(x)=>{return '';});
+        const test = plugin.execute(state,(_x)=>{return '';});
         expect(test).toBe(true);
       });
 
@@ -287,16 +240,16 @@ describe('FontTypeCommand', () => {
             },
             plugins: [],
             schema: {marks:{ 'mark-font-type': MARK_FONT_TYPE,}},
-            tr:{doc:{nodeAt:(x)=>{return {isAtom:true,isLeaf:true,isText:false};}}},
+            tr:{doc:{nodeAt:(_x)=>{return {isAtom:true,isLeaf:true,isText:false};}}},
           } as unknown as EditorState;
 
 
-          const test = plugin.execute(state,(x)=>{return '';});
+          const test = plugin.execute(state,(_x)=>{return '';});
           expect(test).toBe(true);
         });
 
     it('should handle executecustom',()=>{
-      jest.spyOn(TextSelection,'create').mockReturnValue({} as unknown as TextSelection)
+      jest.spyOn(TextSelection,'create').mockReturnValue({} as unknown as TextSelection);
       const state = {
 
         selection: {
@@ -306,11 +259,11 @@ describe('FontTypeCommand', () => {
         },
         plugins: [],
         schema: {marks:{ 'mark-font-type': MARK_FONT_TYPE,}},
-        tr:{doc:{nodeAt:(x)=>{return {isAtom:true,isLeaf:true,isText:false};}}},
+        tr:{doc:{nodeAt:(_x)=>{return {isAtom:true,isLeaf:true,isText:false};}}},
       } as unknown as EditorState;
-      const tr = {setSelection:()=>{return {}},doc:{}} as unknown as Transform
+      const tr = {setSelection:()=>{return {};},doc:{}} as unknown as Transform;
       expect(plugin.executeCustom(state,tr,0,1)).toBeDefined();
-    })
+    });
       });
 
 
