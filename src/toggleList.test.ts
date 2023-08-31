@@ -1,5 +1,5 @@
 import toggleList from './toggleList';
-import { Fragment, Node, NodeType, Schema} from 'prosemirror-model';
+import { Fragment, Node, NodeType, Schema } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 import * as prossermirror_utlites from 'prosemirror-utils';
@@ -35,8 +35,6 @@ describe('toggleList', () => {
         trr = document.createElement('tr');
         // Add some descendant nodes for testing
         trr.innerHTML = '<td>Cell 1</td><td>Cell 2</td><td>Cell 3</td>';
-
-
 
     });
 
@@ -132,7 +130,6 @@ describe('toggleList', () => {
             selection: { from: 0, to: 1 },
             doc: { descendants: ((_x, _y) => { return ''; }) },
             setSelection: (_a) => { return { getMeta: (_x) => { return 'uu'; } }; },
-            // getMeta: (a) => { return 'dryrun' as unknown as Transaction}
         } as unknown as Transform;
 
         jest.spyOn(TextSelection, 'create').mockReturnValue({} as unknown as TextSelection);
@@ -225,7 +222,6 @@ describe('toggleList', () => {
             selection: { from: 0, to: 1 },
             doc: { descendants: ((_x, _y) => { return ''; }) },
             setSelection: (_a) => { return { getMeta: (_x) => { return 'dryrun'; }, selection: { from: 0, to: 1 }, doc: dummyDoc }; },
-            // getMeta: (a) => { return 'dryrun' as unknown as Transaction}
         } as unknown as Transform;
 
         jest.spyOn(TextSelection, 'create').mockReturnValue({} as unknown as TextSelection);
@@ -234,22 +230,9 @@ describe('toggleList', () => {
             .mockReturnValueOnce(() => { return undefined as unknown as ContentNodeWithPos; })
             .mockReturnValueOnce(() => { return { pos: 1, start: 2, depth: 4, node: '' } as unknown as ContentNodeWithPos; })
             .mockReturnValueOnce(() => { return { pos: 1, start: 2, depth: 4, node: '' } as unknown as ContentNodeWithPos; });
-        // jest.spyOn(prossermirror_utlites, 'findParentNodeOfType').mockReturnValueOnce(() => { return {pos:1,start:2,depth:4,node:''} as unknown as ContentNodeWithPos })
-        // jest.spyOn(prossermirror_utlites, 'findParentNodeOfType').mockReturnValueOnce(() => { return {pos:1,start:2,depth:4,node:''} as unknown as ContentNodeWithPos })
         const listNodeType = {} as unknown as NodeType;
         const test = toggleList(tr, mock_schema, listNodeType, 'bold');
-
-
-        //     const prossermirror_utlites = jest.fn();
-        //     prossermirror_utlites
-        // .mockReturnValueOnce(10)
-        // .mockReturnValueOnce(20)
-        // .mockReturnValueOnce(30);
-
         expect(test).toBeDefined();
-
-
-
     });
 
     it('transformAndPreserveTextSelection without schema {marks}', () => {
@@ -258,14 +241,12 @@ describe('toggleList', () => {
             selection: { from: 0, to: 1 },
             doc: { descendants: ((_x, _y) => { return ''; }) },
             setSelection: (_a) => { return { getMeta: (_x) => { return ''; } }; },
-            // getMeta: (a) => { return 'dryrun' as unknown as Transaction}
         } as unknown as Transform;
 
         jest.spyOn(TextSelection, 'create').mockReturnValue({} as unknown as TextSelection);
         jest.spyOn(prossermirror_utlites, 'findParentNodeOfType').mockReturnValue(() => { return {} as unknown as ContentNodeWithPos; });
         const listNodeType = {} as unknown as NodeType;
         const test = toggleList(tr, schema, listNodeType, 'bold');
-
         expect(test).toBeDefined();
 
     });
@@ -276,7 +257,6 @@ describe('toggleList', () => {
             selection: { from: 0, to: 1 },
             doc: { descendants: ((_x, _y) => { return ''; }) },
             setSelection: (_a) => { return { getMeta: (_x) => { return ''; }, selection: null, doc: {} }; },
-            // getMeta: (a) => { return 'dryrun' as unknown as Transaction}
         } as unknown as Transform;
 
         jest.spyOn(TextSelection, 'create').mockReturnValue({} as unknown as TextSelection);
@@ -295,7 +275,6 @@ describe('toggleList', () => {
             selection: { from: 0, to: 1 },
             doc: { descendants: ((_x, _y) => { return ''; }) },
             setSelection: (_a) => { return { getMeta: (_x) => { return ''; }, selection: {}, doc: null }; },
-            // getMeta: (a) => { return 'dryrun' as unknown as Transaction}
         } as unknown as Transform;
 
         jest.spyOn(TextSelection, 'create').mockReturnValue({} as unknown as TextSelection);
@@ -314,7 +293,6 @@ describe('toggleList', () => {
             selection: { from: 0, to: 1 },
             doc: { descendants: ((_x, _y) => { return ''; }) },
             setSelection: (_a) => { return { getMeta: (_x) => { return ''; }, selection: { from: 0, to: 0 }, doc: { nodeAt: (_a) => { return 0; } } }; },
-            // getMeta: (a) => { return 'dryrun' as unknown as Transaction}
         } as unknown as Transform;
 
         jest.spyOn(TextSelection, 'create').mockReturnValue({} as unknown as TextSelection);
@@ -329,89 +307,84 @@ describe('toggleList', () => {
     });
     it('transformAndPreserveTextSelection calling with scehema, selection, doc checking condition !currentNode && prevNode && prevNode.type.name === TEXT', () => {
         const tr = {
-          selection: { from: 0, to: 1 },
-          doc: {
-            descendants: (_x, _y) => { return ''; }, // Update the implementation of descendants
-            nodeAt: (a) => {
-              if (a == 2) {
-                return { type: 'hh' };
-              } else if (a == 1) {
-                return { type: 'hh' };
-              }
-              // Return null to cover any other input
-              return null;
-            }
-          },
-          setSelection: (_a) => {
-            return {
-              getMeta: (_x) => { return ''; },
-              selection: { from: 2, to: 2 },
-              setSelection: (_a) => { return { doc: dummyDoc }; },
-              doc: {
-                descendants: (_a) => { return ''; }, // Update the implementation of descendants
+            selection: { from: 0, to: 1 },
+            doc: {
+                descendants: (_x, _y) => { return ''; },
                 nodeAt: (a) => {
-                  if (a == 2) {
-                    return { type: 'hh' };
-                  } else if (a == 1) {
-                    return { type: 'hh' };
-                  }
-                  // Return null to cover any other input
-                  return null;
-                }
-              }
-            };
-          }
-        } as unknown as Transform;
-
-        jest.spyOn(TextSelection, 'create').mockReturnValueOnce({} as unknown as TextSelection).mockReturnValueOnce({} as unknown as TextSelection).mockReturnValueOnce({ doc: dummyDoc } as unknown as TextSelection);
-        jest.spyOn(prossermirror_utlites, 'findParentNodeOfType').mockReturnValue(() => { return {} as unknown as ContentNodeWithPos; });
-        jest.spyOn(applymark, 'default').mockReturnValue({ docChanged: true } as unknown as Transform);
-        jest.spyOn(consolidateListNodes, 'default').mockReturnValue({ doc: dummyDoc, removeMark: () => { return { doc: dummyDoc, setSelection: () => { return {}; } }; } } as unknown as Transform);
-
-        const listNodeType = {} as unknown as NodeType;
-        const sc = { marks: { 'mark-text-selection': MARK_TEXT_SELECTION }, nodes: { 'paragraph': PARAGRAPH, 'heading': HEADING } } as unknown as Schema;
-
-        const test = toggleList(tr, sc, listNodeType, 'bold');
-
-        expect(test).toStrictEqual({});
-      });
-
-
-      it('transformAndPreserveTextSelection calling with scehema,selection,doc checking condition prevNode && currentNode && currentNode.type === prevNode.type', () => {
-        const tr = {
-          selection: { from: 0, to: 1 },
-          doc: {
-            descendants: (_a, _b) => { return ''; }, // Provide an implementation for the descendants method
-            nodeAt: (a) => {
-              if (a == 2) {
-                return { type: 'hh' };
-              } else if (a == 1) {
-                return { type: 'hh' };
-              }
-              // Return null to cover any other input
-              return null;
-            }
-          },
-          setSelection: (_a) => {
-            return {
-              getMeta: (_x) => { return ''; },
-              selection: { from: 2, to: 2 },
-              setSelection: (_a) => { return { doc: dummyDoc }; },
-              doc: {
-                descendants: (_a) => { return ''; },
-                nodeAt: (a) => {
-                  if (a == 2) {
+                    if (a == 2) {
+                        return { type: 'hh' };
+                    } else if (a == 1) {
+                        return { type: 'hh' };
+                    }
                     return null;
-                  } else if (a == 1) {
-                    return { type: 'hh' };
-                  }
-                  // Return null to cover any other input
-                  return null;
                 }
-              }
-            };
-          },
-          // getMeta: (a) => { return 'dryrun' as unknown as Transaction}
+            },
+            setSelection: (_a) => {
+                return {
+                    getMeta: (_x) => { return ''; },
+                    selection: { from: 2, to: 2 },
+                    setSelection: (_a) => { return { doc: dummyDoc }; },
+                    doc: {
+                        descendants: (_a) => { return ''; },
+                        nodeAt: (a) => {
+                            if (a == 2) {
+                                return { type: 'hh' };
+                            } else if (a == 1) {
+                                return { type: 'hh' };
+                            }
+                            return null;
+                        }
+                    }
+                };
+            }
+        } as unknown as Transform;
+
+        jest.spyOn(TextSelection, 'create').mockReturnValueOnce({} as unknown as TextSelection).mockReturnValueOnce({} as unknown as TextSelection).mockReturnValueOnce({ doc: dummyDoc } as unknown as TextSelection);
+        jest.spyOn(prossermirror_utlites, 'findParentNodeOfType').mockReturnValue(() => { return {} as unknown as ContentNodeWithPos; });
+        jest.spyOn(applymark, 'default').mockReturnValue({ docChanged: true } as unknown as Transform);
+        jest.spyOn(consolidateListNodes, 'default').mockReturnValue({ doc: dummyDoc, removeMark: () => { return { doc: dummyDoc, setSelection: () => { return {}; } }; } } as unknown as Transform);
+
+        const listNodeType = {} as unknown as NodeType;
+        const sc = { marks: { 'mark-text-selection': MARK_TEXT_SELECTION }, nodes: { 'paragraph': PARAGRAPH, 'heading': HEADING } } as unknown as Schema;
+
+        const test = toggleList(tr, sc, listNodeType, 'bold');
+
+        expect(test).toStrictEqual({});
+    });
+
+
+    it('transformAndPreserveTextSelection calling with scehema,selection,doc checking condition prevNode && currentNode && currentNode.type === prevNode.type', () => {
+        const tr = {
+            selection: { from: 0, to: 1 },
+            doc: {
+                descendants: (_a, _b) => { return ''; },
+                nodeAt: (a) => {
+                    if (a == 2) {
+                        return { type: 'hh' };
+                    } else if (a == 1) {
+                        return { type: 'hh' };
+                    }
+                    return null;
+                }
+            },
+            setSelection: (_a) => {
+                return {
+                    getMeta: (_x) => { return ''; },
+                    selection: { from: 2, to: 2 },
+                    setSelection: (_a) => { return { doc: dummyDoc }; },
+                    doc: {
+                        descendants: (_a) => { return ''; },
+                        nodeAt: (a) => {
+                            if (a == 2) {
+                                return null;
+                            } else if (a == 1) {
+                                return { type: 'hh' };
+                            }
+                            return null;
+                        }
+                    }
+                };
+            },
         } as unknown as Transform;
 
         jest.spyOn(TextSelection, 'create').mockReturnValueOnce({} as unknown as TextSelection).mockReturnValueOnce({} as unknown as TextSelection).mockReturnValueOnce({ doc: dummyDoc } as unknown as TextSelection);
@@ -423,34 +396,32 @@ describe('toggleList', () => {
         const test = toggleList(tr, sc, listNodeType, 'bold');
 
         expect(test).toStrictEqual({});
-      });
+    });
 
 
     it('transformAndPreserveTextSelection calling with scehema,selection,doc checking condition nextNode && currentNode && currentNode.type === nextNode.type', () => {
         const tr = {
-          selection: { from: 0, to: 1 },
-          doc: { descendants: ((_x, _y) => { return ''; }) },
-          setSelection: (_a) => {
-            return {
-              getMeta: (_x) => { return ''; },
-              selection: { from: 2, to: 2 },
-              setSelection: (_a) => { return { doc: dummyDoc }; },
-              doc: {
-                // No need for the descendants method here
-                nodeAt: (a) => {
-                  if (a == 2) {
-                    return { type: 'hh' };
-                  } else if (a == 1) {
-                    return null;
-                  } else if (a == 3) {
-                    return { type: 'hh' };
-                  }
-                  // Return null to cover any other input
-                  return null;
-                }
-              }
-            };
-          },
+            selection: { from: 0, to: 1 },
+            doc: { descendants: ((_x, _y) => { return ''; }) },
+            setSelection: (_a) => {
+                return {
+                    getMeta: (_x) => { return ''; },
+                    selection: { from: 2, to: 2 },
+                    setSelection: (_a) => { return { doc: dummyDoc }; },
+                    doc: {
+                        nodeAt: (a) => {
+                            if (a == 2) {
+                                return { type: 'hh' };
+                            } else if (a == 1) {
+                                return null;
+                            } else if (a == 3) {
+                                return { type: 'hh' };
+                            }
+                            return null;
+                        }
+                    }
+                };
+            },
         } as unknown as Transform;
 
 
@@ -467,43 +438,41 @@ describe('toggleList', () => {
     });
     it('transformAndPreserveTextSelection calling with scehema,selection,doc checking condition nextNode', () => {
         const tr = {
-          selection: { from: 0, to: 1 },
-          doc: {
-            descendants: (_a, _b) => { return ''; }, // Provide an implementation for the descendants method
-            nodeAt: (a) => {
-              if (a == 2) {
-                return null;
-              } else if (a == 1) {
-                return null;
-              } else if (a == 3) {
-                return { type: 'hh' };
-              }
-              // Return null to cover any other input
-              return null;
-            }
-          },
-          setSelection: (_a) => {
-            return {
-              getMeta: (_x) => { return ''; },
-              selection: { from: 2, to: 2 },
-              setSelection: (_a) => { return { doc: dummyDoc }; },
-              doc: {
-                descendants: (_a) => { return ''; }, // Provide an implementation for the descendants method
+            selection: { from: 0, to: 1 },
+            doc: {
+                descendants: (_a, _b) => { return ''; },
                 nodeAt: (a) => {
-                  if (a == 2) {
+                    if (a == 2) {
+                        return null;
+                    } else if (a == 1) {
+                        return null;
+                    } else if (a == 3) {
+                        return { type: 'hh' };
+                    }
                     return null;
-                  } else if (a == 1) {
-                    return null;
-                  } else if (a == 3) {
-                    return { type: 'hh' };
-                  }
-                  // Return null to cover any other input
-                  return null;
                 }
-              }
-            };
-          },
-          // getMeta: (a) => { return 'dryrun' as unknown as Transaction}
+            },
+            setSelection: (_a) => {
+                return {
+                    getMeta: (_x) => { return ''; },
+                    selection: { from: 2, to: 2 },
+                    setSelection: (_a) => { return { doc: dummyDoc }; },
+                    doc: {
+                        descendants: (_a) => { return ''; },
+                        nodeAt: (a) => {
+                            if (a == 2) {
+                                return null;
+                            } else if (a == 1) {
+                                return null;
+                            } else if (a == 3) {
+                                return { type: 'hh' };
+                            }
+
+                            return null;
+                        }
+                    }
+                };
+            },
         } as unknown as Transform;
 
         jest.spyOn(TextSelection, 'create').mockReturnValueOnce({} as unknown as TextSelection).mockReturnValueOnce({} as unknown as TextSelection).mockReturnValueOnce({ doc: dummyDoc } as unknown as TextSelection);
@@ -515,12 +484,9 @@ describe('toggleList', () => {
         const test = toggleList(tr, sc, listNodeType, 'bold');
 
         expect(test).toStrictEqual({});
-      });
+    });
 
     it('transformAndPreserveTextSelection calling with scehema,selection,doc checking condition prevNode', () => {
-
-
-
         const tr = {
             selection: { from: 0, to: 1 },
             doc: { descendants: (_x, _y) => { return ''; } },
@@ -543,13 +509,12 @@ describe('toggleList', () => {
                             } else if (a == 3) {
                                 return null;
                             }
-                            // Return null to cover any other input
+
                             return null;
                         }
                     }
                 };
             },
-            // getMeta: (a) => { return 'dryrun' as unknown as Transaction}
         } as unknown as Transform;
 
 
@@ -582,7 +547,6 @@ describe('toggleList', () => {
                     }
                 };
             },
-            // getMeta: (a) => { return 'dryrun' as unknown as Transaction}
         } as unknown as Transform;
 
         jest.spyOn(TextSelection, 'create').mockReturnValue({} as unknown as TextSelection);
@@ -616,17 +580,14 @@ describe('toggleList', () => {
                             } else if (a == 1) {
                                 return { type: { name: 'paragraph' }, firstChild: null };
                             }
-                            // Return null to cover any other input
                             return null;
                         }
                     }
                 };
             },
-            // getMeta: (a) => { return 'dryrun' as unknown as Transaction}
         } as unknown as Transform;
 
         jest.spyOn(TextSelection, 'create').mockReturnValueOnce({} as unknown as TextSelection).mockReturnValueOnce({} as unknown as TextSelection).mockReturnValueOnce({ doc: dummyDoc } as unknown as TextSelection).mockReturnValueOnce({} as unknown as TextSelection);
-        //jest.spyOn(TextSelection, 'create').mockReturnValue({} as unknown as TextSelection)
         jest.spyOn(prossermirror_utlites, 'findParentNodeOfType').mockReturnValue(() => { return {} as unknown as ContentNodeWithPos; });
         jest.spyOn(applymark, 'default').mockReturnValue({ docChanged: true } as unknown as Transform);
         jest.spyOn(consolidateListNodes, 'default').mockReturnValue({ doc: dummyDoc, removeMark: () => { return { doc: dummyDoc, setSelection: () => { return {}; } }; } } as unknown as Transform);
@@ -639,7 +600,7 @@ describe('toggleList', () => {
     });
 
 
-    it('', () => {
+    it('toggleList function() should be return object', () => {
 
         const tr = {
             selection: { from: 0, to: 1000 },
@@ -660,7 +621,6 @@ describe('toggleList', () => {
                             } else if (a == 3) {
                                 return null;
                             }
-                            // Return null to cover any other input
                             return null;
                         }
 
@@ -681,15 +641,11 @@ describe('toggleList', () => {
         expect(test).toStrictEqual({});
 
     });
-    it('', () => {
-        //jest.spyOn(TextSelection,'create').mockReturnValue({from:0,to:1} as unknown as TextSelection)
-
-
+    it('toggleList function() should be return defined value, If setNodeMarkup is not there', () => {
         const tr = {
             selection: { from: 0, to: 1 },
             doc: dummyDoc,
             setSelection: (_a) => { return { getMeta: (_x) => { return 'dryrun'; }, selection: { from: 0, to: 1, 'heading': HEADING }, doc: dummyDoc }; },
-            // getMeta: (a) => { return 'dryrun' as unknown as Transaction}
         } as unknown as Transform;
 
         jest.spyOn(TextSelection, 'create').mockReturnValue({ from: 0, to: 1 } as unknown as TextSelection);
@@ -698,25 +654,11 @@ describe('toggleList', () => {
         jest.spyOn(prossermirror_utlites, 'findParentNodeOfType')
             .mockReturnValueOnce(() => { return undefined as unknown as ContentNodeWithPos; })
             .mockReturnValueOnce(() => { return { pos: 1, start: 2, depth: 4, node: '' } as unknown as ContentNodeWithPos; })
-            .mockReturnValueOnce(() => { return { pos: 1, start: 2, depth: 4, node: '' } as unknown as ContentNodeWithPos; });
-        // jest.spyOn(prossermirror_utlites, 'findParentNodeOfType').mockReturnValueOnce(() => { return {pos:1,start:2,depth:4,node:''} as unknown as ContentNodeWithPos })
-        // jest.spyOn(prossermirror_utlites, 'findParentNodeOfType').mockReturnValueOnce(() => { return {pos:1,start:2,depth:4,node:''} as unknown as ContentNodeWithPos })
         const listNodeType = {} as unknown as NodeType;
         const test = toggleList(tr, mock_schema, listNodeType, 'bold');
-
-
-        //     const prossermirror_utlites = jest.fn();
-        //     prossermirror_utlites
-        // .mockReturnValueOnce(10)
-        // .mockReturnValueOnce(20)
-        // .mockReturnValueOnce(30);
-
         expect(test).toBeDefined();
-
-
-
     });
-    it('', () => {
+    it('toggleList function() should be return defined value, If setNodeMarkup is there', () => {
 
 
         const tr = {
@@ -744,7 +686,7 @@ describe('toggleList', () => {
 
     describe('wrapItemsWithListInternal', () => {
         const items = [
-            { node: { id: 1, name: 'Node 1',marks:'fg' } as unknown as Node, pos: 1 },
+            { node: { id: 1, name: 'Node 1', marks: 'fg' } as unknown as Node, pos: 1 },
 
         ];
 
@@ -772,7 +714,7 @@ describe('toggleList', () => {
 
         it('should return the transform  when both paragraph and listitem is there', () => {
 
-            const tr = {setNodeMarkup:(_a)=>{return {setNodeMarkup:(_a)=>{return {doc:{nodeAt:(_b)=>{return;}}};},doc:{nodeAt:(_b)=>{return;}}};},doc:{nodeAt:(_b)=>{return;}}} as unknown as Transform;
+            const tr = { setNodeMarkup: (_a) => { return { setNodeMarkup: (_a) => { return { doc: { nodeAt: (_b) => { return; } } }; }, doc: { nodeAt: (_b) => { return; } } }; }, doc: { nodeAt: (_b) => { return; } } } as unknown as Transform;
             const sc = { nodes: { 'paragraph': {}, 'list_item': {} } } as unknown as Schema;
             const list_node = {} as unknown as NodeType;
 
@@ -783,9 +725,7 @@ describe('toggleList', () => {
 
         it('should return the transform if not equal to firstNode and lastNode', () => {
 
-
-
-            const tr = {setNodeMarkup:(_a)=>{return {setNodeMarkup:(_a)=>{return {doc:{nodeAt:(_b)=>{return; }}};},doc:{nodeAt:(_b)=>{return {attrs:{id:null}};}}};},doc:dummyDoc} as unknown as Transform;
+            const tr = { setNodeMarkup: (_a) => { return { setNodeMarkup: (_a) => { return { doc: { nodeAt: (_b) => { return; } } }; }, doc: { nodeAt: (_b) => { return { attrs: { id: null } }; } } }; }, doc: dummyDoc } as unknown as Transform;
             const sc = { nodes: { 'paragraph': {}, 'list_item': {} } } as unknown as Schema;
             const list_node = {} as unknown as NodeType;
 

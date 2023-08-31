@@ -115,10 +115,6 @@ describe('MarkToggleCommand', () => {
 
       },
     });
-
-    // mockDoc.js
-
-
     const dummyDoc = mySchema.node('doc', null, [
       mySchema.node('heading', { marks: [] }, [
         mySchema.text('Heading 1',),
@@ -205,9 +201,6 @@ describe('MarkToggleCommand', () => {
       tr: { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } } },
       schema: { marks: 'value' },
     } as unknown as EditorState;
-
-    //  const tr =  {doc:{nodeAt:(x)=>{return {isAtom:true,isLeaf:true,isText:false}}}}as unknown as Transform ;
-
     const test = plugin.execute(state);
     expect(test).toBe(false);
 
@@ -389,10 +382,6 @@ describe('MarkToggleCommand', () => {
 
       },
     });
-
-    // mockDoc.js
-
-
     const dummyDoc = mySchema.node('doc', null, [
       mySchema.node('heading', { marks: [] }, [
         mySchema.text('Heading 1',),

@@ -1,12 +1,12 @@
-import {Selection, NodeSelection} from 'prosemirror-state';
-import {Schema} from 'prosemirror-model';
+import { Selection, NodeSelection } from 'prosemirror-state';
+import { Schema } from 'prosemirror-model';
 import isNodeSelectionForNodeType from './isNodeSelectionForNodeType';
 
 describe('isNodeSelectionForNodeType', () => {
   it('should return true if the selection is a NodeSelection for the provided node type', () => {
     const schema = new Schema({
       nodes: {
-        doc: {content: 'paragraph+'},
+        doc: { content: 'paragraph+' },
         paragraph: {
           content: 'text*',
           toDOM() {
@@ -31,7 +31,7 @@ describe('isNodeSelectionForNodeType', () => {
   it('should return false if selection is null', () => {
     const schema = new Schema({
       nodes: {
-        doc: {content: 'paragraph+'},
+        doc: { content: 'paragraph+' },
         paragraph: {
           content: 'text*',
           toDOM() {

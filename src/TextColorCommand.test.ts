@@ -1,15 +1,14 @@
 import TextColorCommand from './TextColorCommand';
-import { EditorState, TextSelection} from 'prosemirror-state';
+import { EditorState, TextSelection } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
-import { schema} from 'prosemirror-test-builder';
+import { schema } from 'prosemirror-test-builder';
 import { Transform } from 'prosemirror-transform';
-import {  MARK_TEXT_COLOR } from './MarkNames';
+import { MARK_TEXT_COLOR } from './MarkNames';
 import { EditorView } from 'prosemirror-view';
 import { Mark, Node } from 'prosemirror-model';
 import * as applymark from './applyMark';
 import * as React from 'react';
 import * as findNodesWithSameMark from './findNodesWithSameMark';
-// import * as nullthrows from ''
 
 describe('TextColorCommand', () => {
   let plugin!: TextColorCommand;
@@ -20,9 +19,7 @@ describe('TextColorCommand', () => {
     expect(plugin).toBeTruthy();
   });
 
-
-
-  it('', () => {
+  it('executeWithUserInput function() should be return false', () => {
     const state = {
       plugins: [],
       schema: { marks: { 'mark-text-color': MARK_TEXT_COLOR, } },
@@ -34,7 +31,7 @@ describe('TextColorCommand', () => {
   });
 
 
-  it('', () => {
+  it('executeWithUserInput function() should be return true, If docChanged = true', () => {
     const state = {
       plugins: [],
       schema: { marks: { 'mark-text-color': MARK_TEXT_COLOR, } },
@@ -50,7 +47,7 @@ describe('TextColorCommand', () => {
 
     expect(test).toBeTruthy();
   });
-  it('', () => {
+  it('executeWithUserInput function() should be return true, If storedMarksSet = true', () => {
     const state = {
       plugins: [],
       schema: { marks: { 'mark-text-color': MARK_TEXT_COLOR, } },
@@ -76,8 +73,6 @@ describe('TextColorCommand', () => {
     } as unknown as EditorState;
 
     const tr = { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; }, resolve: () => { return 1; } }, storedMarks: [], setSelection: () => { return ''; } } as unknown as Transform;
-
-    // jest.spyOn(Transaction, ).mockReturnValue({}as unknown as TextSelection)
     jest.spyOn(TextSelection, 'create').mockReturnValue({} as unknown as TextSelection);
 
     jest.spyOn(applymark, 'default').mockReturnValue({ storedMarks: [] } as unknown as Transform);
@@ -87,7 +82,7 @@ describe('TextColorCommand', () => {
     expect(test).toStrictEqual({ 'storedMarks': [] });
   });
 
-  it('', () => {
+  it('waitForUserInput function() should be return undefined', () => {
     const state = {
       plugins: [],
       selection: { from: 1, to: 2 },
@@ -108,12 +103,11 @@ describe('TextColorCommand', () => {
   });
 
   it('should resolve with undefined when event is not defined or currentTarget is not an HTMLElement', async () => {
-    // Arrange
     const state = {
       plugins: [],
-      selection:{from:1, to:2},
-      schema: {marks:{ 'mark-text-color': MARK_TEXT_COLOR,}},
-    doc:{nodeAt:(_x)=>{return {isAtom:true,isLeaf:true,isText:false};}},
+      selection: { from: 1, to: 2 },
+      schema: { marks: { 'mark-text-color': MARK_TEXT_COLOR, } },
+      doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } },
     } as unknown as EditorState;
 
     const _dispatch = jest.fn();
@@ -121,16 +115,11 @@ describe('TextColorCommand', () => {
     const event_ = {
       currentTarget: 'not an HTMLElement',
     } as unknown as React.SyntheticEvent;
-    // Act
     const result = await plugin.waitForUserInput(state, _dispatch, editorview, event_);
-
-    // Assert
     expect(result).toBeUndefined();
   });
 
   it('should resolve with undefined when event is not defined or currentTarget is not an HTMLElement', async () => {
-    // Arrange
-
     const state = {
 
     } as unknown as EditorState;
@@ -140,10 +129,7 @@ describe('TextColorCommand', () => {
     const event_ = {
       currentTarget: 'not an HTMLElement',
     } as unknown as React.SyntheticEvent;
-    // Act
     const result = await plugin.waitForUserInput(state, _dispatch, editorview, event_);
-
-    // Assert
     expect(result).toBeUndefined();
   });
 
@@ -162,7 +148,7 @@ describe('TextColorCommand', () => {
       currentTarget: document.createElement('div'),
     } as unknown as React.SyntheticEvent;
     const result1 = {
-      mark: {attrs:{color:'red'}} as unknown as Mark ,
+      mark: { attrs: { color: 'red' } } as unknown as Mark,
       from: {
         node: {} as unknown as Node,
         pos: 0,
@@ -172,7 +158,7 @@ describe('TextColorCommand', () => {
         pos: 1,
       }
     };
-    jest.spyOn(findNodesWithSameMark,'default').mockReturnValue(result1);
+    jest.spyOn(findNodesWithSameMark, 'default').mockReturnValue(result1);
     const editorview = {} as unknown as EditorView;
 
     const result = plugin.waitForUserInput(state, _dispatch, editorview, event_);
@@ -186,8 +172,6 @@ describe('TextColorCommand', () => {
 describe('HeadingCommand', () => {
   let schema1;
   let command: TextColorCommand;
-  // let dispatch: jest.Mock;
-
   beforeEach(() => {
     schema1 = new Schema({
       nodes: schema.spec.nodes,
@@ -202,12 +186,4 @@ describe('HeadingCommand', () => {
     const isEnabled = command.isEnabled(state);
     expect(isEnabled).toBe(false);
   });
-
-  // xit('execute ', () => {
-  //   const state = EditorState.create({schema: schema1});
-  // //   command.execute(state, dispatch);
-  //  const transform = new Transform(schema);
-  //   command.executeCustom(state, transform, 1, 2);
-  //   expect(dispatch).not.toHaveBeenCalledWith(expect.any(transform));
-  // });
 });

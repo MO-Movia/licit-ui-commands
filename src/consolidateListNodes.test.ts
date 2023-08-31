@@ -83,8 +83,6 @@ describe('consolidateListNodes', () => {
     const { tr } = state;
 
     const transformedTr = consolidateListNodes(tr);
-
-    // Assert that all list nodes are joined into a single list node
     expect(transformedTr.doc.content.childCount).toBe(1);
     expect(transformedTr.doc.content.firstChild?.content.childCount).toBe(4);
   });
@@ -98,17 +96,11 @@ describe('consolidateListNodes', () => {
 
     const { tr } = state;
 
-    const pos = 1; // Position of the list node in the document
+    const pos = 1;
 
     const transformedTr = consolidateListNodes(tr);
-
-    // Get the document after the transformation
     const transformedDoc = transformedTr.doc;
-
-    // Get the list node at the specified position
     const listNode = transformedDoc.nodeAt(pos);
-
-    // Assert that the counterReset attribute of the list node is set to 'none'
     expect(listNode?.attrs.counterReset).toBe(undefined);
   });
   it('should consolidate list nodes and handle counter linking', () => {
@@ -124,11 +116,7 @@ describe('consolidateListNodes', () => {
     const { tr } = state;
 
     const transformedTr = consolidateListNodes(tr);
-
-    // Assert that list nodes are consolidated
     expect(transformedTr.doc.content.childCount).toBe(3);
-
-    // Assert that the counterReset attribute of the consolidated list node is set to 'none'
     const consolidatedListNode = transformedTr.doc.content.firstChild;
     expect(consolidatedListNode?.attrs.counterReset).toBe(undefined);
   });

@@ -1,4 +1,4 @@
-import { Schema  } from 'prosemirror-model';
+import { Schema } from 'prosemirror-model';
 import { clearHeading, clearMarks } from './clearMarks';
 import { EditorState, TextSelection } from 'prosemirror-state';
 import { doc, p } from 'prosemirror-test-builder';
@@ -44,32 +44,28 @@ describe('clearMarks', () => {
 
     },
   });
-
-  // mockDoc.js
-
-
   const dummyDoc = mySchema.node('doc', null, [
     mySchema.node('heading', { marks: [] }, [
       mySchema.text('Heading 1',),
     ]),
     mySchema.node('paragraph', { marks: [] }, [
-      mySchema.text('This is a paragraph', ),
+      mySchema.text('This is a paragraph',),
     ]),
     mySchema.node('bullet_list', { marks: [] }, [
       mySchema.node('list_item', { marks: [] }, [
         mySchema.node('paragraph', { marks: [] }, [
-          mySchema.text('List item 1', ),
+          mySchema.text('List item 1',),
         ]),
       ]),
       mySchema.node('list_item', { marks: [] }, [
         mySchema.node('paragraph', { marks: [] }, [
-          mySchema.text('List item 2', ),
+          mySchema.text('List item 2',),
         ]),
       ]),
     ]),
     mySchema.node('blockquote', { marks: [] }, [
       mySchema.node('paragraph', { marks: [] }, [
-        mySchema.text('This is a blockquote', ),
+        mySchema.text('This is a blockquote',),
       ]),
     ]),
   ]);
@@ -181,8 +177,6 @@ describe('clearMarks', () => {
       });
       const tr = state.tr;
       tr.setSelection(TextSelection.create(state.doc, 0, 5));
-
-      // Set a non-empty selection range
       const transformedTr = clearHeading(tr, schema1);
 
       expect(transformedTr).toBe(tr);
@@ -199,7 +193,7 @@ describe('clearMarks', () => {
 
       const tr = { doc: dummyDoc, selection: { from: 1, to: 2 } } as unknown as Transform;
 
-      const sc = {marks:{'mark-font-size':MARK_FONT_SIZE},nodes:{'blockquote':BLOCKQUOTE, 'heading':HEADING,'paragraph':PARAGRAPH, 'list_item':LIST_ITEM}} as unknown as Schema;
+      const sc = { marks: { 'mark-font-size': MARK_FONT_SIZE }, nodes: { 'blockquote': BLOCKQUOTE, 'heading': HEADING, 'paragraph': PARAGRAPH, 'list_item': LIST_ITEM } } as unknown as Schema;
       const clearmarks = clearMarks(tr, sc);
       expect(clearmarks).toBeTruthy();
     });
@@ -271,81 +265,7 @@ describe('clearMarks', () => {
 
       const tr = { doc: docStructure, selection: { from: 1, to: 2 } } as unknown as Transform;
 
-      const sc = {marks:{'mark-font-size':MARK_FONT_SIZE,'strong':MARK_STRONG,'em':MARK_EM},nodes:{'blockquote':BLOCKQUOTE, 'heading':HEADING,'paragraph':PARAGRAPH, 'list_item':LIST_ITEM}} as unknown as Schema;
-      const clearmarks = clearMarks(tr, sc);
-      expect(clearmarks).toBeTruthy();
-    });
-
-
-
-    xit('should check the condition markTypesToRemove.has(mark.type) == true', () => {
-      const mySchema = new Schema({
-        nodes: {
-          doc: {
-            content: 'block+',
-          },
-          paragraph: {
-            content: 'text*',
-            group: 'block',
-          },
-          heading: {
-            attrs: { level: { default: 1 } },
-            content: 'text*',
-            group: 'block',
-            defining: true,
-          },
-          bullet_list: {
-            content: 'list_item+',
-            group: 'block',
-          },
-          list_item: {
-            content: 'paragraph',
-            defining: true,
-          },
-          blockquote: {
-            content: 'block+',
-            group: 'block',
-          },
-          text: {
-            inline: true,
-          },
-        },
-        marks: {
-          strong: {},
-          em: {},
-
-        },
-      });
-
-      const docStructure = mySchema.node('doc', null, [
-        mySchema.node('heading', { level: 1 }, [
-          mySchema.text('Heading 1', [mySchema.marks.strong.create()]),
-        ]),
-        mySchema.node('paragraph', null, [
-          mySchema.text('This is a paragraph', [mySchema.marks.em.create()]),
-        ]),
-        mySchema.node('bullet_list', null, [
-          mySchema.node('list_item', null, [
-            mySchema.node('paragraph', null, [
-              mySchema.text('List item 1', [mySchema.marks.strong.create(), mySchema.marks.em.create()]),
-            ]),
-          ]),
-          mySchema.node('list_item', null, [
-            mySchema.node('paragraph', null, [
-              mySchema.text('List item 2'),
-            ]),
-          ]),
-        ]),
-        mySchema.node('blockquote', null, [
-          mySchema.node('paragraph', null, [
-            mySchema.text('This is a blockquote', [mySchema.marks.strong.create()]),
-          ]),
-        ]),
-      ]);
-
-      const tr = { doc: docStructure, selection: { from: 1, to: 2 } } as unknown as Transform;
-
-      const sc = {marks:{'strong':MARK_STRONG,'em':MARK_EM},nodes:{'blockquote':BLOCKQUOTE, 'heading':HEADING,'paragraph':PARAGRAPH, 'list_item':LIST_ITEM}} as unknown as Schema;
+      const sc = { marks: { 'mark-font-size': MARK_FONT_SIZE, 'strong': MARK_STRONG, 'em': MARK_EM }, nodes: { 'blockquote': BLOCKQUOTE, 'heading': HEADING, 'paragraph': PARAGRAPH, 'list_item': LIST_ITEM } } as unknown as Schema;
       const clearmarks = clearMarks(tr, sc);
       expect(clearmarks).toBeTruthy();
     });

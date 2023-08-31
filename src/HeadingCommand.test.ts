@@ -1,28 +1,28 @@
 import HeadingCommand from './HeadingCommand';
-import {EditorState} from 'prosemirror-state';
+import { EditorState } from 'prosemirror-state';
 import { MARK_FONT_TYPE } from './MarkNames';
-import {Transform} from 'prosemirror-transform';
-import {Schema} from 'prosemirror-model';
-import {schema} from 'prosemirror-test-builder';
+import { Transform } from 'prosemirror-transform';
+import { Schema } from 'prosemirror-model';
+import { schema } from 'prosemirror-test-builder';
 import * as toggleHeading from './toggleHeading';
 describe('HeadingCommand', () => {
-    let plugin!: HeadingCommand;
-    let schema1;
-    let command: HeadingCommand;
+  let plugin!: HeadingCommand;
+  let schema1;
+  let command: HeadingCommand;
 
-    beforeEach(() => {
-        plugin = new HeadingCommand(1);
-        schema1 = new Schema({
-          nodes: schema.spec.nodes,
-          marks: schema.spec.marks,
-        });
-        command = new HeadingCommand(1);
-
+  beforeEach(() => {
+    plugin = new HeadingCommand(1);
+    schema1 = new Schema({
+      nodes: schema.spec.nodes,
+      marks: schema.spec.marks,
     });
-    it('should create', () => {
-        expect(plugin).toBeTruthy();
+    command = new HeadingCommand(1);
 
-    });
+  });
+  it('should create', () => {
+    expect(plugin).toBeTruthy();
+
+  });
   const state = {
     doc: {
       type: 'doc',
@@ -53,7 +53,7 @@ describe('HeadingCommand', () => {
     expect(test).toBe(true);
   });
   it('should enable the command when text style mark is enabled', () => {
-    const state = EditorState.create({schema: schema1});
+    const state = EditorState.create({ schema: schema1 });
     const isEnabled = command.isActive(state);
     expect(isEnabled).toBe(true);
   });
@@ -61,46 +61,14 @@ describe('HeadingCommand', () => {
   it('execute without dispatch', () => {
     const state = EditorState.create({ schema: schema1 });
     command.execute(state);
+  });
+
+  it('execute function() should be return false', () => {
+    const state = { schema: {}, selection: {}, tr: { setSelection: () => { return {}; } } } as unknown as EditorState;
+    jest.spyOn(toggleHeading, 'default').mockReturnValue({ docChanged: false } as unknown as Transform);
+    const test = plugin.execute(state);
+    expect(test).toBeFalsy();
+
+  });
+
 });
-
-it('',()=>{
-
-  const state = {schema:{},selection:{},tr:{setSelection:()=>{return {};}}} as unknown as EditorState;
-  jest.spyOn(toggleHeading,'default').mockReturnValue({docChanged:false} as unknown as Transform);
-  const test = plugin.execute(state);
-  expect(test).toBeFalsy();
-
-});
-
-});
-
-// describe('HeadingCommand', () => {
-//     let schema1;
-//     let command: HeadingCommand;
-//     let dispatch: jest.Mock;
-
-//     beforeEach(() => {
-//       schema1 = new Schema({
-//         nodes: schema.spec.nodes,
-//         marks: schema.spec.marks,
-//       });
-//       command = new HeadingCommand(1);
-//       dispatch = jest.fn();
-//     });
-
-//     it('should enable the command when text style mark is enabled', () => {
-//       const state = EditorState.create({schema: schema1});
-//       const isEnabled = command.isActive(state);
-//       expect(isEnabled).toBe(true);
-//     });
-
-//     it('should apply the font size mark to the current selection', () => {
-//       const state = EditorState.create({schema: schema1});
-
-//     });
-//     it('execute without dispatch', () => {
-//       const state = EditorState.create({ schema: schema1 });
-//       command.execute(state);
-//   });
-
-//   });

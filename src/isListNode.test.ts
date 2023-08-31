@@ -1,5 +1,5 @@
 import isListNode from './isListNode';
-import {Node, Schema} from 'prosemirror-model';
+import { Node, Schema } from 'prosemirror-model';
 describe('isListNode', () => {
   it('should return true if the node is bullet_list', () => {
     const blockNodeType = {
@@ -8,7 +8,7 @@ describe('isListNode', () => {
     };
     const schema = new Schema({
       nodes: {
-        doc: {content: 'paragraph+'},
+        doc: { content: 'paragraph+' },
         paragraph: {
           content: 'text*',
           toDOM() {
@@ -21,11 +21,8 @@ describe('isListNode', () => {
         },
       },
     });
-
     const customNode = schema.nodes.bullet_list.create();
-
     const result = isListNode(customNode);
-
     expect(result).toBe(true);
   });
 
@@ -36,7 +33,7 @@ describe('isListNode', () => {
     };
     const schema = new Schema({
       nodes: {
-        doc: {content: 'paragraph+'},
+        doc: { content: 'paragraph+' },
         paragraph: {
           content: 'text*',
           toDOM() {
@@ -49,19 +46,14 @@ describe('isListNode', () => {
         },
       },
     });
-
     const customNode = schema.nodes.ordered_list.create();
-
     const result = isListNode(customNode);
-
     expect(result).toBe(true);
   });
 
   it('should return false if the node is not an instance of Node', () => {
     const node = {};
-
     const result = isListNode(node as Node);
-
     expect(result).toBe(false);
   });
 });

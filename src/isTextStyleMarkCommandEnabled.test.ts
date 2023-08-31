@@ -1,9 +1,9 @@
-import {EditorState, TextSelection} from 'prosemirror-state';
+import { EditorState, TextSelection } from 'prosemirror-state';
 import isTextStyleMarkCommandEnabled from './isTextStyleMarkCommandEnabled';
-import {Schema} from 'prosemirror-model';
-import {schema, builders} from 'prosemirror-test-builder';
-import {EditorView} from 'prosemirror-view';
-import {MATH} from './NodeNames';
+import { Schema } from 'prosemirror-model';
+import { schema, builders } from 'prosemirror-test-builder';
+import { EditorView } from 'prosemirror-view';
+import { MATH } from './NodeNames';
 describe('isTextStyleMarkCommandEnabled', () => {
   it('should return true if a math node is selected and the mark name is valid', () => {
     const mySchema = new Schema({
@@ -13,14 +13,14 @@ describe('isTextStyleMarkCommandEnabled', () => {
         textColor: {},
       },
     });
-    const {doc, p} = builders(mySchema, {p: {nodeType: 'paragraph'}});
+    const { doc, p } = builders(mySchema, { p: { nodeType: 'paragraph' } });
     const state = EditorState.create({
       doc: doc(p('Test Para')),
       schema: mySchema,
     });
     const dom = document.createElement('div');
     const view = new EditorView(
-      {mount: dom},
+      { mount: dom },
       {
         state: state,
       }
@@ -29,9 +29,7 @@ describe('isTextStyleMarkCommandEnabled', () => {
     const tr = view.state.tr.setSelection(selection);
     view.dispatch(tr);
     const markName = 'fontSize';
-
     const result = isTextStyleMarkCommandEnabled(state, markName);
-
     expect(result).toBe(true);
   });
 
@@ -44,8 +42,8 @@ describe('isTextStyleMarkCommandEnabled', () => {
         math: {
           content: 'inline*',
           group: 'block',
-          parseDOM: [{tag: 'div.custom-node'}],
-          toDOM: () => ['div', {class: 'custom-node'}, 0],
+          parseDOM: [{ tag: 'div.custom-node' }],
+          toDOM: () => ['div', { class: 'custom-node' }, 0],
         },
         text: {
           group: 'inline',
@@ -63,7 +61,7 @@ describe('isTextStyleMarkCommandEnabled', () => {
     const view = new EditorView(document.createElement('div'), {
       state,
     });
-    const {from, to} = view.state.selection;
+    const { from, to } = view.state.selection;
     view.dispatch(
       view.state.tr.setSelection(
         new TextSelection(
@@ -74,15 +72,13 @@ describe('isTextStyleMarkCommandEnabled', () => {
     );
     const markName = MATH;
     const result = isTextStyleMarkCommandEnabled(state, markName);
-
     expect(result).toBe(false);
   });
 
   it('should return true in other cases', () => {
-    const state = EditorState.create({schema});
+    const state = EditorState.create({ schema });
     const markName = 'fontSize';
     const result = isTextStyleMarkCommandEnabled(state, markName);
-
     expect(result).toBe(false);
   });
 });
