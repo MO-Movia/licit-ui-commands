@@ -1,5 +1,4 @@
 import updateIndentLevel from './updateIndentLevel';
-import { setListNodeIndent } from './updateIndentLevel';
 import { setNodeIndentMarkup } from './updateIndentLevel';
 import { Node, Schema } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
@@ -149,7 +148,7 @@ describe('updateIndentLevel', () => {
 
     it('should be return tr inside setListNodeIndent function()', () => {
         const state = {} as unknown as EditorState;
-        const tr = { doc: dummyDoc, selection: { from: 1, to: 2 }, getMeta: () => { return 'dryrun'; }, delete: () => { } } as unknown as Transform;
+        const tr = { doc: dummyDoc, selection: { from: 1, to: 2 }, getMeta: () => { return 'dryrun'; }, delete: () => {return;} } as unknown as Transform;
         const sc = { nodes: { 'paragraph': PARAGRAPH, 'heading': HEADING, 'blockquote': BLOCKQUOTE, 'list_item': LIST_ITEM } } as unknown as Schema;
         const view = {} as unknown as EditorView;
         jest.spyOn(isListNode, 'default').mockReturnValue(true) as unknown as Node;

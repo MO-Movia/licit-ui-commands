@@ -653,7 +653,7 @@ describe('toggleList', () => {
 
         jest.spyOn(prossermirror_utlites, 'findParentNodeOfType')
             .mockReturnValueOnce(() => { return undefined as unknown as ContentNodeWithPos; })
-            .mockReturnValueOnce(() => { return { pos: 1, start: 2, depth: 4, node: '' } as unknown as ContentNodeWithPos; })
+            .mockReturnValueOnce(() => { return { pos: 1, start: 2, depth: 4, node: '' } as unknown as ContentNodeWithPos; });
         const listNodeType = {} as unknown as NodeType;
         const test = toggleList(tr, mock_schema, listNodeType, 'bold');
         expect(test).toBeDefined();

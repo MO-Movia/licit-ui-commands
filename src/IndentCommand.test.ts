@@ -28,7 +28,8 @@ describe('IndentCommand', () => {
 
   it('execute without dispatch', () => {
     const state = EditorState.create({ schema: schema1 });
-    command.execute(state);
+    const test = command.execute(state);
+    expect(test).toBeDefined();
   });
 
   it('should handle executecustom', () => {

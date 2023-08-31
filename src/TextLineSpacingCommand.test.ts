@@ -96,7 +96,8 @@ describe('TextLineSpacingCommand', () => {
 
   it('execute', () => {
     const state = EditorState.create({ schema: schema1 });
-    command.execute(state, dispatch);
+    const test = command.execute(state, dispatch);
+    expect(test).toBeDefined();
   });
 
   it('should be check condition !selection', () => {
