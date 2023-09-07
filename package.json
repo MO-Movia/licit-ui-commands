@@ -107,7 +107,7 @@
     "prosemirror-history": "1.1.3",
     "prosemirror-inputrules": "1.1.3",
     "prosemirror-utils": "1.0.0-0",
-    "@modusoperandi/licit-doc-attrs-step": "^0.1.6",
+    "@modusoperandi/licit-doc-attrs-step": "^0.1.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "uuid": "9.0.0",

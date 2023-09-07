@@ -5,7 +5,6 @@ import {Transaction, EditorState, TextSelection} from 'prosemirror-state';
 import {MARK_FONT_SIZE} from './MarkNames';
 import {Schema} from 'prosemirror-model';
 import {Transform} from 'prosemirror-transform';
-import noop from './noop';
 
 function setFontSize(tr: Transform, schema: Schema, pt: number): Transform {
   const markType = schema.marks[MARK_FONT_SIZE];
@@ -35,7 +34,6 @@ class FontSizeCommand extends UICommand {
     dispatch?: (tr: Transform) => void
     // view?: EditorView
   ): boolean => {
-    dispatch = dispatch || noop;
     const { schema } = state;
     // commnted selection because selection removes the storedMarks;
     // {selection}
@@ -45,7 +43,7 @@ class FontSizeCommand extends UICommand {
       // If selection is empty, the color is added to `storedMarks`, which
       // works like `toggleMark`
       // (see https://prosemirror.net/docs/ref/#commands.toggleMark).
-      dispatch(tr);
+      dispatch?.(tr);
       return true;
     }
     return false;

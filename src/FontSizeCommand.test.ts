@@ -1,6 +1,6 @@
 import FontSizeCommand from './FontSizeCommand';
-import { EditorState } from 'prosemirror-state';
-import { MARK_FONT_SIZE } from './MarkNames';
+import { EditorState, TextSelection } from 'prosemirror-state';
+import { MARK_FONT_SIZE, MARK_FONT_TYPE } from './MarkNames';
 import { Schema } from 'prosemirror-model';
 import { schema } from 'prosemirror-test-builder';
 import { Transform } from 'prosemirror-transform';
@@ -66,8 +66,42 @@ describe('FontSizeCommand', () => {
     expect(test).toBe(true);
   });
 
+  it('should handle executecustom', () => {
+    jest.spyOn(TextSelection, 'create').mockReturnValue({} as unknown as TextSelection);
+    const state = {
 
+      selection: {
+        node: null,
+        anchor: 0,
+        head: 0,
+      },
+      plugins: [],
+      schema: { marks: { 'mark-font-type': MARK_FONT_TYPE, } },
+      tr: { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } } },
+    } as unknown as EditorState;
+    const tr = { setSelection: () => { return {}; }, doc: {} } as unknown as Transform;
+    const test = plugin.executeCustom(state, tr, 0, 1);
+    expect(test).toBeDefined();
+  });
 
+  it('should handle when pt is undefined', () => {
+    plugin._pt = undefined as unknown as number;
+    jest.spyOn(TextSelection, 'create').mockReturnValue({} as unknown as TextSelection);
+    const state = {
+
+      selection: {
+        node: null,
+        anchor: 0,
+        head: 0,
+      },
+      plugins: [],
+      schema: { marks: { 'mark-font-size': MARK_FONT_SIZE, } },
+      tr: { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } } },
+    } as unknown as EditorState;
+    const tr = { setSelection: () => { return {}; }, doc: {} } as unknown as Transform;
+    const test = plugin.executeCustom(state, tr, 0, 1);
+    expect(test).toBeDefined();
+  });
 
   it('should call when executeCustom function return false', () => {
 

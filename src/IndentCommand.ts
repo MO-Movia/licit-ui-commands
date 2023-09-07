@@ -4,7 +4,6 @@ import { EditorView } from 'prosemirror-view';
 
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 import updateIndentLevel from './updateIndentLevel';
-import noop from './noop';
 
 class IndentCommand extends UICommand {
   _delta: number;
@@ -24,13 +23,13 @@ class IndentCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    dispatch = dispatch || noop;
+
     const { selection, schema } = state;
     let { tr } = state;
     tr = tr.setSelection(selection);
     const trx = updateIndentLevel(state, tr, schema, this._delta, _view);
     if (trx.docChanged) {
-      dispatch(trx.tr);
+      dispatch?.(trx.tr);
     }
     return true;
   };

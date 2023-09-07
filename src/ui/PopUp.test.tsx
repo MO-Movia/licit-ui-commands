@@ -5,8 +5,6 @@ import instance from './PopUpManager';
 import Enzyme, { shallow } from 'enzyme';
 Enzyme.configure({ adapter: new Adapter() });
 
-
-
 declare let beforeEach: jest.Lifecycle;
 declare let afterEach: jest.Lifecycle;
 declare let describe: jest.Describe;
@@ -15,23 +13,32 @@ declare const expect: jest.Expect;
 
 
 describe('PopUp', () => {
-    let popUpManager;
-    let mockRegister;
-    let mockUnregister;
+  let popUpManager;
+  let mockRegister;
+  let mockUnregister;
+  let wrapper;
 
-    beforeEach(() => {
-        popUpManager = instance;
-        mockRegister = jest.spyOn(popUpManager, 'register');
-        mockUnregister = jest.spyOn(popUpManager, 'unregister');
+  beforeEach(() => {
+    popUpManager = instance;
+    mockRegister = jest.spyOn(popUpManager, 'register');
+    mockUnregister = jest.spyOn(popUpManager, 'unregister');
 
-    });
+    wrapper = shallow(
+      <PopUp
+        View={MockView}
+        close={mockClose}
+        popUpParams={mockPopUpParams}
+        viewProps={mockViewProps}
+      />
+    );
+  });
 
-    afterEach(() => {
-        popUpManager = null;
-        mockRegister.mockRestore();
-        mockUnregister.mockRestore();
-
-    });
+  afterEach(() => {
+    popUpManager = null;
+    mockRegister.mockRestore();
+    mockUnregister.mockRestore();
+    jest.clearAllMocks();
+  });
   const MockView = jest.fn(() => <div>Mock View</div>);
   const mockClose = jest.fn();
   const mockPopUpParams = {
@@ -48,25 +55,6 @@ describe('PopUp', () => {
     prop1: 'value1',
     prop2: 'value2',
   };
-
-  let wrapper;
-
-  beforeEach(() => {
-
-    wrapper = shallow(
-      <PopUp
-        View={MockView}
-        close={mockClose}
-        popUpParams={mockPopUpParams}
-        viewProps={mockViewProps}
-      />
-    );
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('renders the component correctly', () => {
 
     expect(wrapper.find(MockView).exists()).toBe(true);

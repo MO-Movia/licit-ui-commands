@@ -9,7 +9,6 @@ import { EditorView } from 'prosemirror-view';
 
 import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import noop from './noop';
 
 export function setTextAlign(
   tr: Transform,
@@ -106,7 +105,6 @@ class TextAlignCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    dispatch = dispatch || noop;
     const { schema, selection } = state;
     const tr = setTextAlign(
       state.tr.setSelection(selection),
@@ -114,7 +112,7 @@ class TextAlignCommand extends UICommand {
       this._alignment
     );
     if (tr.docChanged) {
-      dispatch(tr);
+      dispatch?.(tr);
       return true;
     } else {
       return false;

@@ -121,11 +121,14 @@ describe('TextAlignCommand', () => {
 
   it('execute with dispatch', () => {
     const state = EditorState.create({ schema: schema1 });
-    command.execute(state, dispatch);
+    const test = command.execute(state, dispatch);
+    expect(test).toBeTruthy();
+
   });
   it('execute without dispatch', () => {
     const state = EditorState.create({ schema: schema1 });
-    command.execute(state);
+    const test = command.execute(state);
+    expect(test).toBeTruthy();
   });
   it('should execute without doc changes', () => {
     const dispatchMock = jest.fn();

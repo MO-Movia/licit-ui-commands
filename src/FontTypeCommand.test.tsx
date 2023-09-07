@@ -1,5 +1,5 @@
 import FontTypeCommand from './FontTypeCommand';
-import { EditorState, TextSelection } from 'prosemirror-state';
+import { EditorState } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import { schema } from 'prosemirror-test-builder';
 import * as applymark from './applyMark';
@@ -243,23 +243,4 @@ describe('FontTypeCommand', () => {
     const test = plugin.execute(state, (_x) => { return ''; });
     expect(test).toBe(true);
   });
-
-  it('should handle executecustom', () => {
-    jest.spyOn(TextSelection, 'create').mockReturnValue({} as unknown as TextSelection);
-    const state = {
-
-      selection: {
-        node: null,
-        anchor: 0,
-        head: 0,
-      },
-      plugins: [],
-      schema: { marks: { 'mark-font-type': MARK_FONT_TYPE, } },
-      tr: { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } } },
-    } as unknown as EditorState;
-    const tr = { setSelection: () => { return {}; }, doc: {} } as unknown as Transform;
-    expect(plugin.executeCustom(state, tr, 0, 1)).toBeDefined();
-  });
 });
-
-

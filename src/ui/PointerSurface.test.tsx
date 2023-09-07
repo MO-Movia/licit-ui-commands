@@ -1,10 +1,10 @@
 import React from 'react';
-import {shallow} from 'enzyme';
+import { shallow } from 'enzyme';
 import Adapter from '@cfaester/enzyme-adapter-react-18';
-import {configure} from 'enzyme';
-import {PointerSurface} from './PointerSurface';
+import { configure } from 'enzyme';
+import { PointerSurface } from './PointerSurface';
 
-configure({adapter: new Adapter()});
+configure({ adapter: new Adapter() });
 
 
 declare let describe: jest.Describe;
@@ -14,7 +14,8 @@ declare const expect: jest.Expect;
 
 describe('PointerSurface', () => {
   it('renders without crashing', () => {
-    shallow(<PointerSurface />);
+    const test = shallow(<PointerSurface />);
+    expect(test).toBeTruthy();
   });
 
   it('applies the correct className when active prop is true', () => {
