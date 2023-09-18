@@ -1,4 +1,4 @@
-import  Color  from 'color';
+import Color from 'color';
 import * as React from 'react';
 
 import CustomButton from './CustomButton';
@@ -11,7 +11,7 @@ function generateGreyColors(count: number): Array<Color> {
   const interval = cc / count;
   const colors = [];
   while (cc > 0) {
-    const color = Color({ r: cc, g: cc, b: cc });
+    const color = Color({r: cc, g: cc, b: cc});
     cc -= interval;
     cc = Math.floor(cc);
     colors.unshift(color);
@@ -80,7 +80,7 @@ class ColorEditor extends React.PureComponent {
   ): React.ReactElement<CustomButton> => {
     const selectedColor = this.props.hex;
     const hex = color.hex().toLowerCase();
-    const style = { backgroundColor: hex };
+    const style = {backgroundColor: hex};
     const active = selectedColor && selectedColor.toLowerCase() === hex;
     return (
       <CustomButton

@@ -1,15 +1,10 @@
 import compareNumber from './compareNumber';
 
 describe('compareNumber', () => {
-    it('returns 1 when the first number is greater than the second', () => {
-      expect(compareNumber(5, 2)).toBe(1);
-    });
-
-    it('returns -1 when the first number is less than the second', () => {
-      expect(compareNumber(2, 5)).toBe(-1);
-    });
-
-    it('returns 0 when the numbers are equal', () => {
-      expect(compareNumber(3, 3)).toBe(0);
-    });
+  it('can sort numbers', () => {
+    const numbers = [1, 5, 2, 9, 8, 0, -1, 3, 4, 7, 6, 1];
+    expect(numbers.sort(compareNumber)).toEqual([
+      -1, 0, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+    ]);
   });
+});

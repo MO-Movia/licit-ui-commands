@@ -1,8 +1,14 @@
-import toCSSLineSpacing, { getLineSpacingValue } from './toCSSLineSpacing';
+import toCSSLineSpacing, {getLineSpacingValue} from './toCSSLineSpacing';
 
 describe('toCSSLineSpacing', () => {
   it('should convert numeric line spacing value to percentage', () => {
     expect(toCSSLineSpacing('1.1')).toBe('110%');
+  });
+
+  it('should normalize incorrect line spacing values', () => {
+    expect(toCSSLineSpacing('10px')).toBe('10px');
+    expect(toCSSLineSpacing('15px')).toBe('15px');
+    expect(toCSSLineSpacing('20px')).toBe('20px');
   });
 
   it('should normalize incorrect line spacing values', () => {

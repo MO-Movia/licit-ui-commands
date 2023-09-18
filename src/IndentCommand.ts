@@ -1,8 +1,8 @@
-import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
-import { Transform } from 'prosemirror-transform';
-import { EditorView } from 'prosemirror-view';
+import {EditorState, TextSelection, Transaction} from 'prosemirror-state';
+import {Transform} from 'prosemirror-transform';
+import {EditorView} from 'prosemirror-view';
 
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
 import updateIndentLevel from './updateIndentLevel';
 
 class IndentCommand extends UICommand {
@@ -17,15 +17,13 @@ class IndentCommand extends UICommand {
     return true;
   };
 
-
   execute = (
     state: EditorState,
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-
-    const { selection, schema } = state;
-    let { tr } = state;
+    const {selection, schema} = state;
+    let {tr} = state;
     tr = tr.setSelection(selection);
     const trx = updateIndentLevel(state, tr, schema, this._delta, _view);
     if (trx.docChanged) {
@@ -41,7 +39,7 @@ class IndentCommand extends UICommand {
     from: number,
     to: number
   ): Transform => {
-    const { schema } = state;
+    const {schema} = state;
     tr = (tr as Transaction).setSelection(
       TextSelection.create(tr.doc, from, to)
     );

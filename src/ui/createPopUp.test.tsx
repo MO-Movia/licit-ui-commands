@@ -1,9 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import createPopUp, {
-  unrenderPopUp,
-  hideModalMask,
-} from './createPopUp'; // Adjust the path accordingly
+import createPopUp, {unrenderPopUp, hideModalMask} from './createPopUp'; // Adjust the path accordingly
 
 jest.mock('react-dom', () => ({
   render: jest.fn(),

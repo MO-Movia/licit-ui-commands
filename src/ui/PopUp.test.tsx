@@ -2,15 +2,14 @@ import React from 'react';
 import Adapter from '@cfaester/enzyme-adapter-react-18';
 import PopUp from './PopUp';
 import instance from './PopUpManager';
-import Enzyme, { shallow } from 'enzyme';
-Enzyme.configure({ adapter: new Adapter() });
+import Enzyme, {shallow} from 'enzyme';
+Enzyme.configure({adapter: new Adapter()});
 
 declare let beforeEach: jest.Lifecycle;
 declare let afterEach: jest.Lifecycle;
 declare let describe: jest.Describe;
 declare let it: jest.It;
 declare const expect: jest.Expect;
-
 
 describe('PopUp', () => {
   let popUpManager;
@@ -56,7 +55,6 @@ describe('PopUp', () => {
     prop2: 'value2',
   };
   it('renders the component correctly', () => {
-
     expect(wrapper.find(MockView).exists()).toBe(true);
     expect(wrapper.find(MockView).props()).toEqual({
       ...mockViewProps,
@@ -64,8 +62,9 @@ describe('PopUp', () => {
     });
   });
   it('should register the bridge on componentDidMount', () => {
-
-    expect(mockRegister).toHaveBeenCalledWith(expect.objectContaining({ getDetails: expect.any(Function) }));
+    expect(mockRegister).toHaveBeenCalledWith(
+      expect.objectContaining({getDetails: expect.any(Function)})
+    );
   });
 
   it('should unregister the bridge on componentWillUnmount', () => {
@@ -79,7 +78,9 @@ describe('PopUp', () => {
     const wrapper = shallow(<PopUp {...props} />);
     wrapper.unmount();
 
-    expect(mockUnregister).toHaveBeenCalledWith(expect.objectContaining({ getDetails: expect.any(Function) }));
+    expect(mockUnregister).toHaveBeenCalledWith(
+      expect.objectContaining({getDetails: expect.any(Function)})
+    );
   });
   it('should return the details from _getDetails with popup id null', () => {
     const closeMock = jest.fn();
@@ -132,5 +133,4 @@ describe('PopUp', () => {
 
     expect(instance._getDetails()).toEqual(expectedDetails);
   });
-
 });

@@ -1,9 +1,9 @@
 import HeadingCommand from './HeadingCommand';
-import { EditorState } from 'prosemirror-state';
-import { MARK_FONT_TYPE } from './MarkNames';
-import { Transform } from 'prosemirror-transform';
-import { Schema } from 'prosemirror-model';
-import { schema } from 'prosemirror-test-builder';
+import {EditorState} from 'prosemirror-state';
+import {MARK_FONT_TYPE} from './MarkNames';
+import {Transform} from 'prosemirror-transform';
+import {Schema} from 'prosemirror-model';
+import {schema} from 'prosemirror-test-builder';
 import * as toggleHeading from './toggleHeading';
 describe('HeadingCommand', () => {
   let plugin!: HeadingCommand;
@@ -17,11 +17,9 @@ describe('HeadingCommand', () => {
       marks: schema.spec.marks,
     });
     command = new HeadingCommand(1);
-
   });
   it('should create', () => {
     expect(plugin).toBeTruthy();
-
   });
   const state = {
     doc: {
@@ -44,32 +42,39 @@ describe('HeadingCommand', () => {
       head: 0,
     },
     plugins: [],
-    schema: { marks: { 'mark-font-type': MARK_FONT_TYPE, } },
+    schema: {marks: {'mark-font-type': MARK_FONT_TYPE}},
   } as unknown as EditorState;
-
 
   it('should call when execute function return true', () => {
     const test = plugin.isActive(state);
     expect(test).toBe(true);
   });
   it('should enable the command when text style mark is enabled', () => {
-    const state = EditorState.create({ schema: schema1 });
+    const state = EditorState.create({schema: schema1});
     const isEnabled = command.isActive(state);
     expect(isEnabled).toBe(true);
   });
 
   it('execute without dispatch', () => {
-    const state = EditorState.create({ schema: schema1 });
+    const state = EditorState.create({schema: schema1});
     const test = command.execute(state);
     expect(test).toBeTruthy();
   });
 
   it('execute function() should be return false', () => {
-    const state = { schema: {}, selection: {}, tr: { setSelection: () => { return {}; } } } as unknown as EditorState;
-    jest.spyOn(toggleHeading, 'default').mockReturnValue({ docChanged: false } as unknown as Transform);
+    const state = {
+      schema: {},
+      selection: {},
+      tr: {
+        setSelection: () => {
+          return {};
+        },
+      },
+    } as unknown as EditorState;
+    jest
+      .spyOn(toggleHeading, 'default')
+      .mockReturnValue({docChanged: false} as unknown as Transform);
     const test = plugin.execute(state);
     expect(test).toBeFalsy();
-
   });
-
 });

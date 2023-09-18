@@ -106,53 +106,52 @@ describe('atViewportCenter', () => {
   });
 });
 
-
 describe('atAnchorTopRight', () => {
   it('shuld returns the correct rect when both anchorRect and bodyRect are provided', () => {
-    const anchorRect = { x: 10, y: 20, w: 30, h: 40 };
-    const bodyRect = { x: 0, y: 0, w: 50, h: 60 };
+    const anchorRect = {x: 10, y: 20, w: 30, h: 40};
+    const bodyRect = {x: 0, y: 0, w: 50, h: 60};
     const result = atAnchorTopRight(anchorRect, bodyRect);
 
-    expect(result).toEqual({ x: -9, y: 20, w: 0, h: 0 });
+    expect(result).toEqual({x: -9, y: 20, w: 0, h: 0});
   });
 
   it('return the correct rect', () => {
-    const anchorRect = { x: 10, y: 20, w: 0, h: 0 };
-    const bodyRect = { x: 0, y: 0, w: 50, h: 60 };
+    const anchorRect = {x: 10, y: 20, w: 0, h: 0};
+    const bodyRect = {x: 0, y: 0, w: 50, h: 60};
     const result = atAnchorTopRight(anchorRect, bodyRect);
 
-    expect(result).toEqual({ x: -10000, y: 20, w: 0, h: 0 });
+    expect(result).toEqual({x: -10000, y: 20, w: 0, h: 0});
   });
 
   it('should return the correct rect when anchorRect is not provided', () => {
-    const result = atAnchorTopRight(undefined, { x: 0, y: 0, w: 50, h: 60 });
+    const result = atAnchorTopRight(undefined, {x: 0, y: 0, w: 50, h: 60});
 
-    expect(result).toEqual({ x: -10000, y: 0, w: 0, h: 0 });
+    expect(result).toEqual({x: -10000, y: 0, w: 0, h: 0});
   });
 });
 
 describe('atAnchorTopCenter', () => {
   it('should returns the rect when both anchorRect and bodyRect are provided', () => {
-    const anchorRect = { x: 10, y: 20, w: 30, h: 40 };
-    const bodyRect = { x: 0, y: 0, w: 50, h: 60 };
+    const anchorRect = {x: 10, y: 20, w: 30, h: 40};
+    const bodyRect = {x: 0, y: 0, w: 50, h: 60};
 
     const result = atAnchorTopCenter(anchorRect, bodyRect);
 
-    expect(result).toEqual({ x: 0, y: 20, w: 0, h: 0 });
+    expect(result).toEqual({x: 0, y: 20, w: 0, h: 0});
   });
 
   it('should return the correct rect when anchorRect is collapsed', () => {
-    const anchorRect = { x: 10, y: 20, w: 0, h: 0 };
-    const bodyRect = { x: 0, y: 0, w: 50, h: 60 };
+    const anchorRect = {x: 10, y: 20, w: 0, h: 0};
+    const bodyRect = {x: 0, y: 0, w: 50, h: 60};
 
     const result = atAnchorTopCenter(anchorRect, bodyRect);
 
-    expect(result).toEqual({ x: -10000, y: 20, w: 0, h: 0 });
+    expect(result).toEqual({x: -10000, y: 20, w: 0, h: 0});
   });
 
   it('should retun the rect when anchorRect is not provided', () => {
-    const result = atAnchorTopCenter(undefined, { x: 0, y: 0, w: 50, h: 60 });
+    const result = atAnchorTopCenter(undefined, {x: 0, y: 0, w: 50, h: 60});
 
-    expect(result).toEqual({ x: -10000, y: 0, w: 0, h: 0 });
+    expect(result).toEqual({x: -10000, y: 0, w: 0, h: 0});
   });
 });

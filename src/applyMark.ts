@@ -1,5 +1,5 @@
-import { Transaction } from '@remirror/pm/state';
-import { MarkType, Node, Schema } from 'prosemirror-model';
+import {Transaction} from '@remirror/pm/state';
+import {MarkType, Node, Schema} from 'prosemirror-model';
 import {SelectionRange, TextSelection} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
 
@@ -10,8 +10,12 @@ interface MyNode {
   };
 }
 
-function markApplies(doc: Node, ranges: readonly SelectionRange[], type: MarkType) {
-  for (const { $from, $to } of ranges) {
+function markApplies(
+  doc: Node,
+  ranges: readonly SelectionRange[],
+  type: MarkType
+) {
+  for (const {$from, $to} of ranges) {
     let can = $from.depth === 0 ? doc.type.allowsMarkType(type) : false;
     doc.nodesBetween($from.pos, $to.pos, (node: MyNode) => {
       if (can) {
@@ -51,7 +55,7 @@ export default function applyMark(
 
   let has = false;
   for (let i = 0; !has && i < ranges.length; i++) {
-    const { $from, $to } = ranges[i];
+    const {$from, $to} = ranges[i];
     has = tr.doc.rangeHasMark($from.pos, $to.pos, markType);
   }
   for (const {$from, $to} of ranges) {

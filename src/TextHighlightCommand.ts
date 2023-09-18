@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ColorEditor from './ui/ColorEditor';
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
 import applyMark from './applyMark';
 import createPopUp from './ui/createPopUp';
 import findNodesWithSameMark from './findNodesWithSameMark';
@@ -37,16 +37,16 @@ class TextHighlightCommand extends UICommand {
       return Promise.resolve(undefined);
     }
 
-    const { doc, selection, schema } = state;
+    const {doc, selection, schema} = state;
     const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
-    const { from, to } = selection;
+    const {from, to} = selection;
     const result = findNodesWithSameMark(doc, from, to, markType);
     const hex = result ? result.mark.attrs.highlightColor : null;
-    const anchor =  event?.currentTarget;
+    const anchor = event?.currentTarget;
     return new Promise((resolve) => {
       this._popUp = createPopUp(
         ColorEditor,
-        { hex },
+        {hex},
         {
           anchor,
           onClose: (val) => {
@@ -67,10 +67,10 @@ class TextHighlightCommand extends UICommand {
     color?: string
   ): boolean => {
     if (dispatch && color !== undefined) {
-      const { schema } = state;
-      let { tr } = state;
+      const {schema} = state;
+      let {tr} = state;
       const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
-      const attrs = color ? { highlightColor: color } : null;
+      const attrs = color ? {highlightColor: color} : null;
       (tr as Transform) = applyMark(tr, schema, markType, attrs);
       if (tr.docChanged || tr.storedMarksSet) {
         // If selection is empty, the color is added to `storedMarks`, which

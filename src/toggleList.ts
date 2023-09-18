@@ -1,16 +1,16 @@
 import consolidateListNodes from './consolidateListNodes';
 import compareNumber from './compareNumber';
 import nullthrows from 'nullthrows';
-import { Fragment, Node, NodeType, Schema } from 'prosemirror-model';
-import { TextSelection, Transaction } from 'prosemirror-state';
-import { Transform } from 'prosemirror-transform';
-import { findParentNodeOfType } from 'prosemirror-utils';
+import {Fragment, Node, NodeType, Schema} from 'prosemirror-model';
+import {TextSelection, Transaction} from 'prosemirror-state';
+import {Transform} from 'prosemirror-transform';
+import {findParentNodeOfType} from 'prosemirror-utils';
 
-import { HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
+import {HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
 import isListNode from './isListNode';
 import transformAndPreserveTextSelection from './transformAndPreserveTextSelection';
 
-import type { SelectionMemo } from './transformAndPreserveTextSelection';
+import type {SelectionMemo} from './transformAndPreserveTextSelection';
 
 export default function toggleList(
   tr: Transform,
@@ -18,15 +18,15 @@ export default function toggleList(
   listNodeType: NodeType,
   listStyleType: string
 ): Transform {
-  const { selection, doc } = tr as Transaction;
+  const {selection, doc} = tr as Transaction;
   if (!selection || !doc) {
     return tr;
   }
 
   // [FS][04-AUG-2020][IRAD-955]
   // Fix Unable to apply list using Ctrl+A selection
-  let { from } = selection;
-  let { to } = selection;
+  let {from} = selection;
+  let {to} = selection;
   let newselection = selection;
 
   if (0 === from && 0 != to) {
@@ -121,10 +121,10 @@ function wrapNodesWithListInternal(
   listStyleType: string,
   newselection = null
 ): Transform {
-  const { schema } = memo;
-  let { tr } = memo;
-  const { doc, selection } = tr as Transaction;
-  let { from, to } = selection;
+  const {schema} = memo;
+  let {tr} = memo;
+  const {doc, selection} = tr as Transaction;
+  let {from, to} = selection;
   if (!tr || !selection) {
     return tr;
   }
@@ -162,7 +162,7 @@ function wrapNodesWithListInternal(
 
     if (nodeType === heading || nodeType === paragraph) {
       items = items || [];
-      items.push({ node, pos });
+      items.push({node, pos});
     } else {
       items?.length && lists.push(items);
       items = null;
@@ -201,7 +201,7 @@ export function wrapItemsWithListInternal(
   tr: Transform,
   schema: Schema,
   listNodeType: NodeType,
-  items: Array<{ node: Node; pos: number }>,
+  items: Array<{node: Node; pos: number}>,
   listStyleType: string
 ): Transform {
   const initialTr = tr;
@@ -214,10 +214,10 @@ export function wrapItemsWithListInternal(
 
   const paragraphNodes = [];
   items.forEach((item) => {
-    const { node, pos } = item;
+    const {node, pos} = item;
     // Temporarily annotate each node with an unique ID.
     const uniqueID = {};
-    const nodeAttrs = { ...node.attrs, id: uniqueID };
+    const nodeAttrs = {...node.attrs, id: uniqueID};
     // Replace the original node with the node annotated by the uniqueID.
     tr = tr.setNodeMarkup(pos, paragraph, nodeAttrs, node.marks);
     paragraphNodes.push(tr.doc.nodeAt(pos));
@@ -254,7 +254,7 @@ export function wrapItemsWithListInternal(
 
   const listItemNodes = [];
   items.forEach((item) => {
-    const { node } = item;
+    const {node} = item;
     // Restore the annotated nodes with the copy of the original ones.
     const paragraphNode = paragraph.create(
       node.attrs,
@@ -268,7 +268,7 @@ export function wrapItemsWithListInternal(
     listItemNodes.push(listItemNode);
   });
 
-  const listNodeAttrs = { indent: 0, start: 1, type: listStyleType };
+  const listNodeAttrs = {indent: 0, start: 1, type: listStyleType};
 
   const $fromPos = tr.doc.resolve(fromPos);
   const $toPos = tr.doc.resolve(toPos);
@@ -310,7 +310,7 @@ export function wrapItemsWithListInternal(
 function unwrapNodesFromSelection(
   tr: Transform,
   listNodePos: number,
-  nodes: { [x: string]: NodeType },
+  nodes: {[x: string]: NodeType},
   from: number,
   to: number,
   unwrapParagraphNode?: (Node) => Node
@@ -354,7 +354,7 @@ function unwrapNodesFromSelection(
   tr = tr.delete(listNodePos, listNodePos + listNode.nodeSize);
 
   const listNodeType = listNode.type;
-  const attrs = { indent: listNode.attrs.indent, start: 1 };
+  const attrs = {indent: listNode.attrs.indent, start: 1};
 
   if (contentBlocksAfter.length) {
     const nodes = contentBlocksAfter.map((block) => {
@@ -396,14 +396,14 @@ function unwrapNodesFromListInternal(
   listNodePos: number,
   unwrapParagraphNode?: (Node) => Node
 ): Transform {
-  const { schema } = memo;
-  let { tr } = memo;
+  const {schema} = memo;
+  let {tr} = memo;
 
   if (!tr.doc || !(tr as Transaction).selection) {
     return tr;
   }
 
-  const { nodes } = schema;
+  const {nodes} = schema;
   const paragraph = nodes[PARAGRAPH];
   const listItem = nodes[LIST_ITEM];
 
@@ -417,7 +417,7 @@ function unwrapNodesFromListInternal(
   }
 
   const initialSelection = (tr as Transaction).selection;
-  const { from, to } = initialSelection;
+  const {from, to} = initialSelection;
 
   const listNodePoses = [];
 

@@ -31,7 +31,6 @@ describe('PopUpManager', () => {
   it('closes pop-up when autoDismiss is true and intersects with body', () => {
     const mockCloseFn = jest.fn();
 
-
     const mockEvent = new MouseEvent('click', {
       bubbles: true,
       clientX: 100,
@@ -127,8 +126,6 @@ describe('PopUpManager', () => {
   it('should set IsCustom value to true ', () => {
     const mockCloseFn = jest.fn();
 
-
-
     const targetClassName = 'not-a-vaild-class';
 
     const targetElement = document.createElement('div');
@@ -144,8 +141,6 @@ describe('PopUpManager', () => {
     popUpManager._syncPosition();
     expect(mockCloseFn).not.toHaveBeenCalled();
   });
-
-
 
   it('should call _onMouseChange', () => {
     const originalCancelAnimationFrame = window.cancelAnimationFrame;

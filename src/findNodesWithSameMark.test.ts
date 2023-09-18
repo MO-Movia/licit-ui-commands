@@ -1,7 +1,6 @@
-
 import findNodesWithSameMark from './findNodesWithSameMark';
 import {schema} from 'prosemirror-schema-basic';
-import { Node } from 'prosemirror-model';
+import {Node} from 'prosemirror-model';
 describe('findNodesWithSameMark', () => {
   it('should return null if any node within the range is missing marks', () => {
     const textNode = schema.text('Hello, World!');
@@ -10,7 +9,6 @@ describe('findNodesWithSameMark', () => {
 
     expect(result).toBeNull();
   });
-
 
   it('should return null if nodes within the range have different marks', () => {
     const textNode = schema.text('Hello, World!');
@@ -29,7 +27,7 @@ describe('findNodesWithSameMark', () => {
           content: [
             {
               type: 'text',
-              marks: [{ type: 'strong' }],
+              marks: [{type: 'strong'}],
               text: 'Bold text',
             },
             {
@@ -53,6 +51,3 @@ describe('findNodesWithSameMark', () => {
     }
   });
 });
-
-
-

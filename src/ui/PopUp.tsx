@@ -1,11 +1,11 @@
 import * as React from 'react';
 
 import PopUpManager from './PopUpManager';
-import { atAnchorBottomLeft, atViewportCenter } from './PopUpPosition';
+import {atAnchorBottomLeft, atViewportCenter} from './PopUpPosition';
 import uuid from './uuid';
 
-import type { PopUpDetails } from './PopUpManager';
-import type { Rect } from './rects';
+import type {PopUpDetails} from './PopUpManager';
+import type {Rect} from './rects';
 
 type PositionHandler = (anchorRect?: Rect, bodyRect?: Rect) => Rect;
 
@@ -42,7 +42,7 @@ class PopUp extends React.PureComponent<PopUpProps> {
 
   render(): React.ReactElement<HTMLDivElement> {
     const dummy = {};
-    const { View, viewProps, close } = this.props;
+    const {View, viewProps, close} = this.props;
     return (
       <div data-pop-up-id={this._id} id={this._id}>
         <View {...(viewProps || dummy)} close={close} />
@@ -51,7 +51,7 @@ class PopUp extends React.PureComponent<PopUpProps> {
   }
 
   componentDidMount(): void {
-    this._bridge = { getDetails: this._getDetails };
+    this._bridge = {getDetails: this._getDetails};
     PopUpManager.register(this._bridge);
   }
 
@@ -60,16 +60,16 @@ class PopUp extends React.PureComponent<PopUpProps> {
   }
 
   _getDetails = (): PopUpDetails => {
-    const { close, popUpParams } = this.props;
-    const { anchor, autoDismiss, position, modal, popUpId } = popUpParams;
+    const {close, popUpParams} = this.props;
+    const {anchor, autoDismiss, position, modal, popUpId} = popUpParams;
     return {
       anchor,
-      autoDismiss: autoDismiss === false ? false : true,
+      autoDismiss: autoDismiss !== false,
       body: document.getElementById(this._id),
       close,
       modal: modal === true,
       position: position || (modal ? atViewportCenter : atAnchorBottomLeft),
-      popupId: popUpId ? popUpId : null
+      popupId: popUpId || null,
     };
   };
 }

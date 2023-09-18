@@ -10,7 +10,7 @@ export default function isTextStyleMarkCommandEnabled(
   state: EditorState,
   markName: string
 ): boolean {
-  const { selection, schema, tr } = state;
+  const {selection, schema, tr} = state;
   const markType = schema.marks[markName];
   if (!markType) {
     return false;
@@ -25,7 +25,7 @@ export default function isTextStyleMarkCommandEnabled(
     return true;
   }
 
-  const { from, to } = state.selection;
+  const {from, to} = state.selection;
 
   if (to === from + 1) {
     const node = tr.doc.nodeAt(from);
