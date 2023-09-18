@@ -1,7 +1,7 @@
 import './czi-vars.css';
 import './czi-pop-up.css';
 
-import type { PopUpParams, ViewProps } from './PopUp';
+import type {PopUpParams, ViewProps} from './PopUp';
 
 import PopUp from './PopUp';
 // eslint-disable-next-line no-unused-vars
@@ -20,7 +20,7 @@ let popUpsCount = 0;
 const Z_INDEX_BASE = 9999;
 const MODAL_MASK_ID = 'pop-up-modal-mask-' + uuid();
 
-function showModalMask(IsChildDialog?: boolean): void {
+export function showModalMask(IsChildDialog?: boolean): void {
   const root = document.body || document.documentElement;
   let element = document.getElementById(MODAL_MASK_ID);
   if (!element) {
@@ -59,9 +59,9 @@ function showModalMask(IsChildDialog?: boolean): void {
   }
 }
 
-function hideModalMask(): void {
+export function hideModalMask(): void {
   const element = document.getElementById(MODAL_MASK_ID);
-  if (element && element.parentElement) {
+  if (element?.parentElement) {
     element.parentElement.removeChild(element);
   }
 }
@@ -72,8 +72,9 @@ function getRootElement(
   popUpParams?: PopUpParams
 ): HTMLElement | null {
   const root =
-    (popUpParams && popUpParams.container) ||
-    (document.getElementsByClassName('czi-editor-frameset') && document.getElementsByClassName('czi-editor-frameset')[0]) ||
+    popUpParams?.container ||
+    (document.getElementsByClassName('czi-editor-frameset') &&
+      document.getElementsByClassName('czi-editor-frameset')[0]) ||
     document.documentElement;
   let element = document.getElementById(id);
   if (!element && forceCreation) {
@@ -84,12 +85,12 @@ function getRootElement(
     return null;
   }
 
-  if (popUpParams && popUpParams.modal) {
+  if (popUpParams?.modal) {
     element.setAttribute('data-pop-up-modal', 'y');
   }
   // [FS] IRAD-1048 2020-10-07
   // To handle child dialog window
-  if (popUpParams && popUpParams.IsChildDialog) {
+  if (popUpParams?.IsChildDialog) {
     element.className = 'czi-pop-up-element child-modal czi-vars';
   } else {
     element.className = 'czi-pop-up-element czi-vars';
@@ -97,8 +98,8 @@ function getRootElement(
 
   element.id = id;
   const style = element.style;
-  const modalZIndexOffset = popUpParams && popUpParams.modal ? 1 : 0;
-  if (!(popUpParams && popUpParams.container)) {
+  const modalZIndexOffset = popUpParams?.modal ? 1 : 0;
+  if (!popUpParams?.container) {
     style.zIndex = String(Z_INDEX_BASE + popUpsCount * 3 + modalZIndexOffset);
   }
 
@@ -139,11 +140,11 @@ function renderPopUp(
   }
 }
 
-function unrenderPopUp(rootId: string): void {
+export function unrenderPopUp(rootId: string): void {
   const rootNode = getRootElement(rootId, false);
   if (rootNode) {
     ReactDOM.unmountComponentAtNode(rootNode);
-    rootNode.parentElement && rootNode.parentElement.removeChild(rootNode);
+    rootNode.parentElement?.removeChild(rootNode);
   }
 
   if (modalsCount === 0) {
@@ -159,9 +160,8 @@ export default function createPopUp(
   const rootId = popUpParams.popUpId ? popUpParams.popUpId : uuid();
 
   let handle = null;
-  let currentViewProps = viewProps;
+  let currentViewProps = viewProps || {};
 
-  viewProps = viewProps || {};
   popUpParams = popUpParams || {};
 
   const modal = popUpParams.modal || !popUpParams.anchor;
@@ -185,21 +185,19 @@ export default function createPopUp(
     handle = null;
     unrenderPopUp(rootId);
 
-    const onClose = popUpParams && popUpParams.onClose;
-    onClose && onClose(value);
+    popUpParams?.onClose?.(value);
   };
 
   const render = renderPopUp.bind(null, rootId, closePopUp, View);
-  const emptyObj = {};
 
   handle = {
     close: closePopUp,
     update: (nextViewProps) => {
-      currentViewProps = nextViewProps;
-      render(currentViewProps || emptyObj, popUpParams || emptyObj);
+      currentViewProps = nextViewProps || {};
+      render(currentViewProps, popUpParams);
     },
   };
 
-  render(currentViewProps || emptyObj, popUpParams);
+  render(currentViewProps, popUpParams);
   return handle;
 }

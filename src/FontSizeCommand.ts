@@ -1,4 +1,4 @@
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
 import applyMark from './applyMark';
 import isTextStyleMarkCommandEnabled from './isTextStyleMarkCommandEnabled';
 import {Transaction, EditorState, TextSelection} from 'prosemirror-state';
@@ -11,7 +11,7 @@ function setFontSize(tr: Transform, schema: Schema, pt: number): Transform {
   if (!markType) {
     return tr;
   }
-  const attrs = pt ? { pt } : null;
+  const attrs = pt ? {pt} : null;
   tr = applyMark(tr, schema, markType, attrs);
   return tr;
 }
@@ -34,7 +34,7 @@ class FontSizeCommand extends UICommand {
     dispatch?: (tr: Transform) => void
     // view?: EditorView
   ): boolean => {
-    const { schema } = state;
+    const {schema} = state;
     // commnted selection because selection removes the storedMarks;
     // {selection}
     // const tr = setFontSize(state.tr.setSelection(selection), schema, this._pt);
@@ -43,7 +43,7 @@ class FontSizeCommand extends UICommand {
       // If selection is empty, the color is added to `storedMarks`, which
       // works like `toggleMark`
       // (see https://prosemirror.net/docs/ref/#commands.toggleMark).
-      dispatch && dispatch(tr);
+      dispatch?.(tr);
       return true;
     }
     return false;

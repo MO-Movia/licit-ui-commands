@@ -1,26 +1,22 @@
-import { Schema } from 'prosemirror-model';
-import {
-  EditorState,
-  TextSelection,
-  Transaction,
-} from 'prosemirror-state';
-import { Transform } from 'prosemirror-transform';
-import { EditorView } from 'prosemirror-view';
+import {Schema} from 'prosemirror-model';
+import {EditorState, TextSelection, Transaction} from 'prosemirror-state';
+import {Transform} from 'prosemirror-transform';
+import {EditorView} from 'prosemirror-view';
 
-import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import {BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
+import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
 
 export function setTextAlign(
   tr: Transform,
   schema: Schema,
   alignment?: string
 ): Transform {
-  const { selection, doc } = tr as Transaction;
+  const {selection, doc} = tr as Transaction;
   if (!selection || !doc) {
     return tr;
   }
-  const { from, to } = selection;
-  const { nodes } = schema;
+  const {from, to} = selection;
+  const {nodes} = schema;
 
   const blockquote = nodes[BLOCKQUOTE];
   const listItem = nodes[LIST_ITEM];
@@ -50,8 +46,8 @@ export function setTextAlign(
   }
 
   tasks.forEach((job) => {
-    const { node, pos, nodeType } = job;
-    let { attrs } = node;
+    const {node, pos, nodeType} = job;
+    let {attrs} = node;
     if (alignment) {
       attrs = {
         ...attrs,
@@ -78,8 +74,8 @@ class TextAlignCommand extends UICommand {
   }
 
   isActive = (state: EditorState): boolean => {
-    const { selection, doc } = state;
-    const { from, to } = selection;
+    const {selection, doc} = state;
+    const {from, to} = selection;
     let keepLooking = true;
     let active = false;
     doc.nodesBetween(from, to, (node, _pos) => {
@@ -93,7 +89,6 @@ class TextAlignCommand extends UICommand {
   };
 
   isEnabled = (state: EditorState): boolean => {
-
     if (state) {
       return true;
     }
@@ -105,14 +100,14 @@ class TextAlignCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    const { schema, selection } = state;
+    const {schema, selection} = state;
     const tr = setTextAlign(
       state.tr.setSelection(selection),
       schema,
       this._alignment
     );
     if (tr.docChanged) {
-      dispatch && dispatch(tr);
+      dispatch?.(tr);
       return true;
     } else {
       return false;
@@ -126,7 +121,7 @@ class TextAlignCommand extends UICommand {
     from: number,
     to: number
   ): Transform => {
-    const { schema } = state;
+    const {schema} = state;
     tr = setTextAlign(
       (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),
       schema,

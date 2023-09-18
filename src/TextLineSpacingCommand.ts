@@ -1,12 +1,9 @@
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import {
-  Transaction,
-  EditorState,
-} from 'prosemirror-state';
-import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
-import { EditorView } from 'prosemirror-view';
-import { Schema } from 'prosemirror-model';
-import { Transform } from 'prosemirror-transform';
+import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import {Transaction, EditorState} from 'prosemirror-state';
+import {BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
+import {EditorView} from 'prosemirror-view';
+import {Schema} from 'prosemirror-model';
+import {Transform} from 'prosemirror-transform';
 import {
   DOUBLE_LINE_SPACING,
   SINGLE_LINE_SPACING,
@@ -19,12 +16,12 @@ export function setTextLineSpacing(
   schema: Schema,
   lineSpacing?: string
 ): Transform {
-  const { selection, doc } = tr as Transaction;
+  const {selection, doc} = tr as Transaction;
   if (!selection || !doc) {
     return tr;
   }
 
-  const { from, to } = selection;
+  const {from, to} = selection;
   const paragraph = schema.nodes[PARAGRAPH];
   const heading = schema.nodes[HEADING];
   const listItem = schema.nodes[LIST_ITEM];
@@ -52,7 +49,7 @@ export function setTextLineSpacing(
           nodeType,
         });
       }
-      return nodeType === listItem ? true : false;
+      return nodeType === listItem;
     }
     return true;
   });
@@ -62,8 +59,8 @@ export function setTextLineSpacing(
   }
 
   tasks.forEach((job) => {
-    const { node, pos, nodeType } = job;
-    let { attrs } = node;
+    const {node, pos, nodeType} = job;
+    let {attrs} = node;
     if (lineSpacingValue) {
       attrs = {
         ...attrs,
@@ -124,7 +121,7 @@ class TextLineSpacingCommand extends UICommand {
   };
 
   isEnabled = (state: EditorState): boolean => {
-    return this.isActive(state) || this.execute(state, undefined, undefined);
+    return this.isActive(state) || this.execute(state);
   };
 
   execute = (
@@ -132,14 +129,14 @@ class TextLineSpacingCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    const { schema, selection } = state;
+    const {schema, selection} = state;
     const tr = setTextLineSpacing(
       state.tr.setSelection(selection),
       schema,
       this._lineSpacing
     );
     if (tr.docChanged) {
-      dispatch && dispatch(tr as Transaction);
+      dispatch?.(tr as Transaction);
       return true;
     } else {
       return false;

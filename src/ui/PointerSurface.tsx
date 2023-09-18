@@ -2,7 +2,7 @@ import cx from 'classnames';
 import * as React from 'react';
 
 import preventEventDefault from './preventEventDefault';
-import { EditorView } from 'prosemirror-view';
+import {EditorView} from 'prosemirror-view';
 
 export type PointerSurfaceProps = {
   active?: boolean;
@@ -24,14 +24,13 @@ export class PointerSurface extends React.PureComponent {
   _clicked = false;
   _mul = false;
   _pressedTarget = null;
-  _unmounted = false;
 
-  state = { pressed: false };
+  state = {pressed: false};
 
   render(): React.ReactElement {
-    const { className, disabled, active, id, style, title, children } =
+    const {className, disabled, active, id, style, title, children} =
       this.props;
-    const { pressed } = this.state;
+    const {pressed} = this.state;
 
     const buttonClassName = cx(className, {
       active: active,
@@ -61,7 +60,6 @@ export class PointerSurface extends React.PureComponent {
   }
 
   componentWillUnmount(): void {
-    this._unmounted = true;
     if (this._mul) {
       this._mul = false;
       document.removeEventListener('mouseup', this._onMouseUpCapture, true);
@@ -71,8 +69,8 @@ export class PointerSurface extends React.PureComponent {
   _onMouseEnter = (e: React.SyntheticEvent): void => {
     this._pressedTarget = null;
     e.preventDefault();
-    const { onMouseEnter, value } = this.props;
-    onMouseEnter && onMouseEnter(value, e);
+    const {onMouseEnter, value} = this.props;
+    onMouseEnter?.(value, e);
   };
 
   _onMouseLeave = (e: React.MouseEvent): void => {
@@ -92,7 +90,7 @@ export class PointerSurface extends React.PureComponent {
       return;
     }
 
-    this.setState({ pressed: true });
+    this.setState({pressed: true});
     this._pressedTarget = e.currentTarget;
     this._clicked = false;
 
@@ -106,7 +104,7 @@ export class PointerSurface extends React.PureComponent {
     e.preventDefault();
 
     if (this._clicked || e.type === 'keypress') {
-      const { onClick, value, disabled } = this.props;
+      const {onClick, value, disabled} = this.props;
       !disabled && onClick && onClick(value, e);
     }
 
@@ -126,8 +124,6 @@ export class PointerSurface extends React.PureComponent {
       (target === this._pressedTarget ||
         target.contains(this._pressedTarget) ||
         this._pressedTarget.contains(target));
-    this.setState({ pressed: false });
+    this.setState({pressed: false});
   };
 }
-
-// export default PointerSurface;
