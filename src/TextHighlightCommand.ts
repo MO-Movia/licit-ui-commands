@@ -42,7 +42,7 @@ class TextHighlightCommand extends UICommand {
     const { from, to } = selection;
     const result = findNodesWithSameMark(doc, from, to, markType);
     const hex = result ? result.mark.attrs.highlightColor : null;
-    const anchor = event ? event.currentTarget : null;
+    const anchor =  event?.currentTarget;
     return new Promise((resolve) => {
       this._popUp = createPopUp(
         ColorEditor,
@@ -71,7 +71,6 @@ class TextHighlightCommand extends UICommand {
       let { tr } = state;
       const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
       const attrs = color ? { highlightColor: color } : null;
-      // tr = applyMark(tr.setSelection(state.selection), schema, markType, attrs);
       (tr as Transform) = applyMark(tr, schema, markType, attrs);
       if (tr.docChanged || tr.storedMarksSet) {
         // If selection is empty, the color is added to `storedMarks`, which

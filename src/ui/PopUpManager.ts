@@ -237,9 +237,7 @@ class PopUpManager {
           now - registeredAt > CLICK_INTERVAL &&
           !hoveredAnchors.has(anchor)
         ) {
-          if (this._bridges.size < 2) {
-            close();
-          }
+          close();
         }
       }
     }

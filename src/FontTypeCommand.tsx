@@ -12,6 +12,7 @@ import * as React from 'react';
 import { MARK_FONT_TYPE } from './MarkNames';
 import applyMark from './applyMark';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import noop from './noop';
 
 function setFontType(tr: Transform, schema: Schema, name: string): Transform {
   const markType = schema.marks[MARK_FONT_TYPE];
@@ -66,22 +67,17 @@ class FontTypeCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
+    dispatch = dispatch || noop;
     const { schema } = state;
     // commnted selection because selection removes the storedMarks;
     // {selection}
-
-    // const tr = setFontType(
-    //   state.tr.setSelection(selection),
-    //   schema,
-    //   this._name
-    // );
 
     const tr = setFontType(state.tr, schema, this._name);
     if (tr.docChanged || (tr as Transaction).storedMarksSet) {
       // If selection is empty, the color is added to `storedMarks`, which
       // works like `toggleMark`
       // (see https://prosemirror.net/docs/ref/#commands.toggleMark).
-      dispatch && dispatch(tr);
+      dispatch(tr);
       return true;
     }
     return false;

@@ -43,7 +43,7 @@ class FontSizeCommand extends UICommand {
       // If selection is empty, the color is added to `storedMarks`, which
       // works like `toggleMark`
       // (see https://prosemirror.net/docs/ref/#commands.toggleMark).
-      dispatch && dispatch(tr);
+      dispatch?.(tr);
       return true;
     }
     return false;

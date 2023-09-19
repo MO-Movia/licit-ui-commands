@@ -112,7 +112,7 @@ class TextAlignCommand extends UICommand {
       this._alignment
     );
     if (tr.docChanged) {
-      dispatch && dispatch(tr);
+      dispatch?.(tr);
       return true;
     } else {
       return false;

@@ -25,13 +25,6 @@ export default function isTextStyleMarkCommandEnabled(
     return true;
   }
 
-  // if (
-  //   !(selection instanceof TextSelection || selection instanceof AllSelection)
-  // ) {
-  //   // Could be a NodeSelection or CellSelection.
-  //   return true;
-  // }
-
   const { from, to } = state.selection;
 
   if (to === from + 1) {

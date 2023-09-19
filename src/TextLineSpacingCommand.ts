@@ -124,7 +124,7 @@ class TextLineSpacingCommand extends UICommand {
   };
 
   isEnabled = (state: EditorState): boolean => {
-    return this.isActive(state) || this.execute(state, undefined, undefined);
+    return this.isActive(state) || this.execute(state);
   };
 
   execute = (
@@ -139,7 +139,7 @@ class TextLineSpacingCommand extends UICommand {
       this._lineSpacing
     );
     if (tr.docChanged) {
-      dispatch && dispatch(tr as Transaction);
+      dispatch?.(tr as Transaction);
       return true;
     } else {
       return false;

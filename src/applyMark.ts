@@ -1,13 +1,19 @@
 import { Transaction } from '@remirror/pm/state';
-import { MarkType, Schema } from 'prosemirror-model';
-import {TextSelection} from 'prosemirror-state';
+import { MarkType, Node, Schema } from 'prosemirror-model';
+import {SelectionRange, TextSelection} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
 
-function markApplies(doc, ranges, type) {
-  for (let i = 0; i < ranges.length; i++) {
-    const { $from, $to } = ranges[i];
-    let can = $from.depth == 0 ? doc.type.allowsMarkType(type) : false;
-    doc.nodesBetween($from.pos, $to.pos, (node) => {
+interface MyNode {
+  inlineContent: boolean; // Assuming inlineContent is of type boolean
+  type: {
+    allowsMarkType: (type: MarkType) => boolean; // Assuming allowsMarkType returns a boolean
+  };
+}
+
+function markApplies(doc: Node, ranges: readonly SelectionRange[], type: MarkType) {
+  for (const { $from, $to } of ranges) {
+    let can = $from.depth === 0 ? doc.type.allowsMarkType(type) : false;
+    doc.nodesBetween($from.pos, $to.pos, (node: MyNode) => {
       if (can) {
         return false;
       }
@@ -48,8 +54,7 @@ export default function applyMark(
     const { $from, $to } = ranges[i];
     has = tr.doc.rangeHasMark($from.pos, $to.pos, markType);
   }
-  for (let i = 0; i < ranges.length; i++) {
-    const {$from, $to} = ranges[i];
+  for (const {$from, $to} of ranges) {
     // [FS] IRAD-1043 2020-10-27
     // No need to remove the applied custom styles when select the custom style mutiple times.
     if (has && !isCustomStyleApplied) {

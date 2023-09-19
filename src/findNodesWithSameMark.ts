@@ -28,7 +28,7 @@ export default function findNodesWithSameMark(
 
   while (ii <= to) {
     const node = doc.nodeAt(ii);
-    if (!node || !node.marks) {
+    if (!node?.marks) {
       return null;
     }
     const mark = node.marks.find(finder);
@@ -51,7 +51,7 @@ export default function findNodesWithSameMark(
   ii = from - 1;
   while (ii > jj) {
     const node = doc.nodeAt(ii);
-    const mark = node && node.marks.find(finder);
+    const mark = node?.marks.find(finder);
     if (!mark || mark !== firstMark) {
       break;
     }
@@ -64,7 +64,7 @@ export default function findNodesWithSameMark(
   jj = doc.nodeSize - 2;
   while (ii < jj) {
     const node = doc.nodeAt(ii);
-    const mark = node && node.marks.find(finder);
+    const mark = node?.marks.find(finder);
     if (!mark || mark !== firstMark) {
       break;
     }

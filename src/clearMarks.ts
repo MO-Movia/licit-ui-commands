@@ -61,7 +61,7 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
 
   const tasks = [];
   doc.nodesBetween(from, to, (node, pos) => {
-    if (node.marks && node.marks.length) {
+    if (node?.marks.length) {
       node.marks.some((mark) => {
         if (markTypesToRemove.has(mark.type)) {
           tasks.push({ node, pos, mark });
