@@ -3,11 +3,11 @@ import './czi-pop-up.css';
 
 import type {PopUpParams, ViewProps} from './PopUp';
 
-import PopUp from './PopUp';
+import {PopUp} from './PopUp';
 // eslint-disable-next-line no-unused-vars
 import * as React from 'react';
 import ReactDOM from 'react-dom';
-import uuid from './uuid';
+import {uuid} from './uuid';
 
 export type PopUpHandle = {
   close: (val) => void;
@@ -152,7 +152,7 @@ export function unrenderPopUp(rootId: string): void {
   }
 }
 
-export default function createPopUp(
+export function createPopUp(
   View,
   viewProps?: ViewProps,
   popUpParams?: PopUpParams

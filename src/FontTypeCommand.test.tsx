@@ -1,6 +1,6 @@
-import FontTypeCommand from './FontTypeCommand';
+import {FontTypeCommand} from './FontTypeCommand';
 import {EditorState} from 'prosemirror-state';
-import {Schema} from 'prosemirror-model';
+import {Schema,Node} from 'prosemirror-model';
 import {schema} from 'prosemirror-test-builder';
 import * as applymark from './applyMark';
 import {Transform} from 'prosemirror-transform';
@@ -33,14 +33,14 @@ describe('FontSizeCommand', () => {
   it('should apply the font size mark to the current selection', () => {
     const state = EditorState.create({schema: schema1});
     command.execute(state, dispatch);
-    const transform = new Transform(schema);
+    const transform = new Transform(schema as unknown as Node);
     expect(dispatch).not.toHaveBeenCalledWith(expect.any(transform));
   });
 
   it('should apply the font size mark to the current selection', () => {
     const state = EditorState.create({schema: schema1});
     command.execute(state, undefined);
-    const transform = new Transform(schema);
+    const transform = new Transform(schema as unknown as Node);
     expect(dispatch).not.toHaveBeenCalledWith(expect.any(transform));
   });
 });
@@ -210,7 +210,7 @@ describe('FontTypeCommand', () => {
 
   it('should call when execute function return true', () => {
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({docChanged: true} as unknown as Transform);
     const state = {
       selection: {
@@ -236,7 +236,7 @@ describe('FontTypeCommand', () => {
   });
 
   it('should call when execute function return true', () => {
-    jest.spyOn(applymark, 'default').mockReturnValue({
+    jest.spyOn(applymark, 'applyMark').mockReturnValue({
       docChanged: false,
       storedMarksSet: true,
     } as unknown as Transform);

@@ -1,4 +1,4 @@
-import TextAlignCommand from './TextAlignCommand';
+import {TextAlignCommand} from './TextAlignCommand';
 import {EditorState, TextSelection} from 'prosemirror-state';
 import {Schema} from 'prosemirror-model';
 import {schema} from 'prosemirror-test-builder';

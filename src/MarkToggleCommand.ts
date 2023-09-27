@@ -2,10 +2,10 @@ import {toggleMark} from 'prosemirror-commands';
 import {EditorState} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
 import {EditorView} from 'prosemirror-view';
-import findNodesWithSameMark from './findNodesWithSameMark';
+import {findNodesWithSameMark} from './findNodesWithSameMark';
 import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
 
-class MarkToggleCommand extends UICommand {
+export class MarkToggleCommand extends UICommand {
   _markName: string;
 
   constructor(markName: string) {
@@ -136,4 +136,4 @@ function markApplies(doc, ranges, type) {
   }
   return returned;
 }
-export default MarkToggleCommand;
+

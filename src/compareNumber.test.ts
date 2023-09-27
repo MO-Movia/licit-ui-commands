@@ -1,4 +1,4 @@
-import compareNumber from './compareNumber';
+import {compareNumber} from './compareNumber';
 
 describe('compareNumber', () => {
   it('can sort numbers', () => {

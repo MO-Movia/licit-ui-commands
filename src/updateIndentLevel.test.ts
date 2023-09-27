@@ -1,4 +1,4 @@
-import updateIndentLevel, {setNodeIndentMarkup} from './updateIndentLevel';
+import {updateIndentLevel,setNodeIndentMarkup} from './updateIndentLevel';
 import {Node, Schema} from 'prosemirror-model';
 import {EditorState} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
@@ -141,7 +141,7 @@ describe('updateIndentLevel', () => {
       nodes: {paragraph: PARAGRAPH, heading: HEADING, blockquote: BLOCKQUOTE},
     } as unknown as Schema;
     const view = {} as unknown as EditorView;
-    jest.spyOn(isListNode, 'default').mockReturnValue(true) as unknown as Node;
+    jest.spyOn(isListNode, 'isListNode').mockReturnValue(true) as unknown as Node;
     const test = updateIndentLevel(state, tr, sc, 5, view);
     expect(test).toBeTruthy();
   });
@@ -167,9 +167,9 @@ describe('updateIndentLevel', () => {
       },
     } as unknown as Schema;
     const view = {} as unknown as EditorView;
-    jest.spyOn(isListNode, 'default').mockReturnValue(true) as unknown as Node;
+    jest.spyOn(isListNode, 'isListNode').mockReturnValue(true) as unknown as Node;
     jest
-      .spyOn(consolidateListNodes, 'default')
+      .spyOn(consolidateListNodes,'consolidateListNodes')
       .mockReturnValue(tr as unknown as Transform);
     const test = updateIndentLevel(state, tr, sc, 5, view);
     expect(test).toBeTruthy();
@@ -226,9 +226,9 @@ describe('updateIndentLevel', () => {
       },
     } as unknown as Schema;
     const view = {} as unknown as EditorView;
-    jest.spyOn(isListNode, 'default').mockReturnValue(true) as unknown as Node;
+    jest.spyOn(isListNode, 'isListNode').mockReturnValue(true) as unknown as Node;
     jest
-      .spyOn(consolidateListNodes, 'default')
+      .spyOn(consolidateListNodes, 'consolidateListNodes')
       .mockReturnValue(tr as unknown as Transform);
     const test = updateIndentLevel(state, tr, sc, 5, view);
     expect(test).toBeTruthy();
@@ -296,7 +296,7 @@ describe('updateIndentLevel', () => {
         ]),
       ]),
     ]);
-    jest.spyOn(clamp, 'default').mockReturnValue(5);
+    jest.spyOn(clamp, 'clamp').mockReturnValue(5);
     const state = {} as unknown as EditorState;
 
     const tr = {
@@ -318,9 +318,9 @@ describe('updateIndentLevel', () => {
       },
     } as unknown as Schema;
     const view = {} as unknown as EditorView;
-    jest.spyOn(isListNode, 'default').mockReturnValue(true) as unknown as Node;
+    jest.spyOn(isListNode, 'isListNode').mockReturnValue(true) as unknown as Node;
     jest
-      .spyOn(consolidateListNodes, 'default')
+      .spyOn(consolidateListNodes, 'consolidateListNodes')
       .mockReturnValue(tr as unknown as Transform);
 
     const test = updateIndentLevel(state, tr, sc, 5, view);
@@ -388,7 +388,7 @@ describe('updateIndentLevel', () => {
         ]),
       ]),
     ]);
-    jest.spyOn(clamp, 'default').mockReturnValueOnce(7).mockReturnValueOnce(5);
+    jest.spyOn(clamp, 'clamp').mockReturnValueOnce(7).mockReturnValueOnce(5);
     const state = {} as unknown as EditorState;
 
     const tr = {
@@ -410,9 +410,9 @@ describe('updateIndentLevel', () => {
       },
     } as unknown as Schema;
     const view = {} as unknown as EditorView;
-    jest.spyOn(isListNode, 'default').mockReturnValue(true) as unknown as Node;
+    jest.spyOn(isListNode, 'isListNode').mockReturnValue(true) as unknown as Node;
     jest
-      .spyOn(consolidateListNodes, 'default')
+      .spyOn(consolidateListNodes, 'consolidateListNodes')
       .mockReturnValue(tr as unknown as Transform);
 
     const test = updateIndentLevel(state, tr, sc, 5, view);

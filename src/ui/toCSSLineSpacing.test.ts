@@ -1,4 +1,4 @@
-import toCSSLineSpacing, {getLineSpacingValue} from './toCSSLineSpacing';
+import {toCSSLineSpacing,getLineSpacingValue} from './toCSSLineSpacing';
 
 describe('toCSSLineSpacing', () => {
   it('should convert numeric line spacing value to percentage', () => {

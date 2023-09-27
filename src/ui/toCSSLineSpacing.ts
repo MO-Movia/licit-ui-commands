@@ -10,7 +10,7 @@ export const DOUBLE_LINE_SPACING = LINE_SPACING_200;
 // Normalize the css line-height vlaue to percentage-based value if applicable.
 // Also, it calibrates the incorrect line spacing value exported from Google
 // Doc.
-export default function toCSSLineSpacing(source: string): string {
+export function toCSSLineSpacing(source: string): string {
   if (!source) {
     return '';
   }

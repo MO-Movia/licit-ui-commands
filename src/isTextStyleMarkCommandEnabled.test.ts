@@ -1,5 +1,5 @@
 import {EditorState, TextSelection} from 'prosemirror-state';
-import isTextStyleMarkCommandEnabled from './isTextStyleMarkCommandEnabled';
+import {isTextStyleMarkCommandEnabled} from './isTextStyleMarkCommandEnabled';
 import {Schema} from 'prosemirror-model';
 import {schema, builders} from 'prosemirror-test-builder';
 import {EditorView} from 'prosemirror-view';

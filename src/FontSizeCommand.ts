@@ -1,6 +1,6 @@
 import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
-import applyMark from './applyMark';
-import isTextStyleMarkCommandEnabled from './isTextStyleMarkCommandEnabled';
+import {applyMark} from './applyMark';
+import {isTextStyleMarkCommandEnabled} from './isTextStyleMarkCommandEnabled';
 import {Transaction, EditorState, TextSelection} from 'prosemirror-state';
 import {MARK_FONT_SIZE} from './MarkNames';
 import {Schema} from 'prosemirror-model';
@@ -16,7 +16,7 @@ function setFontSize(tr: Transform, schema: Schema, pt: number): Transform {
   return tr;
 }
 
-class FontSizeCommand extends UICommand {
+export class FontSizeCommand extends UICommand {
   _popUp = null;
   _pt = 0;
 
@@ -65,5 +65,3 @@ class FontSizeCommand extends UICommand {
     return tr;
   };
 }
-
-export default FontSizeCommand;

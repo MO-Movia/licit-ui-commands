@@ -1,8 +1,8 @@
 import Color from 'color';
 import * as React from 'react';
 
-import CustomButton from './CustomButton';
-import clamp from './clamp';
+import {CustomButton} from './CustomButton';
+import {clamp} from './clamp';
 
 import './czi-color-editor.css';
 
@@ -38,8 +38,8 @@ function generateRainbowColors(
   return colors;
 }
 
-class ColorEditor extends React.PureComponent {
-  props: {
+export class ColorEditor extends React.PureComponent {
+    declare props: {
     close: (string) => void;
     hex?: string;
   };
@@ -99,4 +99,3 @@ class ColorEditor extends React.PureComponent {
     this.props.close(hex);
   };
 }
-export default ColorEditor;

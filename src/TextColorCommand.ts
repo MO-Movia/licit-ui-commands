@@ -1,17 +1,17 @@
 import * as React from 'react';
-import ColorEditor from './ui/ColorEditor';
+import {ColorEditor} from './ui/ColorEditor';
 import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
-import applyMark from './applyMark';
-import createPopUp from './ui/createPopUp';
-import findNodesWithSameMark from './findNodesWithSameMark';
-import isTextStyleMarkCommandEnabled from './isTextStyleMarkCommandEnabled';
+import {applyMark} from './applyMark';
+import {createPopUp} from './ui/createPopUp';
+import {findNodesWithSameMark} from './findNodesWithSameMark';
+import {isTextStyleMarkCommandEnabled} from './isTextStyleMarkCommandEnabled';
 import nullthrows from 'nullthrows';
 import {EditorState, TextSelection, Transaction} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
 import {MARK_TEXT_COLOR} from './MarkNames';
 import {Transform} from 'prosemirror-transform';
 
-class TextColorCommand extends UICommand {
+export class TextColorCommand extends UICommand {
   _popUp = null;
   _color = '';
 
@@ -108,4 +108,3 @@ class TextColorCommand extends UICommand {
   };
 }
 
-export default TextColorCommand;

@@ -43,7 +43,7 @@ export default {
   ],
 
   // An object that configures minimum threshold enforcement for coverage results
-  coverageThreshold: { global: { branches: 80, functions: 80, lines: 80, }, },
+  coverageThreshold: {global:{branches:80,functions:80,lines:80,},},
 
   // A path to a custom dependency extractor
   // dependencyExtractor: undefined,
@@ -74,7 +74,7 @@ export default {
   // An array of file extensions your modules use
   moduleFileExtensions: [
     'js',
-    //   "jsx",
+       "jsx",
     'ts',
     'tsx',
     //   "json",
@@ -104,15 +104,15 @@ export default {
   // Use this configuration option to add custom reporters to Jest
   reporters: [
     'default',
-    [
-      'jest-junit',
-      {
-        outputDirectory: 'coverage',
-        outputName: 'TESTS.xml'
-      }
+      [
+        'jest-junit',
+        {
+          outputDirectory: 'coverage',
+          outputName: 'TESTS.xml'
+        }
+      ]
     ]
-  ]
-  ,
+    ,
 
   // Automatically reset mock state between every test
   // resetMocks: false,
@@ -159,18 +159,17 @@ export default {
   // testLocationInResults: false,
 
   // The glob patterns Jest uses to detect test files
-  // testMatch: [
-  //   "**/__tests__/**/*.[jt]s?(x)",
-  //   "**/?(*.)+(spec|test).[tj]s?(x)"
-  // ],
+  testMatch: [
+    //   "**/__tests__/**/*.[jt]s?(x)",
+    '**/?(*.)+(spec|test).[tj]s?(x)',
+  ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-  // testPathIgnorePatterns: [
-  //   "/node_modules/"
-  // ],
+  testPathIgnorePatterns:
+    [ "/node_modules/"],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
-  testRegex: ['((\\.|/*.)(test))\\.(ts?|tsx?)$'],
+  //testRegex: ["((\\.|/*.)(test))\\.ts?$"],
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: "jest-sonar-reporter",
@@ -186,14 +185,12 @@ export default {
 
   // A map from regular expressions to paths to transformers
   transform: {
-    '^.+\\.tsx?$': 'babel-jest',
+    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(js|jsx)$': 'babel-jest',
   },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
-  // transformIgnorePatterns: [
-  //   "/node_modules/",
-  //   "\\.pnp\\.[^\\/]+$"
-  // ],
+  transformIgnorePatterns: ['node_modules/(?!(@modusoperandi|@mo)/).+\\.js$'],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
   // unmockedModulePathPatterns: undefined,

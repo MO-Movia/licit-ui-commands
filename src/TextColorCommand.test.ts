@@ -1,4 +1,4 @@
-import TextColorCommand from './TextColorCommand';
+import {TextColorCommand} from './TextColorCommand';
 import {EditorState, TextSelection} from 'prosemirror-state';
 import {Schema, Mark, Node} from 'prosemirror-model';
 import {schema} from 'prosemirror-test-builder';
@@ -51,7 +51,7 @@ describe('TextColorCommand', () => {
     const editorview = {} as unknown as EditorView;
 
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({docChanged: true} as unknown as Transform);
     const test = plugin.executeWithUserInput(
       state,
@@ -80,7 +80,7 @@ describe('TextColorCommand', () => {
     const editorview = {} as unknown as EditorView;
 
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({storedMarksSet: true} as unknown as Transform);
     const test = plugin.executeWithUserInput(
       state,
@@ -119,7 +119,7 @@ describe('TextColorCommand', () => {
       .mockReturnValue({} as unknown as TextSelection);
 
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({storedMarks: []} as unknown as Transform);
     const test = plugin.executeCustom(state, tr, 2, 2);
 
@@ -225,7 +225,7 @@ describe('TextColorCommand', () => {
         pos: 1,
       },
     };
-    jest.spyOn(findNodesWithSameMark, 'default').mockReturnValue(result1);
+    jest.spyOn(findNodesWithSameMark, 'findNodesWithSameMark').mockReturnValue(result1);
     const editorview = {} as unknown as EditorView;
 
     const result = plugin.waitForUserInput(

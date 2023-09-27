@@ -1,19 +1,17 @@
-import toggleList, {wrapItemsWithListInternal} from './toggleList';
+import {toggleList,wrapItemsWithListInternal} from './toggleList';
 import {Fragment, Node, NodeType, Schema} from 'prosemirror-model';
 import {TextSelection} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
 import * as prossermirror_utlites from 'prosemirror-utils';
-import {ContentNodeWithPos} from 'prosemirror-utils';
 import {HEADING, PARAGRAPH} from './NodeNames';
 import {MARK_TEXT_SELECTION} from './MarkNames';
 import * as applymark from './applyMark';
 import * as consolidateListNodes from './consolidateListNodes';
 import * as isListNode from './isListNode';
-
+// import { ContentNodeWithPos } from 'prosemirror-utils/dist/types';
 describe('toggleList', () => {
   let schema;
   let trr;
-
   beforeEach(() => {
     schema = new Schema({
       nodes: {
@@ -135,14 +133,14 @@ describe('toggleList', () => {
     jest
       .spyOn(prossermirror_utlites, 'findParentNodeOfType')
       .mockReturnValue(() => {
-        return {} as unknown as ContentNodeWithPos;
+        return {} as any;
       });
     const listNodeType = {} as unknown as NodeType;
     const test = toggleList(tr, schema, listNodeType, 'bold');
 
     expect(test).toBeDefined();
   });
-  it('should be 0 === from && 0 != to', () => {
+  fit('should be 0 === from && 0 != to', () => {
     const mock_schema = new Schema({
       nodes: {
         doc: {content: 'paragraph*'},
@@ -241,7 +239,7 @@ describe('toggleList', () => {
     jest
       .spyOn(prossermirror_utlites, 'findParentNodeOfType')
       .mockReturnValueOnce(() => {
-        return undefined as unknown as ContentNodeWithPos;
+        return undefined as any;
       })
       .mockReturnValueOnce(() => {
         return {
@@ -249,7 +247,7 @@ describe('toggleList', () => {
           start: 2,
           depth: 4,
           node: '',
-        } as unknown as ContentNodeWithPos;
+        } as any;
       })
       .mockReturnValueOnce(() => {
         return {
@@ -257,7 +255,7 @@ describe('toggleList', () => {
           start: 2,
           depth: 4,
           node: '',
-        } as unknown as ContentNodeWithPos;
+        } as any;
       });
     const listNodeType = {} as unknown as NodeType;
     const test = toggleList(tr, mock_schema, listNodeType, 'bold');
@@ -287,7 +285,7 @@ describe('toggleList', () => {
     jest
       .spyOn(prossermirror_utlites, 'findParentNodeOfType')
       .mockReturnValue(() => {
-        return {} as unknown as ContentNodeWithPos;
+        return {} as unknown as prossermirror_utlites.ContentNodeWithPos;
       });
     const listNodeType = {} as unknown as NodeType;
     const test = toggleList(tr, schema, listNodeType, 'bold');
@@ -319,7 +317,7 @@ describe('toggleList', () => {
     jest
       .spyOn(prossermirror_utlites, 'findParentNodeOfType')
       .mockReturnValue(() => {
-        return {} as unknown as ContentNodeWithPos;
+        return {} as unknown as prossermirror_utlites.ContentNodeWithPos;
       });
     const listNodeType = {} as unknown as NodeType;
     const sc = {
@@ -355,7 +353,7 @@ describe('toggleList', () => {
     jest
       .spyOn(prossermirror_utlites, 'findParentNodeOfType')
       .mockReturnValue(() => {
-        return {} as unknown as ContentNodeWithPos;
+        return {} as unknown as prossermirror_utlites.ContentNodeWithPos;
       });
     const listNodeType = {} as unknown as NodeType;
     const sc = {
@@ -395,7 +393,7 @@ describe('toggleList', () => {
     jest
       .spyOn(prossermirror_utlites, 'findParentNodeOfType')
       .mockReturnValue(() => {
-        return {} as unknown as ContentNodeWithPos;
+        return {} as unknown as prossermirror_utlites.ContentNodeWithPos;
       });
     const listNodeType = {} as unknown as NodeType;
     const sc = {
@@ -452,12 +450,12 @@ describe('toggleList', () => {
     jest
       .spyOn(prossermirror_utlites, 'findParentNodeOfType')
       .mockReturnValue(() => {
-        return {} as unknown as ContentNodeWithPos;
+        return {} as unknown as prossermirror_utlites.ContentNodeWithPos;
       });
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({docChanged: true} as unknown as Transform);
-    jest.spyOn(consolidateListNodes, 'default').mockReturnValue({
+    jest.spyOn(consolidateListNodes, 'consolidateListNodes').mockReturnValue({
       doc: dummyDoc,
       removeMark: () => {
         return {
@@ -528,12 +526,12 @@ describe('toggleList', () => {
     jest
       .spyOn(prossermirror_utlites, 'findParentNodeOfType')
       .mockReturnValue(() => {
-        return {} as unknown as ContentNodeWithPos;
+        return {} as unknown as prossermirror_utlites.ContentNodeWithPos;
       });
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({docChanged: true} as unknown as Transform);
-    jest.spyOn(consolidateListNodes, 'default').mockReturnValue({
+    jest.spyOn(consolidateListNodes, 'consolidateListNodes').mockReturnValue({
       doc: dummyDoc,
       removeMark: () => {
         return {
@@ -595,12 +593,12 @@ describe('toggleList', () => {
     jest
       .spyOn(prossermirror_utlites, 'findParentNodeOfType')
       .mockReturnValue(() => {
-        return {} as unknown as ContentNodeWithPos;
+        return {} as unknown as prossermirror_utlites.ContentNodeWithPos;
       });
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({docChanged: true} as unknown as Transform);
-    jest.spyOn(consolidateListNodes, 'default').mockReturnValue({
+    jest.spyOn(consolidateListNodes, 'consolidateListNodes').mockReturnValue({
       doc: dummyDoc,
       removeMark: () => {
         return {
@@ -675,12 +673,12 @@ describe('toggleList', () => {
     jest
       .spyOn(prossermirror_utlites, 'findParentNodeOfType')
       .mockReturnValue(() => {
-        return {} as unknown as ContentNodeWithPos;
+        return {} as unknown as prossermirror_utlites.ContentNodeWithPos;
       });
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({docChanged: true} as unknown as Transform);
-    jest.spyOn(consolidateListNodes, 'default').mockReturnValue({
+    jest.spyOn(consolidateListNodes, 'consolidateListNodes').mockReturnValue({
       doc: dummyDoc,
       removeMark: () => {
         return {
@@ -748,12 +746,12 @@ describe('toggleList', () => {
     jest
       .spyOn(prossermirror_utlites, 'findParentNodeOfType')
       .mockReturnValue(() => {
-        return {} as unknown as ContentNodeWithPos;
+        return {} as unknown as prossermirror_utlites.ContentNodeWithPos;
       });
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({docChanged: true} as unknown as Transform);
-    jest.spyOn(consolidateListNodes, 'default').mockReturnValue({
+    jest.spyOn(consolidateListNodes, 'consolidateListNodes').mockReturnValue({
       doc: dummyDoc,
       removeMark: () => {
         return {
@@ -803,7 +801,7 @@ describe('toggleList', () => {
     jest
       .spyOn(prossermirror_utlites, 'findParentNodeOfType')
       .mockReturnValue(() => {
-        return {} as unknown as ContentNodeWithPos;
+        return {} as unknown as prossermirror_utlites.ContentNodeWithPos;
       });
     const listNodeType = {} as unknown as NodeType;
     const sc = {
@@ -866,12 +864,12 @@ describe('toggleList', () => {
     jest
       .spyOn(prossermirror_utlites, 'findParentNodeOfType')
       .mockReturnValue(() => {
-        return {} as unknown as ContentNodeWithPos;
+        return {} as unknown as prossermirror_utlites.ContentNodeWithPos;
       });
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({docChanged: true} as unknown as Transform);
-    jest.spyOn(consolidateListNodes, 'default').mockReturnValue({
+    jest.spyOn(consolidateListNodes, 'consolidateListNodes').mockReturnValue({
       doc: dummyDoc,
       removeMark: () => {
         return {
@@ -946,12 +944,12 @@ describe('toggleList', () => {
     jest
       .spyOn(prossermirror_utlites, 'findParentNodeOfType')
       .mockReturnValue(() => {
-        return {} as unknown as ContentNodeWithPos;
+        return {} as unknown as prossermirror_utlites.ContentNodeWithPos;
       });
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({docChanged: true} as unknown as Transform);
-    jest.spyOn(consolidateListNodes, 'default').mockReturnValue({
+    jest.spyOn(consolidateListNodes, 'consolidateListNodes').mockReturnValue({
       doc: dummyDoc,
       removeMark: () => {
         return {
@@ -993,7 +991,7 @@ describe('toggleList', () => {
     jest
       .spyOn(prossermirror_utlites, 'findParentNodeOfType')
       .mockReturnValueOnce(() => {
-        return undefined as unknown as ContentNodeWithPos;
+        return undefined as unknown as prossermirror_utlites.ContentNodeWithPos;
       })
       .mockReturnValueOnce(() => {
         return {
@@ -1001,7 +999,7 @@ describe('toggleList', () => {
           start: 2,
           depth: 4,
           node: '',
-        } as unknown as ContentNodeWithPos;
+        } as unknown as prossermirror_utlites.ContentNodeWithPos;
       });
     const listNodeType = {} as unknown as NodeType;
     const test = toggleList(tr, mock_schema, listNodeType, 'bold');
@@ -1029,7 +1027,7 @@ describe('toggleList', () => {
       .spyOn(TextSelection, 'create')
       .mockReturnValue({from: 0, to: 1} as unknown as TextSelection);
     jest
-      .spyOn(isListNode, 'default')
+      .spyOn(isListNode, 'isListNode')
       .mockReturnValueOnce(true)
       .mockReturnValueOnce(true)
       .mockReturnValueOnce(true)
@@ -1038,7 +1036,7 @@ describe('toggleList', () => {
     jest
       .spyOn(prossermirror_utlites, 'findParentNodeOfType')
       .mockReturnValueOnce(() => {
-        return undefined as unknown as ContentNodeWithPos;
+        return undefined as unknown as prossermirror_utlites.ContentNodeWithPos;
       })
       .mockReturnValueOnce(() => {
         return {
@@ -1046,7 +1044,7 @@ describe('toggleList', () => {
           start: 2,
           depth: 4,
           node: '',
-        } as unknown as ContentNodeWithPos;
+        } as unknown as prossermirror_utlites.ContentNodeWithPos;
       });
 
     const listNodeType = {} as unknown as NodeType;

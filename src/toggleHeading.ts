@@ -3,13 +3,13 @@ import {Schema} from 'prosemirror-model';
 import {Transform} from 'prosemirror-transform';
 
 import {BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
-import compareNumber from './compareNumber';
-import isInsideListItem from './isInsideListItem';
-import isListNode from './isListNode';
+import {compareNumber} from './compareNumber';
+import {isInsideListItem} from './isInsideListItem';
+import {isListNode} from './isListNode';
 import {clearMarks} from './clearMarks';
 import {unwrapNodesFromList} from './toggleList';
 
-export default function toggleHeading(
+export function toggleHeading(
   tr: Transform,
   schema: Schema,
   level: number

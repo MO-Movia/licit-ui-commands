@@ -65,7 +65,7 @@ export function setTextAlign(
   return tr;
 }
 
-class TextAlignCommand extends UICommand {
+export class TextAlignCommand extends UICommand {
   _alignment: string;
 
   constructor(alignment: string) {
@@ -130,5 +130,3 @@ class TextAlignCommand extends UICommand {
     return tr;
   };
 }
-
-export default TextAlignCommand;

@@ -1,6 +1,6 @@
 import {Selection, NodeSelection} from 'prosemirror-state';
 import {Schema} from 'prosemirror-model';
-import isNodeSelectionForNodeType from './isNodeSelectionForNodeType';
+import {isNodeSelectionForNodeType} from './isNodeSelectionForNodeType';
 
 describe('isNodeSelectionForNodeType', () => {
   it('should return true if the selection is a NodeSelection for the provided node type', () => {
