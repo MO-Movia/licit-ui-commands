@@ -1,5 +1,5 @@
-import consolidateListNodes from './consolidateListNodes';
-import compareNumber from './compareNumber';
+import {consolidateListNodes} from './consolidateListNodes';
+import {compareNumber} from './compareNumber';
 import nullthrows from 'nullthrows';
 import {Fragment, Node, NodeType, Schema} from 'prosemirror-model';
 import {TextSelection, Transaction} from 'prosemirror-state';
@@ -7,12 +7,12 @@ import {Transform} from 'prosemirror-transform';
 import {findParentNodeOfType} from 'prosemirror-utils';
 
 import {HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
-import isListNode from './isListNode';
-import transformAndPreserveTextSelection from './transformAndPreserveTextSelection';
+import {isListNode} from './isListNode';
+import {transformAndPreserveTextSelection} from './transformAndPreserveTextSelection';
 
 import type {SelectionMemo} from './transformAndPreserveTextSelection';
 
-export default function toggleList(
+export function toggleList(
   tr: Transform,
   schema: Schema,
   listNodeType: NodeType,
