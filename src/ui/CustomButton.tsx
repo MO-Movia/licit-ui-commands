@@ -3,6 +3,7 @@ import { PointerSurface } from './PointerSurface';
 import * as React from 'react';
 import { TooltipSurface } from './TooltipSurface';
 import cx from 'classnames';
+import { ThemeProvider } from './contextProvider';
 
 import type {PointerSurfaceProps} from './PointerSurface';
 
@@ -18,12 +19,14 @@ props: CustomButtonProps;
     const {icon, label, className, title, theme, ...pointerProps} = this.props;
     const klass = cx(className, 'czi-custom-button', theme);
     return (
-      <TooltipSurface tooltip={title}>
-        <PointerSurface {...pointerProps} className={klass}>
-          {icon}
-          {label}
-        </PointerSurface>
-      </TooltipSurface>
+      <ThemeProvider theme={theme}>
+        <TooltipSurface tooltip={title}>
+          <PointerSurface {...pointerProps} className={klass}>
+            {icon}
+            {label}
+          </PointerSurface>
+        </TooltipSurface>
+      </ThemeProvider>
     );
   }
 }

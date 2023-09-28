@@ -75,4 +75,4 @@ export { MARK_TEXT_HIGHLIGHT } from './MarkNames';
 export { MARK_TEXT_SELECTION } from './MarkNames';
 export { MARK_UNDERLINE } from './MarkNames';
 export { MARK_SPACER } from './MarkNames';
-
+export { ThemeProvider, ThemeContext } from './ui/contextProvider';

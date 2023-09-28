@@ -90,7 +90,6 @@
 
 .czi-custom-button.disabled,
 .czi-custom-button.disabled:hover {
-  background: var(--czi-button-hover);
   color: #666;
   cursor: unset;
   pointer-events: none;
