@@ -14,7 +14,7 @@ class IndentCommand extends UICommand {
   }
 
   isActive = (_state: EditorState): boolean => {
-    return true;
+    return false;
   };
 
 
