@@ -51,7 +51,9 @@ export class TooltipSurface extends React.PureComponent<TooltipSurfaceProps> {
     );
   }
 
-  _onMouseEnter = (): void => {
+  _onMouseEnter = (e): void => {
+    if(e && e.target && e.target.nodeName==='IMG' ||
+       e.target && e.target.className.startsWith('czi-custom-button')){
     if (!this._popUp) {
       const { tooltip } = this.props;
       this._popUp = createPopUp(
@@ -64,11 +66,14 @@ export class TooltipSurface extends React.PureComponent<TooltipSurfaceProps> {
         }
       );
     }
+  }
   };
 
-  _onMouseLeave = (): void => {
+  _onMouseLeave = (e): void => {
+    if(e && e.target && e.target.nodeName!=='IMG'){
     this._popUp && this._popUp.close();
     this._popUp = null;
+    }
   };
 
   _onClose = (): void => {

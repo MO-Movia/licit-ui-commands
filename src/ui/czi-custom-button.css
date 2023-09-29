@@ -30,7 +30,7 @@
 
 /* Theme based styles */
 .czi-custom-button.dark {
-  background-color: transparent;
+  background: #444;
   border-color: transparent;
 }
 
