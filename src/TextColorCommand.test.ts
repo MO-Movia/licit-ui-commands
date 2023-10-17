@@ -154,6 +154,34 @@ describe('TextColorCommand', () => {
 
     expect(result).toBeDefined();
   });
+  it('waitForUserInput function() should be return undefined', () => {
+    const state = {
+      plugins: [],
+      selection: {from: 1, to: 2},
+      schema: {marks: {'mark-text-color': MARK_TEXT_COLOR}},
+      doc: {
+        nodeAt: (_x) => {
+          return {isAtom: true, isLeaf: true, isText: false};
+        },
+      },
+    } as unknown as EditorState;
+
+    const _dispatch = jest.fn();
+    const event_ = {
+      currentTarget: null,
+    } as unknown as React.SyntheticEvent;
+
+    const editorview = {} as unknown as EditorView;
+
+    const result = plugin.waitForUserInput(
+      state,
+      _dispatch,
+      editorview,
+      event_
+    );
+
+    expect(result).toBeDefined();
+  });
 
   it('should resolve with undefined when event is not defined or currentTarget is not an HTMLElement', async () => {
     const state = {
@@ -225,7 +253,9 @@ describe('TextColorCommand', () => {
         pos: 1,
       },
     };
-    jest.spyOn(findNodesWithSameMark, 'findNodesWithSameMark').mockReturnValue(result1);
+    jest
+      .spyOn(findNodesWithSameMark, 'findNodesWithSameMark')
+      .mockReturnValue(result1);
     const editorview = {} as unknown as EditorView;
 
     const result = plugin.waitForUserInput(
@@ -236,6 +266,23 @@ describe('TextColorCommand', () => {
     );
 
     expect(result).toBeDefined();
+  });
+
+  it('executeWithUserInput function() should return false when color is undefined', () => {
+    const state = {
+      // Define your test state here
+    } as unknown as EditorState;
+
+    const editorview = {} as unknown as EditorView;
+
+    const test = plugin.executeWithUserInput(
+      state,
+      (_x) => {'';},
+      editorview,
+      undefined
+    );
+
+    expect(test).toBeFalsy();
   });
 });
 
@@ -255,4 +302,6 @@ describe('HeadingCommand', () => {
     const isEnabled = command.isEnabled(state);
     expect(isEnabled).toBe(false);
   });
+
+  //////////////////////////////////////
 });

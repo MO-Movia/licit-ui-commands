@@ -67,6 +67,35 @@ describe('TextHighlightCommand', () => {
 
     expect(test).toBeTruthy();
   });
+  it('executeWithUserInput function() should be return true, If docChanged = true', () => {
+    const state = {
+      plugins: [],
+      schema: {marks: {'mark-text-highlight': MARK_TEXT_HIGHLIGHT}},
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return {isAtom: true, isLeaf: true, isText: false};
+          },
+        },
+      },
+    } as unknown as EditorState;
+
+    const editorview = {} as unknown as EditorView;
+
+    jest
+      .spyOn(applymark, 'applyMark')
+      .mockReturnValue({docChanged: true} as unknown as Transform);
+    const test = plugin.executeWithUserInput(
+      state,
+      (_x) => {
+        return 'red';
+      },
+      editorview,
+      null
+    );
+
+    expect(test).toBeTruthy();
+  });
   it('executeWithUserInput function() should be return true, If storedMarksSet = true', () => {
     const state = {
       plugins: [],
@@ -126,7 +155,10 @@ describe('TextHighlightCommand', () => {
   });
 
   it('should call when executeCustom function return false', () => {
-    const mock = jest.spyOn(ismarkcommandenabled, 'isTextStyleMarkCommandEnabled');
+    const mock = jest.spyOn(
+      ismarkcommandenabled,
+      'isTextStyleMarkCommandEnabled'
+    );
     const state = {
       plugins: [],
       schema: {marks: {'mark-text-highlight': undefined}},
@@ -138,7 +170,10 @@ describe('TextHighlightCommand', () => {
   });
 
   it('should call when executeCustom function return false', () => {
-    const mock = jest.spyOn(ismarkcommandenabled, 'isTextStyleMarkCommandEnabled');
+    const mock = jest.spyOn(
+      ismarkcommandenabled,
+      'isTextStyleMarkCommandEnabled'
+    );
     const state = {
       selection: {to: 2, from: 1},
       schema: {
@@ -160,7 +195,10 @@ describe('TextHighlightCommand', () => {
   });
 
   it('should call when executeCustom function return true', () => {
-    const mock = jest.spyOn(ismarkcommandenabled, 'isTextStyleMarkCommandEnabled');
+    const mock = jest.spyOn(
+      ismarkcommandenabled,
+      'isTextStyleMarkCommandEnabled'
+    );
     const state = {
       selection: {to: 2, from: 1},
       schema: {
@@ -178,7 +216,9 @@ describe('TextHighlightCommand', () => {
 
     const test = plugin.isEnabled(state);
     expect(mock).toHaveBeenLastCalledWith(state, 'mark-text-highlight');
-    jest.spyOn(isNodeSelectionForNodeType, 'isNodeSelectionForNodeType').mockReturnValue(true);
+    jest
+      .spyOn(isNodeSelectionForNodeType, 'isNodeSelectionForNodeType')
+      .mockReturnValue(true);
     expect(test).toBeTruthy;
   });
   it('waitForUserInput function() should be return undefined', () => {
@@ -280,7 +320,9 @@ describe('TextHighlightCommand', () => {
         pos: 1,
       },
     };
-    jest.spyOn(findNodesWithSameMark, 'findNodesWithSameMark').mockReturnValue(result1);
+    jest
+      .spyOn(findNodesWithSameMark, 'findNodesWithSameMark')
+      .mockReturnValue(result1);
     const editorview = {} as unknown as EditorView;
 
     const result = plugin.waitForUserInput(

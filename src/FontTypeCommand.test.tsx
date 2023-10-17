@@ -1,6 +1,6 @@
 import {FontTypeCommand} from './FontTypeCommand';
 import {EditorState} from 'prosemirror-state';
-import {Schema,Node} from 'prosemirror-model';
+import {Schema, Node} from 'prosemirror-model';
 import {schema} from 'prosemirror-test-builder';
 import * as applymark from './applyMark';
 import {Transform} from 'prosemirror-transform';
@@ -10,7 +10,7 @@ declare let describe: jest.Describe;
 declare let it: jest.It;
 declare const expect: jest.Expect;
 
-describe('FontSizeCommand', () => {
+describe('FontTypeCommand', () => {
   let schema1;
   let command: FontTypeCommand;
   let dispatch: jest.Mock;
@@ -49,6 +49,9 @@ describe('FontTypeCommand', () => {
   let plugin!: FontTypeCommand;
   beforeEach(() => {
     plugin = new FontTypeCommand('Arielle');
+  });
+  it('should create when name is null', () => {
+    expect(new FontTypeCommand(null)).toBeTruthy();
   });
   it('should create', () => {
     expect(plugin).toBeTruthy();
@@ -229,6 +232,32 @@ describe('FontTypeCommand', () => {
       },
     } as unknown as EditorState;
 
+    const test = plugin.execute(state, (_x) => {
+      return '';
+    });
+    expect(test).toBe(true);
+  });
+  it('should call when execute function return true', () => {
+    jest
+      .spyOn(applymark, 'applyMark')
+      .mockReturnValue({docChanged: true} as unknown as Transform);
+    const state = {
+      selection: {
+        node: null,
+        anchor: 0,
+        head: 0,
+      },
+      plugins: [],
+      schema: {marks: {'mark-font-type': MARK_FONT_TYPE}},
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return {isAtom: true, isLeaf: true, isText: false};
+          },
+        },
+      },
+    } as unknown as EditorState;
+    plugin = new FontTypeCommand(null);
     const test = plugin.execute(state, (_x) => {
       return '';
     });

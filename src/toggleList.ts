@@ -22,15 +22,11 @@ export function toggleList(
   if (!selection || !doc) {
     return tr;
   }
-
-  // [FS][04-AUG-2020][IRAD-955]
-  // Fix Unable to apply list using Ctrl+A selection
   let {from} = selection;
   let {to} = selection;
   let newselection = selection;
 
   if (0 === from && 0 != to) {
-    // In here when Ctrl+A is pressed.
     let startPos = -1;
     let endPos = -1;
 
@@ -41,11 +37,7 @@ export function toggleList(
         endPos = pos + 1;
       }
     });
-
-    // validate endPos. Both start & end pos can't be -ve.
     endPos = -1 == endPos ? to : endPos;
-
-    // Actual starting position similar when manually selecting
     startPos = 0 < to - endPos ? to - endPos : 0;
 
     from = startPos;
@@ -102,8 +94,6 @@ function wrapNodesWithList(
   newselection = null
 ): Transform {
   return transformAndPreserveTextSelection(tr, schema, (memo) => {
-    // [FS][04-AUG-2020][IRAD-955]
-    // Fix Unable to apply list using Ctrl+A selection
     return consolidateListNodes(
       wrapNodesWithListInternal(
         memo,
@@ -215,10 +205,10 @@ export function wrapItemsWithListInternal(
   const paragraphNodes = [];
   items.forEach((item) => {
     const {node, pos} = item;
-    // Temporarily annotate each node with an unique ID.
+
     const uniqueID = {};
     const nodeAttrs = {...node.attrs, id: uniqueID};
-    // Replace the original node with the node annotated by the uniqueID.
+
     tr = tr.setNodeMarkup(pos, paragraph, nodeAttrs, node.marks);
     paragraphNodes.push(tr.doc.nodeAt(pos));
   });
@@ -255,7 +245,6 @@ export function wrapItemsWithListInternal(
   const listItemNodes = [];
   items.forEach((item) => {
     const {node} = item;
-    // Restore the annotated nodes with the copy of the original ones.
     const paragraphNode = paragraph.create(
       node.attrs,
       node.content,
@@ -303,9 +292,6 @@ export function wrapItemsWithListInternal(
 
   return tr;
 }
-
-// [FS] IRAD-966 2020-05-20
-// Fix: Toggling issue for Multi-level list.
 
 function unwrapNodesFromSelection(
   tr: Transform,
@@ -421,7 +407,6 @@ function unwrapNodesFromListInternal(
 
   const listNodePoses = [];
 
-  // keep all list type nodes starting position
   tr.doc.nodesBetween(from, to, (node, pos) => {
     if (isListNode(node)) {
       listNodePoses.push(pos);
@@ -431,7 +416,7 @@ function unwrapNodesFromListInternal(
   if (from === to && from < 1) {
     return tr;
   }
-  // Unwraps all selected list
+
   [...listNodePoses]
     .sort(compareNumber)
     .reverse()

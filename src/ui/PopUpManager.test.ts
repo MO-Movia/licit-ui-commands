@@ -159,4 +159,34 @@ describe('PopUpManager', () => {
     window.cancelAnimationFrame = originalCancelAnimationFrame;
     window.requestAnimationFrame = originalRequestAnimationFrame;
   });
+  it('should handle _onResize ', () => {
+    instance._rafID = 1;
+    expect(instance._onResize({} as unknown as Event)).toBeUndefined();
+  });
+  it('should handle _onMouseChange  ', () => {
+    instance._rafID = 1;
+    expect(
+      instance._onMouseChange({} as unknown as MouseEvent)
+    ).toBeUndefined();
+  });
+  it('should handle _syncPosition   ', () => {
+    const mockBody = document.createElement('div');
+    const mockCloseFn = jest.fn();
+    const mockDetails = {
+      anchor: document.createElement('div'),
+      bodyRect: false,
+      autoDismiss: true,
+      modal: false,
+      body: mockBody,
+      position: jest.fn().mockReturnValue({x: 100, y: 200}),
+      close: mockCloseFn,
+    };
+
+    const mockBridge = {
+      getDetails: jest.fn().mockReturnValue(mockDetails),
+    };
+    popUpManager._bridges.set(mockBridge, Date.now() - 1000);
+    instance._rafID = 1;
+    expect(instance._syncPosition()).toBeUndefined();
+  });
 });
