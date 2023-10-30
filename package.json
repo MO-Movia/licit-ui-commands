@@ -20,7 +20,6 @@
     "lint:ts": "eslint src --ext .ts,.tsx --fix",
     "lint:css": "stylelint \"**/*.css\"",
     "lint": "npm run lint:css & npm run lint:ts",
-    "prepare": "npm run build:dist",
     "test": "jest",
     "test:unit": "jest",
     "test:coverage": "jest --coverage",
