@@ -101,6 +101,11 @@ class TextHighlightCommand extends UICommand {
     );
     return tr;
   };
+
+  cancel(): void {
+    return null;
+  }
+
 }
 
 export default TextHighlightCommand;

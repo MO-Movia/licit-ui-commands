@@ -10,6 +10,7 @@ import {
   LINE_SPACING_115,
   LINE_SPACING_150,
 } from './ui/toCSSLineSpacing';
+import * as React from 'react';
 
 export function setTextLineSpacing(
   tr: Transform,
@@ -123,6 +124,28 @@ class TextLineSpacingCommand extends UICommand {
   isEnabled = (state: EditorState): boolean => {
     return this.isActive(state) || this.execute(state);
   };
+
+  waitForUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _event?: React.SyntheticEvent
+  ): Promise<undefined> => {
+    return Promise.resolve(undefined);
+  };
+
+  executeWithUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _inputs?: string
+  ): boolean => {
+    return false;
+  };
+
+  cancel(): void {
+    return null;
+  }
 
   execute = (
     state: EditorState,

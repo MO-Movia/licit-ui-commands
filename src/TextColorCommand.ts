@@ -106,6 +106,10 @@ class TextColorCommand extends UICommand {
     (tr as Transaction).storedMarks = storedmarks;
     return tr;
   };
+
+  cancel(): void {
+    return null;
+  }
 }
 
 export default TextColorCommand;

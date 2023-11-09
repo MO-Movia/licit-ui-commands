@@ -5,6 +5,8 @@ import {Transaction, EditorState, TextSelection} from 'prosemirror-state';
 import {MARK_FONT_SIZE} from './MarkNames';
 import {Schema} from 'prosemirror-model';
 import {Transform} from 'prosemirror-transform';
+import {EditorView} from 'prosemirror-view';
+import * as React from 'react';
 
 function setFontSize(tr: Transform, schema: Schema, pt: number): Transform {
   const markType = schema.marks[MARK_FONT_SIZE];
@@ -28,6 +30,28 @@ class FontSizeCommand extends UICommand {
   isEnabled = (state: EditorState): boolean => {
     return isTextStyleMarkCommandEnabled(state, MARK_FONT_SIZE);
   };
+
+  waitForUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _event?: React.SyntheticEvent
+  ): Promise<undefined> => {
+    return Promise.resolve(undefined);
+  };
+
+  executeWithUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _inputs?: string
+  ): boolean => {
+    return false;
+  };
+
+  cancel(): void {
+    return null;
+  }
 
   execute = (
     state: EditorState,
