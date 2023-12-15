@@ -54,7 +54,8 @@ module.exports = {
     requestAnimationFrame: false,
     window: false,
     CSSStyleDeclaration: false,
-  },
+    console:false
+    },
   overrides: [
     {
       // enable jest globals in test files
