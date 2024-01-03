@@ -1,6 +1,6 @@
 import * as React from 'react';
 // import ColorEditor from './ui/ColorEditor';
-import { ColorEditor } from 'color-picker';
+import { ColorEditor } from '@modusoperandi/color-picker';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 import applyMark from './applyMark';
 import createPopUp from './ui/createPopUp';

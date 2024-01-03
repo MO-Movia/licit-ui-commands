@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { ColorEditor } from 'color-picker';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 import applyMark from './applyMark';
 import createPopUp from './ui/createPopUp';
@@ -11,6 +10,7 @@ import { EditorView } from 'prosemirror-view';
 import { MARK_TEXT_HIGHLIGHT } from './MarkNames';
 import { Transform } from 'prosemirror-transform';
 import { RuntimeService } from './runtime.service';
+import { ColorEditor } from '@modusoperandi/color-picker';
 
 class TextHighlightCommand extends UICommand {
   _popUp = null;
