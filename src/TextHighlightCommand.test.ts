@@ -9,7 +9,7 @@ import * as isNodeSelectionForNodeType from './isNodeSelectionForNodeType';
 import {MATH} from './NodeNames';
 import {Mark, Node} from 'prosemirror-model';
 import * as findNodesWithSameMark from './findNodesWithSameMark';
-import * as React from 'react';
+// import * as React from 'react';
 
 describe('TextHighlightCommand', () => {
   let plugin!: TextHighlightCommand;
@@ -236,7 +236,7 @@ describe('TextHighlightCommand', () => {
     const _dispatch = jest.fn();
     const event_ = {
       currentTarget: document.createElement('div'),
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
 
     const editorview = {} as unknown as EditorView;
 
@@ -266,7 +266,7 @@ describe('TextHighlightCommand', () => {
     const editorview = {} as unknown as EditorView;
     const event_ = {
       currentTarget: 'not an HTMLElement',
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
     const result = await plugin.waitForUserInput(
       state,
       _dispatch,
@@ -283,7 +283,7 @@ describe('TextHighlightCommand', () => {
     const editorview = {} as unknown as EditorView;
     const event_ = {
       currentTarget: 'not an HTMLElement',
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
     const result = await plugin.waitForUserInput(
       state,
       _dispatch,
@@ -308,7 +308,7 @@ describe('TextHighlightCommand', () => {
     const _dispatch = jest.fn();
     const event_ = {
       currentTarget: document.createElement('div'),
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
     const result1 = {
       mark: {attrs: {color: 'red'}} as unknown as Mark,
       from: {

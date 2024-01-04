@@ -6,7 +6,7 @@ import {Transform} from 'prosemirror-transform';
 import {MARK_TEXT_COLOR} from './MarkNames';
 import {EditorView} from 'prosemirror-view';
 import * as applymark from './applyMark';
-import * as React from 'react';
+// import * as React from 'react';
 import * as findNodesWithSameMark from './findNodesWithSameMark';
 
 describe('TextColorCommand', () => {
@@ -141,7 +141,7 @@ describe('TextColorCommand', () => {
     const _dispatch = jest.fn();
     const event_ = {
       currentTarget: document.createElement('div'),
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
 
     const editorview = {} as unknown as EditorView;
 
@@ -169,7 +169,7 @@ describe('TextColorCommand', () => {
     const _dispatch = jest.fn();
     const event_ = {
       currentTarget: null,
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
 
     const editorview = {} as unknown as EditorView;
 
@@ -199,7 +199,7 @@ describe('TextColorCommand', () => {
     const editorview = {} as unknown as EditorView;
     const event_ = {
       currentTarget: 'not an HTMLElement',
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
     const result = await plugin.waitForUserInput(
       state,
       _dispatch,
@@ -216,7 +216,7 @@ describe('TextColorCommand', () => {
     const editorview = {} as unknown as EditorView;
     const event_ = {
       currentTarget: 'not an HTMLElement',
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
     const result = await plugin.waitForUserInput(
       state,
       _dispatch,
@@ -241,7 +241,7 @@ describe('TextColorCommand', () => {
     const _dispatch = jest.fn();
     const event_ = {
       currentTarget: document.createElement('div'),
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
     const result1 = {
       mark: {attrs: {color: 'red'}} as unknown as Mark,
       from: {
