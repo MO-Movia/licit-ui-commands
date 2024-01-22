@@ -1,8 +1,8 @@
-import clamp from './ui/clamp';
-import compareNumber from './compareNumber';
-import consolidateListNodes from './consolidateListNodes';
-import isListNode from './isListNode';
-import transformAndPreserveTextSelection from './transformAndPreserveTextSelection';
+import {clamp} from './ui/clamp';
+import {compareNumber} from './compareNumber';
+import {consolidateListNodes} from './consolidateListNodes';
+import {isListNode} from './isListNode';
+import {transformAndPreserveTextSelection} from './transformAndPreserveTextSelection';
 
 import {EditorState, Transaction} from 'prosemirror-state';
 import {BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
@@ -18,7 +18,7 @@ type UpdateIntendType = {
   docChanged: boolean;
 };
 
-export default function updateIndentLevel(
+export function updateIndentLevel(
   state: EditorState,
   tr: Transform,
   schema: Schema,

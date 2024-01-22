@@ -1,7 +1,7 @@
 import Adapter from '@cfaester/enzyme-adapter-react-18';
 import {configure, shallow} from 'enzyme';
-import ColorEditor from './ColorEditor';
-import CustomButton from './CustomButton';
+import {ColorEditor} from './ColorEditor';
+import {CustomButton} from './CustomButton';
 import React from 'react';
 
 configure({adapter: new Adapter()});

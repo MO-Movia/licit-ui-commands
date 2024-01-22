@@ -1,10 +1,10 @@
 import {EditorState} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
 import {EditorView} from 'prosemirror-view';
-import toggleHeading from './toggleHeading';
+import {toggleHeading} from './toggleHeading';
 import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
 
-class HeadingCommand extends UICommand {
+export class HeadingCommand extends UICommand {
   _level: number;
 
   constructor(level: number) {
@@ -36,4 +36,3 @@ class HeadingCommand extends UICommand {
   };
 }
 
-export default HeadingCommand;

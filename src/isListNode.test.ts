@@ -1,4 +1,4 @@
-import isListNode from './isListNode';
+import {isListNode} from './isListNode';
 import {Node, Schema} from 'prosemirror-model';
 describe('isListNode', () => {
   it('should return true if the node is bullet_list', () => {

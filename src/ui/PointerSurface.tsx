@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import * as React from 'react';
 
-import preventEventDefault from './preventEventDefault';
+import {preventEventDefault} from './preventEventDefault';
 import {EditorView} from 'prosemirror-view';
 
 export type PointerSurfaceProps = {
@@ -19,7 +19,7 @@ export type PointerSurfaceProps = {
 };
 
 export class PointerSurface extends React.PureComponent {
-  props: PointerSurfaceProps;
+  declare props: PointerSurfaceProps;
 
   _clicked = false;
   _mul = false;

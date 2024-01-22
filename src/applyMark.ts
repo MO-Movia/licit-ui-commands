@@ -32,7 +32,7 @@ function markApplies(
 }
 
 // https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.js
-export default function applyMark(
+export function applyMark(
   tr: Transform,
   _schema: Schema,
   markType: MarkType,

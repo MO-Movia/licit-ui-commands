@@ -1,4 +1,4 @@
-import clamp from './clamp';
+import {clamp} from './clamp';
 import {fromHTMlElement, fromXY, isIntersected} from './rects';
 import type {PositionHandler} from './PopUpPosition';
 import type {Rect} from './rects';
@@ -22,7 +22,7 @@ export type PopUpBridge = {
 const CLICK_INTERVAL = 350;
 const DUMMY_RECT = {x: -10000, y: -10000, w: 0, h: 0};
 
-class PopUpManager {
+export class PopUpManager {
   _bridges = new Map();
   _positions = new Map();
 
@@ -244,6 +244,4 @@ class PopUpManager {
   };
 }
 
-const instance = new PopUpManager();
-
-export default instance;
+export const instance = new PopUpManager();

@@ -1,5 +1,5 @@
 import {MARK_TEXT_COLOR, MARK_TEXT_HIGHLIGHT} from './MarkNames';
-import TextHighlightCommand from './TextHighlightCommand';
+import {TextHighlightCommand} from './TextHighlightCommand';
 import {EditorView} from 'prosemirror-view';
 import * as applymark from './applyMark';
 import {EditorState, TextSelection} from 'prosemirror-state';
@@ -9,7 +9,7 @@ import * as isNodeSelectionForNodeType from './isNodeSelectionForNodeType';
 import {MATH} from './NodeNames';
 import {Mark, Node} from 'prosemirror-model';
 import * as findNodesWithSameMark from './findNodesWithSameMark';
-import * as React from 'react';
+// import * as React from 'react';
 
 describe('TextHighlightCommand', () => {
   let plugin!: TextHighlightCommand;
@@ -54,7 +54,7 @@ describe('TextHighlightCommand', () => {
     const editorview = {} as unknown as EditorView;
 
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({docChanged: true} as unknown as Transform);
     const test = plugin.executeWithUserInput(
       state,
@@ -63,6 +63,35 @@ describe('TextHighlightCommand', () => {
       },
       editorview,
       'red'
+    );
+
+    expect(test).toBeTruthy();
+  });
+  it('executeWithUserInput function() should be return true, If docChanged = true', () => {
+    const state = {
+      plugins: [],
+      schema: {marks: {'mark-text-highlight': MARK_TEXT_HIGHLIGHT}},
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return {isAtom: true, isLeaf: true, isText: false};
+          },
+        },
+      },
+    } as unknown as EditorState;
+
+    const editorview = {} as unknown as EditorView;
+
+    jest
+      .spyOn(applymark, 'applyMark')
+      .mockReturnValue({docChanged: true} as unknown as Transform);
+    const test = plugin.executeWithUserInput(
+      state,
+      (_x) => {
+        return 'red';
+      },
+      editorview,
+      null
     );
 
     expect(test).toBeTruthy();
@@ -82,7 +111,7 @@ describe('TextHighlightCommand', () => {
 
     const editorview = {} as unknown as EditorView;
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({storedMarksSet: true} as unknown as Transform);
     const test = plugin.executeWithUserInput(
       state,
@@ -119,14 +148,17 @@ describe('TextHighlightCommand', () => {
       .spyOn(TextSelection, 'create')
       .mockReturnValue({} as unknown as TextSelection);
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({storedMarks: []} as unknown as Transform);
     const test = plugin.executeCustom(state, tr, 2, 2);
     expect(test).toStrictEqual({storedMarks: []});
   });
 
   it('should call when executeCustom function return false', () => {
-    const mock = jest.spyOn(ismarkcommandenabled, 'default');
+    const mock = jest.spyOn(
+      ismarkcommandenabled,
+      'isTextStyleMarkCommandEnabled'
+    );
     const state = {
       plugins: [],
       schema: {marks: {'mark-text-highlight': undefined}},
@@ -138,7 +170,10 @@ describe('TextHighlightCommand', () => {
   });
 
   it('should call when executeCustom function return false', () => {
-    const mock = jest.spyOn(ismarkcommandenabled, 'default');
+    const mock = jest.spyOn(
+      ismarkcommandenabled,
+      'isTextStyleMarkCommandEnabled'
+    );
     const state = {
       selection: {to: 2, from: 1},
       schema: {
@@ -160,7 +195,10 @@ describe('TextHighlightCommand', () => {
   });
 
   it('should call when executeCustom function return true', () => {
-    const mock = jest.spyOn(ismarkcommandenabled, 'default');
+    const mock = jest.spyOn(
+      ismarkcommandenabled,
+      'isTextStyleMarkCommandEnabled'
+    );
     const state = {
       selection: {to: 2, from: 1},
       schema: {
@@ -178,7 +216,9 @@ describe('TextHighlightCommand', () => {
 
     const test = plugin.isEnabled(state);
     expect(mock).toHaveBeenLastCalledWith(state, 'mark-text-highlight');
-    jest.spyOn(isNodeSelectionForNodeType, 'default').mockReturnValue(true);
+    jest
+      .spyOn(isNodeSelectionForNodeType, 'isNodeSelectionForNodeType')
+      .mockReturnValue(true);
     expect(test).toBeTruthy;
   });
   it('waitForUserInput function() should be return undefined', () => {
@@ -196,7 +236,7 @@ describe('TextHighlightCommand', () => {
     const _dispatch = jest.fn();
     const event_ = {
       currentTarget: document.createElement('div'),
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
 
     const editorview = {} as unknown as EditorView;
 
@@ -226,7 +266,7 @@ describe('TextHighlightCommand', () => {
     const editorview = {} as unknown as EditorView;
     const event_ = {
       currentTarget: 'not an HTMLElement',
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
     const result = await plugin.waitForUserInput(
       state,
       _dispatch,
@@ -243,7 +283,7 @@ describe('TextHighlightCommand', () => {
     const editorview = {} as unknown as EditorView;
     const event_ = {
       currentTarget: 'not an HTMLElement',
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
     const result = await plugin.waitForUserInput(
       state,
       _dispatch,
@@ -268,7 +308,7 @@ describe('TextHighlightCommand', () => {
     const _dispatch = jest.fn();
     const event_ = {
       currentTarget: document.createElement('div'),
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
     const result1 = {
       mark: {attrs: {color: 'red'}} as unknown as Mark,
       from: {
@@ -280,7 +320,9 @@ describe('TextHighlightCommand', () => {
         pos: 1,
       },
     };
-    jest.spyOn(findNodesWithSameMark, 'default').mockReturnValue(result1);
+    jest
+      .spyOn(findNodesWithSameMark, 'findNodesWithSameMark')
+      .mockReturnValue(result1);
     const editorview = {} as unknown as EditorView;
 
     const result = plugin.waitForUserInput(

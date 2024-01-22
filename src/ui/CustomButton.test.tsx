@@ -1,6 +1,6 @@
 import Adapter from '@cfaester/enzyme-adapter-react-18';
 import {configure, shallow} from 'enzyme';
-import CustomButton from './CustomButton';
+import {CustomButton} from './CustomButton';
 import {PointerSurface} from './PointerSurface';
 import {TooltipSurface} from './TooltipSurface';
 import React from 'react';

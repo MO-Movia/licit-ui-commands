@@ -1,4 +1,4 @@
-import MarkToggleCommand, {toggleCustomStyle} from './MarkToggleCommand';
+import {MarkToggleCommand,toggleCustomStyle} from './MarkToggleCommand';
 import {EditorState} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
 import {Schema, Mark} from 'prosemirror-model';

@@ -88,7 +88,7 @@ function createGroup(): Array<{[key: string]: TextLineSpacingCommand}> {
   return [group];
 }
 
-class TextLineSpacingCommand extends UICommand {
+export class TextLineSpacingCommand extends UICommand {
   _lineSpacing?: string;
 
   static createGroup = createGroup;
@@ -143,5 +143,3 @@ class TextLineSpacingCommand extends UICommand {
     }
   };
 }
-
-export default TextLineSpacingCommand;

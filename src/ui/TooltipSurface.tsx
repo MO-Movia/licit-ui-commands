@@ -2,9 +2,9 @@ import './czi-tooltip-surface.css';
 import './czi-animations.css';
 
 import * as React from 'react';
-import createPopUp from './createPopUp';
+import {createPopUp} from './createPopUp';
 import {atAnchorBottomCenter} from './PopUpPosition';
-import uuid from './uuid';
+import {uuid} from './uuid';
 
 type TooltipSurfaceProps = {
   tooltip: string;
@@ -24,7 +24,7 @@ export class TooltipSurface extends React.PureComponent<TooltipSurfaceProps> {
   _id = uuid();
   _popUp = null;
 
-  props: {
+  declare props: {
     tooltip: string;
     children?;
   };

@@ -3,9 +3,9 @@ import {Transform} from 'prosemirror-transform';
 import {EditorView} from 'prosemirror-view';
 
 import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
-import updateIndentLevel from './updateIndentLevel';
+import {updateIndentLevel} from './updateIndentLevel';
 
-class IndentCommand extends UICommand {
+export class IndentCommand extends UICommand {
   _delta: number;
 
   constructor(delta: number) {
@@ -48,4 +48,3 @@ class IndentCommand extends UICommand {
   };
 }
 
-export default IndentCommand;
