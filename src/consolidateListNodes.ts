@@ -1,5 +1,5 @@
-import isOrderedListNode from './isOrderedListNode';
-import isListNode from './isListNode';
+import {isOrderedListNode} from './isOrderedListNode';
+import {isListNode} from './isListNode';
 import {Fragment, Node} from 'prosemirror-model';
 import {Transform} from 'prosemirror-transform';
 import {Transaction} from 'prosemirror-state';
@@ -34,7 +34,7 @@ type JointInfo = {
 // List nodes with the same list type and indent level among the same Lists
 // Island will be joined into one list node.
 // Note that this transform may change the current user selection.
-export default function consolidateListNodes(tr: Transaction): Transform {
+export function consolidateListNodes(tr: Transaction): Transform {
   if (tr.getMeta('dryrun')) {
     // This transform is potentially expensive to perform, so skip it if
     // the transform is performed as "dryrun".

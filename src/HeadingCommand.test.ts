@@ -1,4 +1,4 @@
-import HeadingCommand from './HeadingCommand';
+import {HeadingCommand} from './HeadingCommand';
 import {EditorState} from 'prosemirror-state';
 import {MARK_FONT_TYPE} from './MarkNames';
 import {Transform} from 'prosemirror-transform';
@@ -72,7 +72,7 @@ describe('HeadingCommand', () => {
       },
     } as unknown as EditorState;
     jest
-      .spyOn(toggleHeading, 'default')
+      .spyOn(toggleHeading, 'toggleHeading')
       .mockReturnValue({docChanged: false} as unknown as Transform);
     const test = plugin.execute(state);
     expect(test).toBeFalsy();

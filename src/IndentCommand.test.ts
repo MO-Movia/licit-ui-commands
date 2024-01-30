@@ -1,4 +1,4 @@
-import IndentCommand from './IndentCommand';
+import {IndentCommand} from './IndentCommand';
 import {EditorState, TextSelection} from 'prosemirror-state';
 import {Schema} from 'prosemirror-model';
 import {schema} from 'prosemirror-test-builder';

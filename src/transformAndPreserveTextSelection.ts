@@ -4,8 +4,8 @@ import {Transform} from 'prosemirror-transform';
 
 import {MARK_TEXT_SELECTION} from './MarkNames';
 import {PARAGRAPH, TEXT} from './NodeNames';
-import applyMark from './applyMark';
-import uuid from './ui/uuid';
+import {applyMark} from './applyMark';
+import {uuid} from './ui/uuid';
 
 export type SelectionMemo = {
   schema: Schema;
@@ -20,7 +20,7 @@ const PLACEHOLDER_TEXT = `[\u200b\u2800PLACEHOLDER_TEXT_${uuid()}\u2800\u200b]`;
 // The way it works is that this will annotate teh current selection with
 // temporary marks and restores the selection with those marks after performing
 // the transform.
-export default function transformAndPreserveTextSelection(
+export function transformAndPreserveTextSelection(
   tr: Transform,
   schema: Schema,
   fn: (memo: SelectionMemo) => Transform

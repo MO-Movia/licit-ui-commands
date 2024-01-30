@@ -1,4 +1,4 @@
-import toggleHeading, {setHeadingNode} from './toggleHeading';
+import {toggleHeading,setHeadingNode} from './toggleHeading';
 import {Node, Schema} from 'prosemirror-model';
 import {Transform} from 'prosemirror-transform';
 import {BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
@@ -123,11 +123,11 @@ describe('toggleHeading', () => {
       },
     } as unknown as Schema;
     jest
-      .spyOn(isListNode, 'default')
+      .spyOn(isListNode, 'isListNode')
       .mockReturnValueOnce(false)
       .mockReturnValueOnce(true) as unknown as Node;
     jest
-      .spyOn(isInsideListItem, 'default')
+      .spyOn(isInsideListItem, 'isInsideListItem')
       .mockReturnValue(true) as unknown as Node;
     const test = toggleHeading(tr, sc, 0);
     expect(test).toBeDefined();
@@ -152,10 +152,10 @@ describe('toggleHeading', () => {
       },
     } as unknown as Schema;
     jest
-      .spyOn(isInsideListItem, 'default')
+      .spyOn(isInsideListItem, 'isInsideListItem')
       .mockReturnValue(false) as unknown as Node;
     jest
-      .spyOn(isListNode, 'default')
+      .spyOn(isListNode, 'isListNode')
       .mockReturnValue(true)
       .mockReturnValue(true) as unknown as Node;
     const test = toggleHeading(tr, sc, 0);

@@ -6,7 +6,7 @@ import {EditorView} from 'prosemirror-view';
 import * as React from 'react';
 
 import {MARK_FONT_TYPE} from './MarkNames';
-import applyMark from './applyMark';
+import {applyMark} from './applyMark';
 import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
 
 function setFontType(tr: Transform, schema: Schema, name: string): Transform {
@@ -20,7 +20,7 @@ function setFontType(tr: Transform, schema: Schema, name: string): Transform {
   return tr;
 }
 
-class FontTypeCommand extends UICommand {
+export class FontTypeCommand extends UICommand {
   _label = null;
   _name = '';
   _popUp = null;
@@ -114,4 +114,3 @@ class FontTypeCommand extends UICommand {
   }
 }
 
-export default FontTypeCommand;

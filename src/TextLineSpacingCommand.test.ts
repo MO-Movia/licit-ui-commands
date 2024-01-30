@@ -1,5 +1,5 @@
 import {BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
-import TextLineSpacingCommand from './TextLineSpacingCommand';
+import {TextLineSpacingCommand} from './TextLineSpacingCommand';
 import {EditorState} from 'prosemirror-state';
 import {schema} from 'prosemirror-schema-basic';
 import {Schema} from 'prosemirror-model';

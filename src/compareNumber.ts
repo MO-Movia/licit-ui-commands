@@ -1,4 +1,4 @@
-export default function compareNumber(a: number, b: number): number {
+export function compareNumber(a: number, b: number): number {
   if (a > b) {
     return 1;
   }

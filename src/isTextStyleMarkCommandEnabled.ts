@@ -1,4 +1,4 @@
-import isNodeSelectionForNodeType from './isNodeSelectionForNodeType';
+import {isNodeSelectionForNodeType} from './isNodeSelectionForNodeType';
 import {MATH} from './NodeNames';
 import {EditorState} from 'prosemirror-state';
 import {MARK_FONT_SIZE, MARK_TEXT_COLOR} from './MarkNames';
@@ -6,7 +6,7 @@ import {MARK_FONT_SIZE, MARK_TEXT_COLOR} from './MarkNames';
 const VALID_MATH_MARK_NAMES = new Set([MARK_FONT_SIZE, MARK_TEXT_COLOR]);
 
 // Whether the command for apply specific text style mark is enabled.
-export default function isTextStyleMarkCommandEnabled(
+export function isTextStyleMarkCommandEnabled(
   state: EditorState,
   markName: string
 ): boolean {

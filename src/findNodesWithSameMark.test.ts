@@ -1,4 +1,4 @@
-import findNodesWithSameMark from './findNodesWithSameMark';
+import {findNodesWithSameMark} from './findNodesWithSameMark';
 import {schema} from 'prosemirror-schema-basic';
 import {Node} from 'prosemirror-model';
 describe('findNodesWithSameMark', () => {

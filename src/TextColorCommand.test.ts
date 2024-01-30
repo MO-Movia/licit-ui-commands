@@ -1,4 +1,4 @@
-import TextColorCommand from './TextColorCommand';
+import {TextColorCommand} from './TextColorCommand';
 import {EditorState, TextSelection} from 'prosemirror-state';
 import {Schema, Mark, Node} from 'prosemirror-model';
 import {schema} from 'prosemirror-test-builder';
@@ -6,7 +6,7 @@ import {Transform} from 'prosemirror-transform';
 import {MARK_TEXT_COLOR} from './MarkNames';
 import {EditorView} from 'prosemirror-view';
 import * as applymark from './applyMark';
-import * as React from 'react';
+// import * as React from 'react';
 import * as findNodesWithSameMark from './findNodesWithSameMark';
 
 describe('TextColorCommand', () => {
@@ -51,7 +51,7 @@ describe('TextColorCommand', () => {
     const editorview = {} as unknown as EditorView;
 
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({docChanged: true} as unknown as Transform);
     const test = plugin.executeWithUserInput(
       state,
@@ -80,7 +80,7 @@ describe('TextColorCommand', () => {
     const editorview = {} as unknown as EditorView;
 
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({storedMarksSet: true} as unknown as Transform);
     const test = plugin.executeWithUserInput(
       state,
@@ -119,7 +119,7 @@ describe('TextColorCommand', () => {
       .mockReturnValue({} as unknown as TextSelection);
 
     jest
-      .spyOn(applymark, 'default')
+      .spyOn(applymark, 'applyMark')
       .mockReturnValue({storedMarks: []} as unknown as Transform);
     const test = plugin.executeCustom(state, tr, 2, 2);
 
@@ -141,7 +141,35 @@ describe('TextColorCommand', () => {
     const _dispatch = jest.fn();
     const event_ = {
       currentTarget: document.createElement('div'),
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
+
+    const editorview = {} as unknown as EditorView;
+
+    const result = plugin.waitForUserInput(
+      state,
+      _dispatch,
+      editorview,
+      event_
+    );
+
+    expect(result).toBeDefined();
+  });
+  it('waitForUserInput function() should be return undefined', () => {
+    const state = {
+      plugins: [],
+      selection: {from: 1, to: 2},
+      schema: {marks: {'mark-text-color': MARK_TEXT_COLOR}},
+      doc: {
+        nodeAt: (_x) => {
+          return {isAtom: true, isLeaf: true, isText: false};
+        },
+      },
+    } as unknown as EditorState;
+
+    const _dispatch = jest.fn();
+    const event_ = {
+      currentTarget: null,
+    } as unknown as Event;
 
     const editorview = {} as unknown as EditorView;
 
@@ -171,7 +199,7 @@ describe('TextColorCommand', () => {
     const editorview = {} as unknown as EditorView;
     const event_ = {
       currentTarget: 'not an HTMLElement',
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
     const result = await plugin.waitForUserInput(
       state,
       _dispatch,
@@ -188,7 +216,7 @@ describe('TextColorCommand', () => {
     const editorview = {} as unknown as EditorView;
     const event_ = {
       currentTarget: 'not an HTMLElement',
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
     const result = await plugin.waitForUserInput(
       state,
       _dispatch,
@@ -213,7 +241,7 @@ describe('TextColorCommand', () => {
     const _dispatch = jest.fn();
     const event_ = {
       currentTarget: document.createElement('div'),
-    } as unknown as React.SyntheticEvent;
+    } as unknown as Event;
     const result1 = {
       mark: {attrs: {color: 'red'}} as unknown as Mark,
       from: {
@@ -225,7 +253,9 @@ describe('TextColorCommand', () => {
         pos: 1,
       },
     };
-    jest.spyOn(findNodesWithSameMark, 'default').mockReturnValue(result1);
+    jest
+      .spyOn(findNodesWithSameMark, 'findNodesWithSameMark')
+      .mockReturnValue(result1);
     const editorview = {} as unknown as EditorView;
 
     const result = plugin.waitForUserInput(
@@ -236,6 +266,23 @@ describe('TextColorCommand', () => {
     );
 
     expect(result).toBeDefined();
+  });
+
+  it('executeWithUserInput function() should return false when color is undefined', () => {
+    const state = {
+      // Define your test state here
+    } as unknown as EditorState;
+
+    const editorview = {} as unknown as EditorView;
+
+    const test = plugin.executeWithUserInput(
+      state,
+      (_x) => {'';},
+      editorview,
+      undefined
+    );
+
+    expect(test).toBeFalsy();
   });
 });
 
@@ -255,4 +302,6 @@ describe('HeadingCommand', () => {
     const isEnabled = command.isEnabled(state);
     expect(isEnabled).toBe(false);
   });
+
+  //////////////////////////////////////
 });

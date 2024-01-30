@@ -1,4 +1,4 @@
-import consolidateListNodes from './consolidateListNodes';
+import {consolidateListNodes} from './consolidateListNodes';
 import {doc, li, ol, p, ul} from 'prosemirror-test-builder';
 import {EditorState, Transaction} from 'prosemirror-state';
 import {schema} from 'prosemirror-schema-basic';
