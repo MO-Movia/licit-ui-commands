@@ -4,12 +4,6 @@ import {EditorState} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
 import {schema} from 'prosemirror-schema-basic';
 import {Schema} from 'prosemirror-model';
-import {
-  SINGLE_LINE_SPACING,
-  LINE_SPACING_115,
-  LINE_SPACING_150,
-  DOUBLE_LINE_SPACING,
-} from './ui/toCSSLineSpacing';
 
 describe('TextLineSpacingCommand', () => {
   let plugin!: TextLineSpacingCommand;
