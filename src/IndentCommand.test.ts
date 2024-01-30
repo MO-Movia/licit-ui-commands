@@ -60,4 +60,8 @@ describe('IndentCommand', () => {
     } as unknown as Transform;
     expect(command.executeCustom(state, tr, 0, 1)).toBeDefined();
   });
+
+  it('should not render label', () => {
+    expect(command.renderLabel()).toBeNull();
+  });
 });

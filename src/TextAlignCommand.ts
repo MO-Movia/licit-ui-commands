@@ -151,4 +151,8 @@ export class TextAlignCommand extends UICommand {
     );
     return tr;
   };
+
+  renderLabel() {
+    return null;
+  }
 }

@@ -1,10 +1,10 @@
 // import * as React from 'react';
-import { ColorEditor } from './ui/ColorEditor';
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import { applyMark } from './applyMark';
-import { createPopUp } from './ui/createPopUp';
-import { findNodesWithSameMark } from './findNodesWithSameMark';
-import { isTextStyleMarkCommandEnabled } from './isTextStyleMarkCommandEnabled';
+import {ColorEditor} from './ui/ColorEditor';
+import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import {applyMark} from './applyMark';
+import {createPopUp} from './ui/createPopUp';
+import {findNodesWithSameMark} from './findNodesWithSameMark';
+import {isTextStyleMarkCommandEnabled} from './isTextStyleMarkCommandEnabled';
 import nullthrows from 'nullthrows';
 import {EditorState, TextSelection, Transaction} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
@@ -110,5 +110,12 @@ export class TextColorCommand extends UICommand {
   cancel(): void {
     return null;
   }
-}
 
+  isActive(): boolean {
+    return true;
+  }
+
+  renderLabel() {
+    return null;
+  }
+}

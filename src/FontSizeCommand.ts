@@ -88,4 +88,12 @@ export class FontSizeCommand extends UICommand {
     );
     return tr;
   };
+
+  isActive(): boolean {
+    return true;
+  }
+
+  renderLabel() {
+    return null;
+  }
 }

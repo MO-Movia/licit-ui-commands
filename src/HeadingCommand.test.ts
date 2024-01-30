@@ -77,4 +77,17 @@ describe('HeadingCommand', () => {
     const test = plugin.execute(state);
     expect(test).toBeFalsy();
   });
+
+  it('should not render label', () => {
+    expect(command.renderLabel()).toBeNull();
+  });
+
+  it('should execute custom', () => {
+    expect(
+      command.executeCustom(
+        null as unknown as EditorState,
+        null as unknown as Transform
+      )
+    ).toBeNull();
+  });
 });

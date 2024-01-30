@@ -1,7 +1,7 @@
 import {FontSizeCommand} from './FontSizeCommand';
 import {EditorState, TextSelection} from 'prosemirror-state';
 import {MARK_FONT_SIZE, MARK_FONT_TYPE} from './MarkNames';
-import {Schema,Node} from 'prosemirror-model';
+import {Schema, Node} from 'prosemirror-model';
 import {schema} from 'prosemirror-test-builder';
 import {Transform} from 'prosemirror-transform';
 import * as applymark from './applyMark';
@@ -65,12 +65,10 @@ describe('FontSizeCommand', () => {
   });
 
   it('should call when execute function return true', () => {
-    jest
-      .spyOn(applymark, 'applyMark')
-      .mockReturnValue({
-        docChanged: false,
-        storedMarksSet: true,
-      } as unknown as Transform);
+    jest.spyOn(applymark, 'applyMark').mockReturnValue({
+      docChanged: false,
+      storedMarksSet: true,
+    } as unknown as Transform);
 
     const test = plugin.execute(state, (_x) => {
       return '';
@@ -140,7 +138,10 @@ describe('FontSizeCommand', () => {
   });
 
   it('should call when executeCustom function return false', () => {
-    const mock = jest.spyOn(ismarkcommandenabled, 'isTextStyleMarkCommandEnabled');
+    const mock = jest.spyOn(
+      ismarkcommandenabled,
+      'isTextStyleMarkCommandEnabled'
+    );
     const state = {
       doc: {
         type: 'doc',
@@ -203,5 +204,11 @@ describe('FontSizeCommand', () => {
     const state = EditorState.create({schema: schema1});
     const test = command.execute(state);
     expect(test).toBeDefined();
+  });
+  it('should be active', () => {
+    expect(command.isActive()).toBeTruthy();
+  });
+  it('should not render label', () => {
+    expect(command.renderLabel()).toBeNull();
   });
 });

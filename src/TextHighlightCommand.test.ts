@@ -21,6 +21,14 @@ describe('TextHighlightCommand', () => {
     expect(plugin).toBeTruthy();
   });
 
+  it('should be active', () => {
+    expect(plugin.isActive()).toBeTruthy();
+  });
+
+  it('should not render label', () => {
+    expect(plugin.renderLabel()).toBeNull();
+  });
+
   it('executeWithUserInput function should be return false', () => {
     const state = {
       plugins: [],

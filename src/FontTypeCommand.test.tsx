@@ -291,4 +291,8 @@ describe('FontTypeCommand', () => {
     });
     expect(test).toBe(true);
   });
+
+  it('should be active', () => {
+    expect(plugin.isActive()).toBeTruthy();
+  });
 });

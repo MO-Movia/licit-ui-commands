@@ -112,5 +112,8 @@ export class FontTypeCommand extends UICommand {
   cancel(): void {
     return null;
   }
-}
 
+  isActive(): boolean {
+    return true;
+  }
+}

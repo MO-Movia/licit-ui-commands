@@ -95,6 +95,10 @@ export class MarkToggleCommand extends UICommand {
 
     return toggleCustomStyle(markType, null, state, tr, posfrom, posto);
   };
+
+  renderLabel() {
+    return null;
+  }
 }
 
 // [FS] IRAD-1042 2020-09-30
@@ -159,4 +163,3 @@ function markApplies(doc, ranges, type) {
   }
   return returned;
 }
-

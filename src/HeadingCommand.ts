@@ -57,5 +57,12 @@ export class HeadingCommand extends UICommand {
   cancel(): void {
     return null;
   }
-}
 
+  renderLabel() {
+    return null;
+  }
+
+  executeCustom = (_state: EditorState, tr: Transform): Transform => {
+    return tr;
+  };
+}

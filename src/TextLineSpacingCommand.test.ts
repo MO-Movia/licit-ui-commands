@@ -1,8 +1,15 @@
 import {BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
 import {TextLineSpacingCommand} from './TextLineSpacingCommand';
 import {EditorState} from 'prosemirror-state';
+import {Transform} from 'prosemirror-transform';
 import {schema} from 'prosemirror-schema-basic';
 import {Schema} from 'prosemirror-model';
+import {
+  SINGLE_LINE_SPACING,
+  LINE_SPACING_115,
+  LINE_SPACING_150,
+  DOUBLE_LINE_SPACING,
+} from './ui/toCSSLineSpacing';
 
 describe('TextLineSpacingCommand', () => {
   let plugin!: TextLineSpacingCommand;
@@ -197,5 +204,22 @@ describe('TextLineSpacingCommand', () => {
     const test = plugin.isEnabled(state);
 
     expect(test).toBeTruthy();
+  });
+
+  it('should not render label', () => {
+    expect(command.renderLabel()).toBeNull();
+  });
+
+  it('should execute custom', () => {
+    expect(
+      command.executeCustom(
+        null as unknown as EditorState,
+        null as unknown as Transform
+      )
+    ).toBeNull();
+  });
+
+  it('should create group', () => {
+    expect(TextLineSpacingCommand.createGroup().length).toBe(1);
   });
 });

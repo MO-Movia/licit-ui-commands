@@ -165,4 +165,12 @@ export class TextLineSpacingCommand extends UICommand {
       return false;
     }
   };
+
+  renderLabel() {
+    return null;
+  }
+
+  executeCustom = (_state: EditorState, tr: Transform): Transform => {
+    return tr;
+  };
 }
