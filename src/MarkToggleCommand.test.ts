@@ -1,4 +1,4 @@
-import {MarkToggleCommand,toggleCustomStyle} from './MarkToggleCommand';
+import {MarkToggleCommand, toggleCustomStyle} from './MarkToggleCommand';
 import {EditorState} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
 import {Schema, Mark} from 'prosemirror-model';
@@ -558,5 +558,9 @@ describe('MarkToggleCommand', () => {
       const test = toggleCustomStyle(mt, attrs, state, tr, 1, 1);
       expect(test).toStrictEqual({});
     });
+  });
+
+  it('should not render label', () => {
+    expect(plugin.renderLabel()).toBeNull();
   });
 });

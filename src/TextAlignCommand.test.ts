@@ -183,4 +183,7 @@ describe('TextAlignCommand', () => {
     const test = plugin.executeCustom(state, tr, 0, 1);
     expect(test).toBeDefined();
   });
+  it('should not render label', () => {
+    expect(command.renderLabel()).toBeNull();
+  });
 });

@@ -4,6 +4,7 @@ import {Transform} from 'prosemirror-transform';
 import {EditorView} from 'prosemirror-view';
 import {findNodesWithSameMark} from './findNodesWithSameMark';
 import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import * as React from 'react';
 
 export class MarkToggleCommand extends UICommand {
   _markName: string;
@@ -22,6 +23,28 @@ export class MarkToggleCommand extends UICommand {
     }
     return false;
   };
+
+  waitForUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _event?: React.SyntheticEvent
+  ): Promise<undefined> => {
+    return Promise.resolve(undefined);
+  };
+
+  executeWithUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _inputs?: string
+  ): boolean => {
+    return false;
+  };
+
+  cancel(): void {
+    return null;
+  }
 
   execute = (
     state: EditorState,
@@ -72,6 +95,10 @@ export class MarkToggleCommand extends UICommand {
 
     return toggleCustomStyle(markType, null, state, tr, posfrom, posto);
   };
+
+  renderLabel() {
+    return null;
+  }
 }
 
 // [FS] IRAD-1042 2020-09-30
@@ -136,4 +163,3 @@ function markApplies(doc, ranges, type) {
   }
   return returned;
 }
-
