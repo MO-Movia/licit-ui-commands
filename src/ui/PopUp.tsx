@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import PopUpManager from './PopUpManager';
+import {PopUpManager} from './PopUpManager';
 import { atAnchorBottomLeft, atViewportCenter } from './PopUpPosition';
-import uuid from './uuid';
+import {uuid} from './uuid';
 
 import type { PopUpDetails } from './PopUpManager';
 import type { Rect } from './rects';
@@ -34,8 +34,8 @@ export type PopUpHandle = {
   update: (props: Record<string, unknown>) => void;
 };
 
-class PopUp extends React.PureComponent<PopUpProps> {
-  props: PopUpProps;
+export class PopUp extends React.PureComponent<PopUpProps> {
+    declare props: PopUpProps;
 
   _bridge = null;
   _id = uuid();
@@ -52,11 +52,11 @@ class PopUp extends React.PureComponent<PopUpProps> {
 
   componentDidMount(): void {
     this._bridge = { getDetails: this._getDetails };
-    PopUpManager.register(this._bridge);
+    new PopUpManager().register(this._bridge);
   }
 
   componentWillUnmount(): void {
-    this._bridge && PopUpManager.unregister(this._bridge);
+    this._bridge && new PopUpManager().unregister(this._bridge);
   }
 
   _getDetails = (): PopUpDetails => {
@@ -74,4 +74,3 @@ class PopUp extends React.PureComponent<PopUpProps> {
   };
 }
 
-export default PopUp;

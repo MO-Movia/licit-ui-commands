@@ -1,26 +1,22 @@
-import { Schema } from 'prosemirror-model';
-import {
-  EditorState,
-  TextSelection,
-  Transaction,
-} from 'prosemirror-state';
-import { Transform } from 'prosemirror-transform';
-import { EditorView } from 'prosemirror-view';
-
-import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import {Schema} from 'prosemirror-model';
+import {EditorState, TextSelection, Transaction} from 'prosemirror-state';
+import {Transform} from 'prosemirror-transform';
+import {EditorView} from 'prosemirror-view';
+import * as React from 'react';
+import {BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
+import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
 
 export function setTextAlign(
   tr: Transform,
   schema: Schema,
   alignment?: string
 ): Transform {
-  const { selection, doc } = tr as Transaction;
+  const {selection, doc} = tr as Transaction;
   if (!selection || !doc) {
     return tr;
   }
-  const { from, to } = selection;
-  const { nodes } = schema;
+  const {from, to} = selection;
+  const {nodes} = schema;
 
   const blockquote = nodes[BLOCKQUOTE];
   const listItem = nodes[LIST_ITEM];
@@ -50,8 +46,8 @@ export function setTextAlign(
   }
 
   tasks.forEach((job) => {
-    const { node, pos, nodeType } = job;
-    let { attrs } = node;
+    const {node, pos, nodeType} = job;
+    let {attrs} = node;
     if (alignment) {
       attrs = {
         ...attrs,
@@ -69,7 +65,7 @@ export function setTextAlign(
   return tr;
 }
 
-class TextAlignCommand extends UICommand {
+export class TextAlignCommand extends UICommand {
   _alignment: string;
 
   constructor(alignment: string) {
@@ -78,8 +74,8 @@ class TextAlignCommand extends UICommand {
   }
 
   isActive = (state: EditorState): boolean => {
-    const { selection, doc } = state;
-    const { from, to } = selection;
+    const {selection, doc} = state;
+    const {from, to} = selection;
     let keepLooking = true;
     let active = false;
     doc.nodesBetween(from, to, (node, _pos) => {
@@ -93,26 +89,47 @@ class TextAlignCommand extends UICommand {
   };
 
   isEnabled = (state: EditorState): boolean => {
-
     if (state) {
       return true;
     }
     return false;
   };
 
+  waitForUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _event?: React.SyntheticEvent
+  ): Promise<undefined> => {
+    return Promise.resolve(undefined);
+  };
+
+  executeWithUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _inputs?: string
+  ): boolean => {
+    return false;
+  };
+
+  cancel(): void {
+    return null;
+  }
+
   execute = (
     state: EditorState,
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    const { schema, selection } = state;
+    const {schema, selection} = state;
     const tr = setTextAlign(
       state.tr.setSelection(selection),
       schema,
       this._alignment
     );
     if (tr.docChanged) {
-      dispatch && dispatch(tr);
+      dispatch?.(tr);
       return true;
     } else {
       return false;
@@ -126,7 +143,7 @@ class TextAlignCommand extends UICommand {
     from: number,
     to: number
   ): Transform => {
-    const { schema } = state;
+    const {schema} = state;
     tr = setTextAlign(
       (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),
       schema,
@@ -134,6 +151,8 @@ class TextAlignCommand extends UICommand {
     );
     return tr;
   };
-}
 
-export default TextAlignCommand;
+  renderLabel() {
+    return null;
+  }
+}

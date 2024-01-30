@@ -1,17 +1,14 @@
-import clamp from './ui/clamp';
-import compareNumber from './compareNumber';
-import consolidateListNodes from './consolidateListNodes';
-import isListNode from './isListNode';
-import transformAndPreserveTextSelection from './transformAndPreserveTextSelection';
-import {
-  EditorState,
-  Transaction,
-} from 'prosemirror-state';
-import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
-import { Fragment, Schema } from 'prosemirror-model';
-// import { MAX_INDENT_LEVEL, MIN_INDENT_LEVEL } from './ParagraphNodeSpec';
-import { Transform } from 'prosemirror-transform';
-import { EditorView } from 'prosemirror-view';
+import {clamp} from './ui/clamp';
+import {compareNumber} from './compareNumber';
+import {consolidateListNodes} from './consolidateListNodes';
+import {isListNode} from './isListNode';
+import {transformAndPreserveTextSelection} from './transformAndPreserveTextSelection';
+
+import {EditorState, Transaction} from 'prosemirror-state';
+import {BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
+import {Fragment, Schema} from 'prosemirror-model';
+import {Transform} from 'prosemirror-transform';
+import {EditorView} from 'prosemirror-view';
 
 const MIN_INDENT_LEVEL = 0;
 const MAX_INDENT_LEVEL = 7;
@@ -21,20 +18,20 @@ type UpdateIntendType = {
   docChanged: boolean;
 };
 
-export default function updateIndentLevel(
+export function updateIndentLevel(
   state: EditorState,
   tr: Transform,
   schema: Schema,
   delta: number,
   view: EditorView
 ): UpdateIntendType {
-  const { doc, selection } = tr as Transaction;
+  const {doc, selection} = tr as Transaction;
   if (!doc || !selection) {
-    return { tr, docChanged: false };
+    return {tr, docChanged: false};
   }
 
-  const { nodes } = schema;
-  const { from, to } = selection;
+  const {nodes} = schema;
+  const {from, to} = selection;
   const listNodePoses = [];
   const blockquote = nodes[BLOCKQUOTE];
   const heading = nodes[HEADING];
@@ -58,13 +55,13 @@ export default function updateIndentLevel(
   });
 
   if (!listNodePoses.length) {
-    return { tr, docChanged: true };
+    return {tr, docChanged: true};
   }
 
   tr = transformAndPreserveTextSelection(tr, schema, (memo) => {
-    const { schema } = memo;
+    const {schema} = memo;
     let tr2 = memo.tr;
-    listNodePoses
+    [...listNodePoses]
       .sort(compareNumber)
       .reverse()
       .forEach((pos) => {
@@ -74,10 +71,10 @@ export default function updateIndentLevel(
     return tr2;
   });
 
-  return { tr, docChanged: true };
+  return {tr, docChanged: true};
 }
 
-function setListNodeIndent(
+export function setListNodeIndent(
   state: EditorState,
   tr: Transform,
   schema: Schema,
@@ -85,17 +82,8 @@ function setListNodeIndent(
   delta: number
 ): Transform {
   const listItem = schema.nodes[LIST_ITEM];
-  if (!listItem) {
-    return tr;
-  }
-
-  const { doc, selection } = tr as Transaction;
-  if (!doc) {
-    return tr;
-  }
-
-  const listNode = doc.nodeAt(pos);
-  if (!listNode) {
+  const listNode = tr?.doc?.nodeAt(pos);
+  if (!listItem || !listNode) {
     return tr;
   }
 
@@ -108,7 +96,7 @@ function setListNodeIndent(
     return tr;
   }
 
-  const { from, to } = selection;
+  const {from, to} = (tr as Transaction).selection;
 
   // [FS] IRAD-947 2020-05-19
   // Fix for Multi-level lists lose multi-levels when indenting/de-indenting
@@ -126,28 +114,24 @@ function setListNodeIndent(
   const itemsSelected = [];
   const itemsAfter = [];
 
-  doc.nodesBetween(pos, pos + listNode.nodeSize, (itemNode, itemPos) => {
-    if (itemNode.type === listNodeType) {
+  tr.doc.nodesBetween(pos, pos + listNode.nodeSize, (itemNode, itemPos) => {
+    if (itemNode.type === listNodeType || itemNode.type !== listItem) {
       return true;
     }
 
-    if (itemNode.type === listItem) {
-      const listItemNode = listItem.create(
-        itemNode.attrs,
-        itemNode.content,
-        itemNode.marks
-      );
-      if (itemPos + itemNode.nodeSize <= from) {
-        itemsBefore.push(listItemNode);
-      } else if (itemPos > to) {
-        itemsAfter.push(listItemNode);
-      } else {
-        itemsSelected.push(listItemNode);
-      }
-      return false;
+    const listItemNode = listItem.create(
+      itemNode.attrs,
+      itemNode.content,
+      itemNode.marks
+    );
+    if (itemPos + itemNode.nodeSize <= from) {
+      itemsBefore.push(listItemNode);
+    } else if (itemPos > to) {
+      itemsAfter.push(listItemNode);
+    } else {
+      itemsSelected.push(listItemNode);
     }
-
-    return true;
+    return false;
   });
 
   tr = tr.delete(pos, pos + listNode.nodeSize);
@@ -182,7 +166,7 @@ function setListNodeIndent(
   return tr;
 }
 
-function setNodeIndentMarkup(
+export function setNodeIndentMarkup(
   _state: EditorState,
   tr: Transform,
   pos: number,
@@ -191,11 +175,11 @@ function setNodeIndentMarkup(
 ): UpdateIntendType {
   const retVal = true;
   if (!tr.doc) {
-    return { tr, docChanged: false };
+    return {tr, docChanged: false};
   }
   const node = tr.doc.nodeAt(pos);
   if (!node) {
-    return { tr, docChanged: retVal };
+    return {tr, docChanged: retVal};
   }
   const indent = clamp(
     MIN_INDENT_LEVEL,
@@ -204,12 +188,12 @@ function setNodeIndentMarkup(
   );
 
   if (indent === node.attrs.indent) {
-    return { tr, docChanged: false };
+    return {tr, docChanged: false};
   }
   const nodeAttrs = {
     ...node.attrs,
     indent,
   };
   tr = tr.setNodeMarkup(pos, node.type, nodeAttrs, node.marks);
-  return { tr, docChanged: true };
+  return {tr, docChanged: true};
 }

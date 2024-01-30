@@ -1,11 +1,11 @@
-import { Fragment, Schema } from 'prosemirror-model';
-import { TextSelection, Transaction } from 'prosemirror-state';
-import { Transform } from 'prosemirror-transform';
+import {Fragment, Schema} from 'prosemirror-model';
+import {TextSelection, Transaction} from 'prosemirror-state';
+import {Transform} from 'prosemirror-transform';
 
-import { MARK_TEXT_SELECTION } from './MarkNames';
-import { PARAGRAPH, TEXT } from './NodeNames';
-import applyMark from './applyMark';
-import uuid from './ui/uuid';
+import {MARK_TEXT_SELECTION} from './MarkNames';
+import {PARAGRAPH, TEXT} from './NodeNames';
+import {applyMark} from './applyMark';
+import {uuid} from './ui/uuid';
 
 export type SelectionMemo = {
   schema: Schema;
@@ -20,27 +20,23 @@ const PLACEHOLDER_TEXT = `[\u200b\u2800PLACEHOLDER_TEXT_${uuid()}\u2800\u200b]`;
 // The way it works is that this will annotate teh current selection with
 // temporary marks and restores the selection with those marks after performing
 // the transform.
-export default function transformAndPreserveTextSelection(
+export function transformAndPreserveTextSelection(
   tr: Transform,
   schema: Schema,
   fn: (memo: SelectionMemo) => Transform
 ): Transform {
   if ((tr as Transaction).getMeta('dryrun')) {
     // There's no need to preserve the selection in dryrun mode.
-    return fn({ tr, schema });
+    return fn({tr, schema});
   }
 
-  const { selection, doc } = tr as Transaction;
+  const {selection, doc} = tr as Transaction;
   const markType = schema.marks[MARK_TEXT_SELECTION];
   if (!markType || !selection || !doc) {
     return tr;
   }
 
-  // if (!(selection instanceof TextSelection)) {
-  //   return tr;
-  // }
-
-  const { from, to } = selection;
+  const {from, to} = selection;
 
   // Mark current selection so that we could resume the selection later
   // after changing the whole list.
@@ -105,7 +101,7 @@ export default function transformAndPreserveTextSelection(
     let markFrom = 0;
     let markTo = 0;
     tr.doc.descendants((node, pos) => {
-      if (node.marks && node.marks.find(findMark)) {
+      if (node?.marks.find(findMark)) {
         markFrom = markFrom === 0 ? pos : markFrom;
         markTo = pos + node.nodeSize;
       }
@@ -119,8 +115,8 @@ export default function transformAndPreserveTextSelection(
 
   // TODO: This has side-effect. It will cause `tr.docChanged` to be `true`.
   // No matter whether `fn({tr, schema})` did change the doc or not.
-  tr = applyMark(tr, schema, markType, { id });
-  tr = fn({ tr, schema });
+  tr = applyMark(tr, schema, markType, {id});
+  tr = fn({tr, schema});
 
   const markRange = findMarkRange();
   const selectionRange = {

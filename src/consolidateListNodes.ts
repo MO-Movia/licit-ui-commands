@@ -1,8 +1,8 @@
-import isOrderedListNode from './isOrderedListNode';
-import isListNode from './isListNode';
-import { Fragment, Node } from 'prosemirror-model';
-import { Transform } from 'prosemirror-transform';
-import { Transaction } from 'prosemirror-state';
+import {isOrderedListNode} from './isOrderedListNode';
+import {isListNode} from './isListNode';
+import {Fragment, Node} from 'prosemirror-model';
+import {Transform} from 'prosemirror-transform';
+import {Transaction} from 'prosemirror-state';
 
 type JointInfo = {
   content: Fragment;
@@ -34,7 +34,7 @@ type JointInfo = {
 // List nodes with the same list type and indent level among the same Lists
 // Island will be joined into one list node.
 // Note that this transform may change the current user selection.
-export default function consolidateListNodes(tr: Transaction): Transform {
+export function consolidateListNodes(tr: Transaction): Transform {
   if (tr.getMeta('dryrun')) {
     // This transform is potentially expensive to perform, so skip it if
     // the transform is performed as "dryrun".
@@ -47,7 +47,7 @@ export default function consolidateListNodes(tr: Transaction): Transform {
   while (continueLoop) {
     const jointInfo = traverseDocAndFindJointInfo(tr.doc, prevJointInfo);
     if (jointInfo) {
-      const { deleteFrom, deleteTo, insertAt, content } = jointInfo;
+      const {deleteFrom, deleteTo, insertAt, content} = jointInfo;
       tr = tr.delete(deleteFrom, deleteTo);
       tr = tr.insert(insertAt, content);
       prevJointInfo = jointInfo;
@@ -104,7 +104,7 @@ function linkOrderedListCounters(tr: Transform): Transform {
       willTraverseNodeChildren = false;
       const indent = node.attrs.indent || 0;
       const start = node.attrs.start || 1;
-      const { name, following } = node.attrs;
+      const {name, following} = node.attrs;
       if (name) {
         namedLists.add(name);
       }
@@ -175,7 +175,7 @@ function linkOrderedListCounters(tr: Transform): Transform {
           tr = setCounterLinked(tr, pos, counterIsLinked);
         }
       }
-      listsBefore.unshift({ parentNode, indent, node });
+      listsBefore.unshift({parentNode, indent, node});
     } else {
       // Not traversing within any list node. No lists need to be updated.
       listsBefore = null;
@@ -194,7 +194,7 @@ function setCounterLinked(
   const currentValue = node.attrs.counterReset || null;
   const nextValue = linked ? 'none' : null;
   if (nextValue !== currentValue) {
-    const nodeAttrs = { ...node.attrs, counterReset: nextValue };
+    const nodeAttrs = {...node.attrs, counterReset: nextValue};
     tr = tr.setNodeMarkup(pos, node.type, nodeAttrs, node.marks);
   }
   return tr;

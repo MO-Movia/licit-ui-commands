@@ -2,10 +2,11 @@ import {toggleMark} from 'prosemirror-commands';
 import {EditorState} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
 import {EditorView} from 'prosemirror-view';
-import findNodesWithSameMark from './findNodesWithSameMark';
+import {findNodesWithSameMark} from './findNodesWithSameMark';
 import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import * as React from 'react';
 
-class MarkToggleCommand extends UICommand {
+export class MarkToggleCommand extends UICommand {
   _markName: string;
 
   constructor(markName: string) {
@@ -23,18 +24,38 @@ class MarkToggleCommand extends UICommand {
     return false;
   };
 
+  waitForUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _event?: React.SyntheticEvent
+  ): Promise<undefined> => {
+    return Promise.resolve(undefined);
+  };
+
+  executeWithUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _inputs?: string
+  ): boolean => {
+    return false;
+  };
+
+  cancel(): void {
+    return null;
+  }
+
   execute = (
     state: EditorState,
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    const { schema, selection, tr } = state;
+    const {schema, selection, tr} = state;
     const markType = schema.marks[this._markName];
     if (!markType) {
       return false;
     }
-
-
 
     const {from, to} = selection;
     if (tr && to === from + 1) {
@@ -57,18 +78,13 @@ class MarkToggleCommand extends UICommand {
     tr: Transform,
     posfrom: number,
     posto: number
-  ): any => {
+  ) => {
     const {schema} = state;
     const markType = schema.marks[this._markName];
     if (!markType) {
       return false;
     }
 
-    // if (selection.empty && !(selection instanceof TextSelection)) {
-    //   return false;
-    // }
-
-    // const {from, to} = selection;
     if (tr && posto === posfrom + 1) {
       const node = tr.doc.nodeAt(posfrom);
       if (node.isAtom && !node.isText && node.isLeaf) {
@@ -79,12 +95,16 @@ class MarkToggleCommand extends UICommand {
 
     return toggleCustomStyle(markType, null, state, tr, posfrom, posto);
   };
+
+  renderLabel() {
+    return null;
+  }
 }
 
 // [FS] IRAD-1042 2020-09-30
 // Fix: overrided the toggleMarks for custom style implementation
 // Return Transform object
-function toggleCustomStyle(
+export function toggleCustomStyle(
   markType,
   attrs,
   state,
@@ -143,4 +163,3 @@ function markApplies(doc, ranges, type) {
   }
   return returned;
 }
-export default MarkToggleCommand;

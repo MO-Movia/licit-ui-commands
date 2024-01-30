@@ -1,22 +1,24 @@
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import applyMark from './applyMark';
-import isTextStyleMarkCommandEnabled from './isTextStyleMarkCommandEnabled';
+import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import {applyMark} from './applyMark';
+import {isTextStyleMarkCommandEnabled} from './isTextStyleMarkCommandEnabled';
 import {Transaction, EditorState, TextSelection} from 'prosemirror-state';
 import {MARK_FONT_SIZE} from './MarkNames';
 import {Schema} from 'prosemirror-model';
 import {Transform} from 'prosemirror-transform';
+import {EditorView} from 'prosemirror-view';
+import * as React from 'react';
 
 function setFontSize(tr: Transform, schema: Schema, pt: number): Transform {
   const markType = schema.marks[MARK_FONT_SIZE];
   if (!markType) {
     return tr;
   }
-  const attrs = pt ? { pt } : null;
+  const attrs = pt ? {pt} : null;
   tr = applyMark(tr, schema, markType, attrs);
   return tr;
 }
 
-class FontSizeCommand extends UICommand {
+export class FontSizeCommand extends UICommand {
   _popUp = null;
   _pt = 0;
 
@@ -29,12 +31,34 @@ class FontSizeCommand extends UICommand {
     return isTextStyleMarkCommandEnabled(state, MARK_FONT_SIZE);
   };
 
+  waitForUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _event?: React.SyntheticEvent
+  ): Promise<undefined> => {
+    return Promise.resolve(undefined);
+  };
+
+  executeWithUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _inputs?: string
+  ): boolean => {
+    return false;
+  };
+
+  cancel(): void {
+    return null;
+  }
+
   execute = (
     state: EditorState,
     dispatch?: (tr: Transform) => void
     // view?: EditorView
   ): boolean => {
-    const { schema } = state;
+    const {schema} = state;
     // commnted selection because selection removes the storedMarks;
     // {selection}
     // const tr = setFontSize(state.tr.setSelection(selection), schema, this._pt);
@@ -43,7 +67,7 @@ class FontSizeCommand extends UICommand {
       // If selection is empty, the color is added to `storedMarks`, which
       // works like `toggleMark`
       // (see https://prosemirror.net/docs/ref/#commands.toggleMark).
-      dispatch && dispatch(tr);
+      dispatch?.(tr);
       return true;
     }
     return false;
@@ -64,6 +88,12 @@ class FontSizeCommand extends UICommand {
     );
     return tr;
   };
-}
 
-export default FontSizeCommand;
+  isActive(): boolean {
+    return true;
+  }
+
+  renderLabel() {
+    return null;
+  }
+}

@@ -1,7 +1,7 @@
 import './czi-custom-button.css';
-import { PointerSurface } from './PointerSurface';
+import {PointerSurface} from './PointerSurface';
 import * as React from 'react';
-import { TooltipSurface } from './TooltipSurface';
+import {TooltipSurface} from './TooltipSurface';
 import cx from 'classnames';
 
 import type {PointerSurfaceProps} from './PointerSurface';
@@ -11,8 +11,8 @@ type CustomButtonProps = PointerSurfaceProps & {
   label?: string | React.ReactElement | null;
 };
 
-class CustomButton extends React.PureComponent<CustomButtonProps> {
-props: CustomButtonProps;
+export class CustomButton extends React.PureComponent<CustomButtonProps> {
+  declare props: CustomButtonProps;
   render(): React.ReactNode {
     const {icon, label, className, title, ...pointerProps} = this.props;
     const klass = cx(className, 'czi-custom-button', {
@@ -29,4 +29,3 @@ props: CustomButtonProps;
   }
 }
 
-export default CustomButton;
