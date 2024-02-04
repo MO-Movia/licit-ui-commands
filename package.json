@@ -43,7 +43,7 @@
   "devDependencies": {
     "@cfaester/enzyme-adapter-react-18": "^0.7.0",
     "@cyclonedx/cyclonedx-npm": "^1.11.0",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/jest-dom": "^6.4.1",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/color": "^3.0.3",
