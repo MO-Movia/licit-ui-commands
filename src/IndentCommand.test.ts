@@ -1,9 +1,9 @@
-import {IndentCommand} from './IndentCommand';
-import {EditorState, TextSelection} from 'prosemirror-state';
-import {Schema} from 'prosemirror-model';
-import {schema} from 'prosemirror-test-builder';
-import {Transform} from 'prosemirror-transform';
-import {MARK_EM} from './MarkNames';
+import { IndentCommand } from './IndentCommand';
+import { EditorState, TextSelection } from 'prosemirror-state';
+import { Schema } from 'prosemirror-model';
+import { schema } from 'prosemirror-test-builder';
+import { Transform } from 'prosemirror-transform';
+import { MARK_EM } from './MarkNames';
 
 describe('IndentCommand', () => {
   let schema1;
@@ -21,13 +21,13 @@ describe('IndentCommand', () => {
   });
 
   it('should enable the command when text style mark is enabled', () => {
-    const state = EditorState.create({schema: schema1});
+    const state = EditorState.create({ schema: schema1 });
     const isEnabled = command.isActive(state);
     expect(isEnabled).toBe(true);
   });
 
   it('execute without dispatch', () => {
-    const state = EditorState.create({schema: schema1});
+    const state = EditorState.create({ schema: schema1 });
     const test = command.execute(state);
     expect(test).toBeDefined();
   });
@@ -43,11 +43,11 @@ describe('IndentCommand', () => {
         head: 0,
       },
       plugins: [],
-      schema: {marks: {em: MARK_EM}},
+      schema: { marks: { em: MARK_EM } },
       tr: {
         doc: {
           nodeAt: () => {
-            return {isAtom: true, isLeaf: true, isText: false};
+            return { isAtom: true, isLeaf: true, isText: false };
           },
         },
       },
@@ -62,6 +62,6 @@ describe('IndentCommand', () => {
   });
 
   it('should not render label', () => {
-    expect(command.renderLabel()).toBeNull();
+    expect(command.renderLabel(undefined)).toBeNull();
   });
 });
