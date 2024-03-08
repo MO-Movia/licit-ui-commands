@@ -58,11 +58,11 @@ export class HeadingCommand extends UICommand {
     return null;
   }
 
-  renderLabel = (_state: EditorState): any => {
+  renderLabel = () => {
     return null;
-  }
+  };
 
-  executeCustom = (_state: EditorState, tr: Transform, from: number, to: number): Transform => {
+  executeCustom = (_state: EditorState, tr: Transform): Transform => {
     return tr;
   };
 }

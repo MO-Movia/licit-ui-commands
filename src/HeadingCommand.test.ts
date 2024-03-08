@@ -79,14 +79,14 @@ describe('HeadingCommand', () => {
   });
 
   it('should not render label', () => {
-    expect(command.renderLabel(state)).toBeNull();
+    expect(command.renderLabel()).toBeNull();
   });
 
   it('should execute custom', () => {
     expect(
       command.executeCustom(
         null as unknown as EditorState,
-        null as unknown as Transform, 0, 1
+        null as unknown as Transform, 
       )
     ).toBeNull();
   });
