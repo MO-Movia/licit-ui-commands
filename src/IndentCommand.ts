@@ -69,4 +69,7 @@ export class IndentCommand extends UICommand {
     return null;
   }
 
+  renderLabel() {
+    return null;
+  }
 }
