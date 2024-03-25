@@ -1,8 +1,8 @@
-import {EditorState} from 'prosemirror-state';
-import {Transform} from 'prosemirror-transform';
-import {EditorView} from 'prosemirror-view';
-import {toggleHeading} from './toggleHeading';
-import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import { EditorState } from 'prosemirror-state';
+import { Transform } from 'prosemirror-transform';
+import { EditorView } from 'prosemirror-view';
+import { toggleHeading } from './toggleHeading';
+import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 import * as React from 'react';
 
 export class HeadingCommand extends UICommand {
@@ -22,7 +22,7 @@ export class HeadingCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    const {schema, selection} = state;
+    const { schema, selection } = state;
     const tr = toggleHeading(
       state.tr.setSelection(selection),
       schema,
@@ -58,9 +58,9 @@ export class HeadingCommand extends UICommand {
     return null;
   }
 
-  renderLabel() {
+  renderLabel = () => {
     return null;
-  }
+  };
 
   executeCustom = (_state: EditorState, tr: Transform): Transform => {
     return tr;
