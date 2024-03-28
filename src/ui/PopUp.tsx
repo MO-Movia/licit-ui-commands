@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {PopUpManager} from './PopUpManager';
+import { instance } from './PopUpManager';
 import { atAnchorBottomLeft, atViewportCenter } from './PopUpPosition';
 import {uuid} from './uuid';
 
@@ -52,11 +52,11 @@ export class PopUp extends React.PureComponent<PopUpProps> {
 
   componentDidMount(): void {
     this._bridge = { getDetails: this._getDetails };
-    new PopUpManager().register(this._bridge);
+    instance.register(this._bridge);
   }
 
   componentWillUnmount(): void {
-    this._bridge && new PopUpManager().unregister(this._bridge);
+    this._bridge && instance.unregister(this._bridge);
   }
 
   _getDetails = (): PopUpDetails => {
