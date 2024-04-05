@@ -123,12 +123,23 @@ export class TextAlignCommand extends UICommand {
     _view?: EditorView
   ): boolean => {
     const {schema, selection} = state;
-    const tr = setTextAlign(
+    let tr = setTextAlign(
       state.tr.setSelection(selection),
       schema,
       this._alignment
     );
     if (tr.docChanged) {
+      if (
+        selection.$head.parent.attrs.align !== this._alignment ||
+        (selection.$head.parent.attrs.align === null &&
+          this._alignment !== 'left')
+      ) {
+        tr = tr.setNodeAttribute(
+          selection.head - selection.$head.parentOffset - 1,
+          'overriddenAlign',
+          true
+        );
+      }
       dispatch?.(tr);
       return true;
     } else {
