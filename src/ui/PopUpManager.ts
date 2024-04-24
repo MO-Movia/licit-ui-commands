@@ -49,6 +49,7 @@ export class PopUpManager {
   }
 
   _observe(): void {
+    this._unobserve();
     document.addEventListener('mousemove', this._onMouseChange, false);
     document.addEventListener('mouseup', this._onMouseChange, false);
     document.addEventListener('click', this._onClick, false);
@@ -184,11 +185,11 @@ export class PopUpManager {
         this._positions.set(bridge, positionKey);
         const bodyStyle = body.style;
         bodyStyle.position = 'absolute';
-        bodyStyle.left = `${x}px`;
-        bodyStyle.top = `${y}px`;
+        bodyStyle.left = `${x - bodyRect.x}px`;
+        bodyStyle.top = `${y - bodyRect.y}px`;
         bodyStyle.setProperty('--czi-pop-up-anchor-offset-left', `${ax}px`);
-        bodyRect.x = x;
-        bodyRect.y = y;
+        bodyRect.x = x - bodyRect.x;
+        bodyRect.y = y - bodyRect.y;
       }
 
       if (
