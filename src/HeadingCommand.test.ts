@@ -86,7 +86,7 @@ describe('HeadingCommand', () => {
     expect(
       command.executeCustom(
         null as unknown as EditorState,
-        null as unknown as Transform, 
+        null as unknown as Transform,
       )
     ).toBeNull();
   });

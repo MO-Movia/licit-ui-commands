@@ -33,6 +33,7 @@
     "prosemirror-utils": "^1.0.0-0"
   },
   "dependencies": {
+    "@modusoperandi/color-picker": "^1.0.0",
     "classnames": "^2.3.2",
     "color": "^4.2.3",
     "nullthrows": "^1.1.1",
