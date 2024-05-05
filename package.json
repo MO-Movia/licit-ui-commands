@@ -41,7 +41,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@cfaester/enzyme-adapter-react-18": "^0.7.0",
+    "@cfaester/enzyme-adapter-react-18": "^0.8.0",
     "@cyclonedx/cyclonedx-npm": "^1.11.0",
     "@testing-library/jest-dom": "^6.4.1",
     "@testing-library/react": "^15.0.2",
