@@ -31,3 +31,4 @@ export * from './isInsideListItem';
 export * from './clearMarks';
 export * from './NodeNames';
 export * from './MarkNames';
+export * from './runtime.service';

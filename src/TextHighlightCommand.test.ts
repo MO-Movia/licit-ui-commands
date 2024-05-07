@@ -239,6 +239,11 @@ describe('TextHighlightCommand', () => {
           return {isAtom: true, isLeaf: true, isText: false};
         },
       },
+      tr:{doc:{
+        nodeAt: (_x) => {
+          return {isAtom: true, isLeaf: true, isText: false, marks:[]};
+        },
+      }}
     } as unknown as EditorState;
 
     const _dispatch = jest.fn();
@@ -311,6 +316,11 @@ describe('TextHighlightCommand', () => {
           return {isAtom: true, isLeaf: true, isText: false};
         },
       },
+      tr:{doc:{
+        nodeAt: (_x) => {
+          return {isAtom: true, isLeaf: true, isText: false, marks:[]};
+        },
+      }}
     } as unknown as EditorState;
 
     const _dispatch = jest.fn();
