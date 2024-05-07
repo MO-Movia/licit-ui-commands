@@ -1,6 +1,6 @@
 {
   "name": "@modusoperandi/licit-ui-commands",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "description": "Module that extend Step, overriding the apply, invert, map, getMap and fromJSON methods, and registering your class with a unique JSON-serialization identifier using Step.jsonID.",
   "main": "index.js",
@@ -33,7 +33,7 @@
     "prosemirror-utils": "^1.0.0-0"
   },
   "dependencies": {
-    "@modusoperandi/color-picker": "^1.0.0",
+    "@modusoperandi/color-picker": "^1.0.1",
     "classnames": "^2.3.2",
     "color": "^4.2.3",
     "nullthrows": "^1.1.1",
