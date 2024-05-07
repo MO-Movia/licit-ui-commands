@@ -25,6 +25,7 @@ const DUMMY_RECT = {x: -10000, y: -10000, w: 0, h: 0};
 export class PopUpManager {
   _bridges = new Map();
   _positions = new Map();
+  isColorPicker = false;
 
   _mx = 0;
   _my = 0;
@@ -87,6 +88,7 @@ export class PopUpManager {
     const now = Date.now();
     let detailsWithModalToDismiss;
     let IsCustom = false;
+    this.isColorPicker = false;
     for (const [bridge, registeredAt] of this._bridges) {
       if (now - registeredAt > CLICK_INTERVAL) {
         const details = bridge.getDetails();
@@ -94,8 +96,14 @@ export class PopUpManager {
           detailsWithModalToDismiss = details;
         }
         if (details.autoDismiss && details.popupId) {
+          const targetName = (e.target as HTMLElement).className;
+          if (targetName && targetName.startsWith('mocp')) {
+            this.isColorPicker = true;
+            return;
+          }
+
           if (this._bridges.size > 1) {
-            const targetName = (e.target as HTMLElement).className;
+     
             if (
               targetName === 'czi-icon format_line_spacing' ||
               targetName === 'czi-icon format_color_text' ||
@@ -124,7 +132,7 @@ export class PopUpManager {
           hasModel = true;
         }
       }
-      if (!hasModel) {
+      if (!hasModel && !this.isColorPicker) {
         arrOpenPopups.forEach((element) => {
           const {close} = element;
           close();
@@ -236,8 +244,7 @@ export class PopUpManager {
           // Modal is handled separately at `onClick`
           !modal &&
           now - registeredAt > CLICK_INTERVAL &&
-          !hoveredAnchors.has(anchor)
-        ) {
+          !hoveredAnchors.has(anchor) && !this.isColorPicker        ) {
           close();
         }
       }

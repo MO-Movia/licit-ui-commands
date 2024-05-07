@@ -1,5 +1,5 @@
 // import * as React from 'react';
-import {ColorEditor} from './ui/ColorEditor';
+import { ColorEditor } from '@modusoperandi/color-picker';
 import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
 import {applyMark} from './applyMark';
 import {createPopUp} from './ui/createPopUp';
@@ -10,6 +10,7 @@ import {EditorState, TextSelection, Transaction} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
 import {MARK_TEXT_COLOR} from './MarkNames';
 import {Transform} from 'prosemirror-transform';
+import { RuntimeService } from './runtime.service';
 
 export class TextColorCommand extends UICommand {
   _popUp = null;
@@ -43,13 +44,17 @@ export class TextColorCommand extends UICommand {
     const {from, to} = selection;
     const result = findNodesWithSameMark(doc, from, to, markType);
     const hex = result ? result.mark.attrs.color : null;
+    const node = state.tr.doc.nodeAt(from);
+    const Textmark = node?.marks.find(mark => mark?.attrs && mark.attrs?.color);
+    const Textcolor  = Textmark?.attrs?.color;
     return new Promise((resolve) => {
       this._popUp = createPopUp(
         ColorEditor,
-        {hex},
+        { hex, runtime: RuntimeService.Runtime, Textcolor},
         {
           anchor,
           popUpId: 'mo-menuList-child',
+          autoDismiss: true,
           onClose: (val) => {
             if (this._popUp) {
               this._popUp = null;
