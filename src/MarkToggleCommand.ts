@@ -1,10 +1,11 @@
-import {toggleMark} from 'prosemirror-commands';
-import {EditorState} from 'prosemirror-state';
-import {Transform} from 'prosemirror-transform';
-import {EditorView} from 'prosemirror-view';
-import {findNodesWithSameMark} from './findNodesWithSameMark';
-import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import { toggleMark } from 'prosemirror-commands';
+import { EditorState, SelectionRange } from 'prosemirror-state';
+import { Transform } from 'prosemirror-transform';
+import { EditorView } from 'prosemirror-view';
+import { findNodesWithSameMark } from './findNodesWithSameMark';
+import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 import * as React from 'react';
+import { MarkType } from 'prosemirror-model';
 
 export class MarkToggleCommand extends UICommand {
   _markName: string;
@@ -15,8 +16,8 @@ export class MarkToggleCommand extends UICommand {
   }
 
   isActive = (state: EditorState): boolean => {
-    const {schema, doc, selection} = state;
-    const {from, to} = selection;
+    const { schema, doc, selection } = state;
+    const { from, to } = selection;
     const markType = schema.marks[this._markName];
     if (markType && from < to) {
       return !!findNodesWithSameMark(doc, from, to - 1, markType);
@@ -51,13 +52,13 @@ export class MarkToggleCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    const {schema, selection, tr} = state;
+    const { schema, selection, tr } = state;
     const markType = schema.marks[this._markName];
     if (!markType) {
       return false;
     }
 
-    const {from, to} = selection;
+    const { from, to } = selection;
     if (tr && to === from + 1) {
       const node = tr.doc.nodeAt(from);
       if (node.isAtom && !node.isText && node.isLeaf) {
@@ -79,7 +80,7 @@ export class MarkToggleCommand extends UICommand {
     posfrom: number,
     posto: number
   ) => {
-    const {schema} = state;
+    const { schema } = state;
     const markType = schema.marks[this._markName];
     if (!markType) {
       return false;
@@ -125,12 +126,41 @@ export function toggleCustomStyle(
     } else {
       tr = state.tr.addStoredMark(markType.create(attrs));
     }
-  } else {
-    // [FS] IRAD-1043 2020-10-27
-    // No need to remove the applied custom style, if user select the same style multiple times.
+  }
+  else if (!hasMark(ranges, tr, markType)) {
     tr.addMark(posfrom, posto, markType.create(attrs));
   }
+  else {
+    // [FS] IRAD-1043 2020-10-27
+    // No need to remove the applied custom style, if user select the same style multiple times.
+    const nodeTr = tr.doc.nodeAt(posfrom);
+    let from = posfrom;
+    let to = 0;
+    if (nodeTr) {
+      nodeTr.descendants(function (child) {
+        if (child) {
+          to = from + child.nodeSize;
+          child.marks.forEach(function (mark) {
+            if (mark.type.name === markType.name && !mark.attrs.overridden) {
+              tr.addMark(from, to, markType.create(attrs));
+            }
+
+          });
+          from = to;
+        }
+      });
+    }
+  }
   return tr;
+}
+
+function hasMark(ranges: readonly SelectionRange[], tr: Transform, markType: MarkType) {
+  let has = false;
+  for (let i = 0; !has && i < ranges.length; i++) {
+    const { $from, $to } = ranges[i];
+    has = tr.doc.rangeHasMark($from.pos, $to.pos, markType);
+  }
+  return has;
 }
 //overrided method from prosemirror Transform
 function markApplies(doc, ranges, type) {
