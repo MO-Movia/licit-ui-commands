@@ -67,7 +67,7 @@ export class MarkToggleCommand extends UICommand {
       }
     }
 
-    // TODO: Replace `toggleMark` with transform that does not change scroll
+    //Replace `toggleMark` with transform that does not change scroll
     // position.
     return toggleMark(markType)(state, dispatch);
   };

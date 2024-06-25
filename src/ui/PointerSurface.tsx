@@ -44,7 +44,7 @@ export class PointerSurface extends React.PureComponent {
         aria-pressed={pressed}
         className={buttonClassName}
         id={id}
-        onKeyPress={disabled ? preventEventDefault : this._onMouseUp}
+        onKeyDown={disabled ? preventEventDefault : this._onMouseUp}
         onMouseDown={disabled ? preventEventDefault : this._onMouseDown}
         onMouseEnter={disabled ? preventEventDefault : this._onMouseEnter}
         onMouseLeave={disabled ? null : this._onMouseLeave}
@@ -75,7 +75,7 @@ export class PointerSurface extends React.PureComponent {
 
   _onMouseLeave = (e: React.MouseEvent): void => {
     this._pressedTarget = null;
-    const mouseUpEvent: MouseEvent = e as unknown as MouseEvent; //TODO
+    const mouseUpEvent: MouseEvent = e as unknown as MouseEvent;
     this._onMouseUpCapture(mouseUpEvent);
   };
 

@@ -114,47 +114,22 @@ function linkOrderedListCounters(tr: Transform): Transform {
           // Look backward until we could find another ordered list node to
           // link with.
           let counterIsLinked;
-          listsBefore.some((list, _index) => {
-            if (list.node.type !== node.type && list.indent === indent) {
-              // This encounters different type of list node (e.g a bullet
-              // list node), we need to restart the counter.
-              // ------
-              // 1. AAA
-              // 2. BBB
-              // ------
-              // -. CCC
-              // -. DDD
-              // ------
-              // 1. DDD <- Counter restarts here.
-              // 2. EEE
-              // ------
+          listsBefore.some(({ node: { type }, indent: listIndent }) => {
+            if (listIndent < indent || (listIndent === indent && type !== node.type)) {
+              // Restart counter if:
+              // 1. We encounter a list with a lesser indent (moving to a higher level).
+              // 2. We encounter a different type of list at the same indent level.
               counterIsLinked = false;
               return true;
-            } else if (list.indent < indent) {
-              // This encounters an ordered list node that has less indent.
-              // we need to restart the counter.
-              // ------
-              // 1. AAA
-              // 2. BBB
-              // ------
-              //   1. DDD <- Counter restarts here.
-              //   2. EEE
-              // ------
-              counterIsLinked = false;
-              return true;
-            } else if (list.indent === indent) {
-              // This encounters an ordered list node that has same indent.
-              // Do not Restart the counter.
-              // ------
-              // 1. AAA
-              // 2. BBB
-              // ------
-              // 3. DDD <- Counter continues here.
-              // 4. EEE
-              // ------
+            }
+            
+            if (listIndent === indent) {
+              // Continue counter if:
+              // We encounter the same type of list at the same indent level.
               counterIsLinked = true;
               return true;
             }
+          
             return false;
           });
 

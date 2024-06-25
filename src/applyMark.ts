@@ -2,7 +2,6 @@ import { Transaction } from '@remirror/pm/state';
 import { MarkType, Node, Schema } from 'prosemirror-model';
 import { SelectionRange, TextSelection } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
-import { findParentNodeClosestToPos } from 'prosemirror-utils';
 
 interface MyNode {
   inlineContent: boolean; // Assuming inlineContent is of type boolean
@@ -37,8 +36,8 @@ function hasMark(marks, markType) {
   marks.forEach(function (mark) {
     if (mark.type.name === markType) {
       has = true;
-      return has;
     }
+    return has;
   });
   return has;
 }
@@ -95,39 +94,38 @@ export function applyMark(
       }
 
     }
-    else {
-      if (attrs) {
-        const nodeTr = tr.doc.nodeAt($from.pos);
-        if ('link' === markType.name) {
-          if (0 < nodeTr?.marks.length && hasMark(nodeTr.marks, 'mark-text-color')) {
-            tr = tr.removeMark($from.pos, $to.pos, _schema.marks['mark-text-color']);
-          }
-          tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
+    else if (attrs) {
+      const nodeTr = tr.doc.nodeAt($from.pos);
+      if ('link' === markType.name) {
+        if (0 < nodeTr?.marks.length && hasMark(nodeTr.marks, 'mark-text-color')) {
+          tr = tr.removeMark($from.pos, $to.pos, _schema.marks['mark-text-color']);
         }
-        else if ('mark-text-color' === markType.name) {
-          if (0 < nodeTr?.marks.length) {
-            if (!hasMark(nodeTr?.marks, 'link')) {
-              tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
-            }
+        tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
+      }
+      else if ('mark-text-color' === markType.name) {
+        if (0 < nodeTr?.marks.length) {
+          if (!hasMark(nodeTr?.marks, 'link')) {
+            tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
           }
-          else if (nodeTr instanceof Node) {
-            let from = $from.pos + 1;
-            let to = 0;
-            nodeTr.descendants(function (child, pos) {
-              if (child) {
-                to = from + child.nodeSize;
-                if (!hasMark(child.marks, 'link')) {
-                  tr = tr.addMark(from, to, markType.create(attrs));
-                }
-                from = to;
+        }
+        else if (nodeTr instanceof Node) {
+          let from = $from.pos + 1;
+          let to = 0;
+          nodeTr.descendants(function (child) {
+            if (child) {
+              to = from + child.nodeSize;
+              if (!hasMark(child.marks, 'link')) {
+                tr = tr.addMark(from, to, markType.create(attrs));
               }
-            });
-          }
-        }
-        else {
-          tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
+              from = to;
+            }
+          });
         }
       }
+      else {
+        tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
+      }
+
     }
   }
   return tr;

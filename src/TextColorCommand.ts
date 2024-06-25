@@ -1,4 +1,3 @@
-// import * as React from 'react';
 import { ColorEditor } from '@modusoperandi/color-picker';
 import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
 import {applyMark} from './applyMark';
@@ -45,7 +44,7 @@ export class TextColorCommand extends UICommand {
     const result = findNodesWithSameMark(doc, from, to, markType);
     const hex = result ? result.mark.attrs.color : null;
     const node = state.tr.doc.nodeAt(from);
-    const Textmark = node?.marks.find(mark => mark?.attrs && mark.attrs?.color);
+    const Textmark = node?.marks.find(mark => mark?.attrs?.color);
     const Textcolor  = Textmark?.attrs?.color;
     return new Promise((resolve) => {
       this._popUp = createPopUp(

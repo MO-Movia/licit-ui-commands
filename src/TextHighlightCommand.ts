@@ -1,4 +1,3 @@
-// import * as React from 'react';
 import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
 import {applyMark} from './applyMark';
 import {createPopUp} from './ui/createPopUp';
@@ -45,7 +44,7 @@ export class TextHighlightCommand extends UICommand {
     const hex = result ? result.mark.attrs.highlightColor : null;
     const anchor = event?.currentTarget;
     const node = state.tr.doc.nodeAt(from);
-    const Textmark = node?.marks.find(mark => mark?.attrs && mark.attrs?.highlightColor);
+    const Textmark = node?.marks.find(mark => mark?.attrs?.highlightColor);
     const Textcolor  = Textmark?.attrs?.highlightColor;
 
     return new Promise((resolve) => {
