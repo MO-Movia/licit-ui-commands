@@ -70,7 +70,7 @@ export class PopUp extends React.PureComponent<PopUpProps> {
       close,
       modal: modal === true,
       position: position || (modal ? atViewportCenter : atAnchorBottomLeft),
-      popupId: popUpId ? popUpId : null
+      popupId: popUpId
     };
   };
 }
