@@ -122,14 +122,14 @@ function linkOrderedListCounters(tr: Transform): Transform {
               counterIsLinked = false;
               return true;
             }
-            
+
             if (listIndent === indent) {
               // Continue counter if:
               // We encounter the same type of list at the same indent level.
               counterIsLinked = true;
               return true;
             }
-          
+
             return false;
           });
 

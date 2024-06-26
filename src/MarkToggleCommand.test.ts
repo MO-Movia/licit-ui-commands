@@ -380,6 +380,7 @@ describe('MarkToggleCommand', () => {
         rangeHasMark: (_X) => {
           return {};
         },
+        nodesBetween:()=>{return {};}
       },
       addMark: (_x, _y, _z) => {
         return '';

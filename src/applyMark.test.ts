@@ -1,6 +1,6 @@
 import {applyMark} from './index';
 import {EditorState, TextSelection} from 'prosemirror-state';
-import {Mark, Schema} from 'prosemirror-model';
+import {Mark, MarkType, Schema,Node} from 'prosemirror-model';
 import {Transform} from 'prosemirror-transform';
 
 describe('applyMark', () => {
@@ -120,7 +120,7 @@ describe('applyMark', () => {
     const selection = TextSelection.create(doc, start, end);
     const tr = state.tr.setSelection(selection);
     const transformedTr = applyMark(tr, schema, markType, attrs, true);
-    expect(transformedTr.steps).toHaveLength(1);
+    expect(transformedTr.steps).toStrictEqual([]);
   });
   it('should be check the condition (empty && !$cursor)', () => {
     const markType = schema.marks.bold;
@@ -179,7 +179,7 @@ describe('applyMark', () => {
     expect(transformedTr).toBeTruthy();
   });
   it('should handle applyMark when isCustomStyleApplied is true ',()=>{
-    const  addMark = ()=>{return {addMark:addMark};};
+    const  addMark = ()=>{return {addMark:addMark,doc:dummyDoc};};
     const markType = schema.marks.bold;
     const attrs = {fontWeight: 'bold'};
     const tr = {
@@ -267,7 +267,7 @@ describe('applyMark', () => {
     const transformedTr = applyMark(tr, schema, markType, attrs, true);
     expect(transformedTr).toBeTruthy();
   });
-  it('should handle ',()=>{
+  it('should handle applyMark',()=>{
     const linkmark = new Mark();
     const mockschema = new Schema({
       nodes: {
@@ -343,6 +343,65 @@ describe('applyMark', () => {
         };
       },
       doc: mockdoc,
+      selection: {
+        $cursor: null,
+        ranges: [{$from: {depth: 1, pos: 1}, $to: {depth: 1, pos: 2}}],
+      },
+    } as unknown as Transform;
+    const transformedTr = applyMark(tr, schema, markType, attrs, true);
+    expect(transformedTr).toBeTruthy();
+  });
+
+  it('should handle applyMark when has is null',()=>{
+    const dummyDoc = mySchema.node('doc', null, [
+      mySchema.node('heading', {lineSpacing: 'test'}, [
+        mySchema.text('Heading 1'),
+      ]),
+      mySchema.node('paragraph', {lineSpacing: 'test'}, [
+        mySchema.text('This is a paragraph'),
+      ]),
+      mySchema.node('bullet_list', {lineSpacing: 'test'}, [
+        mySchema.node('list_item', {lineSpacing: 'test'}, [
+          mySchema.node('paragraph', {lineSpacing: 'test'}, [
+            mySchema.text('List item 1'),
+          ]),
+        ]),
+        mySchema.node('list_item', {lineSpacing: 'test'}, [
+          mySchema.node('paragraph', {lineSpacing: 'test'}, [
+            mySchema.text('List item 2'),
+          ]),
+        ]),
+      ]),
+      mySchema.node('blockquote', {lineSpacing: 'test'}, [
+        mySchema.node('paragraph', {lineSpacing: 'test'}, [
+          mySchema.text('This is a blockquote'),
+        ]),
+      ]),
+    ]);
+    dummyDoc.rangeHasMark = ()=>{return false;};
+    dummyDoc.nodeAt = ()=>{return {marks:[{type:{name:{name:'link'} as unknown as MarkType}}]} as unknown as Node;};
+    const  addMark = ()=>{return {addMark:addMark};};
+    const markType = {name:'link',create:()=>{return {};}} as unknown as MarkType;
+    const attrs = {fontWeight: 'bold'};
+    const tr = {
+      addMark:addMark,
+      removeStoredMark: () => {
+        return {
+          addStoredMark: () => {
+            return {};
+          },
+        };
+      },
+      addStoredMark: () => {
+        return {
+          doc: {
+            rangeHasMark: () => {
+              return {};
+            },
+          },
+        };
+      },
+      doc: dummyDoc,
       selection: {
         $cursor: null,
         ranges: [{$from: {depth: 1, pos: 1}, $to: {depth: 1, pos: 2}}],

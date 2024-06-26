@@ -1,11 +1,10 @@
 import { toggleMark } from 'prosemirror-commands';
-import { EditorState, SelectionRange } from 'prosemirror-state';
+import { EditorState } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
 import { findNodesWithSameMark } from './findNodesWithSameMark';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 import * as React from 'react';
-import { MarkType } from 'prosemirror-model';
 
 export class MarkToggleCommand extends UICommand {
   _markName: string;
@@ -123,45 +122,39 @@ export function toggleCustomStyle(
   if ($cursor && $cursor.parentOffset === 0 && posfrom === posto) {
     if (markType.isInSet(state.storedMarks || $cursor.marks())) {
       tr = state.tr.removeStoredMark(markType);
-    } else {
+    }
+    else {
       tr = state.tr.addStoredMark(markType.create(attrs));
     }
   }
-  else if (!hasMark(ranges, tr, markType)) {
-    tr.addMark(posfrom, posto, markType.create(attrs));
-  }
+  // else if (!hasMark(posfrom, posto, tr, markType)) {
+  //   tr.addMark(posfrom, posto, markType.create(attrs));
+  // }
   else {
     // [FS] IRAD-1043 2020-10-27
     // No need to remove the applied custom style, if user select the same style multiple times.
-    const nodeTr = tr.doc.nodeAt(posfrom);
     let from = posfrom;
     let to = 0;
-    if (nodeTr) {
-      nodeTr.descendants(function (child) {
-        if (child) {
-          to = from + child.nodeSize;
-          child.marks.forEach(function (mark) {
-            if (mark.type.name === markType.name && !mark.attrs.overridden) {
-              tr.addMark(from, to, markType.create(attrs));
-            }
-
-          });
-          from = to;
+    tr.doc.nodesBetween(posfrom, posto, (node, pos) => {
+      from = pos;
+      to = from + node.nodeSize;
+      if (node && 0 < node.marks.length) {
+        const result = node.marks.find(mark => mark.type.name === markType.name);
+        if (!result) {
+          attrs = { overridden: false };
+          tr = tr.addMark(from, to, markType.create(attrs));
         }
-      });
-    }
+        else {
+          attrs = { overridden: true };
+          tr = tr.addMark(from, to, markType.create(attrs));
+        }
+        from = to;
+      }
+    });
   }
   return tr;
 }
 
-function hasMark(ranges: readonly SelectionRange[], tr: Transform, markType: MarkType) {
-  let has = false;
-  for (let i = 0; !has && i < ranges.length; i++) {
-    const { $from, $to } = ranges[i];
-    has = tr.doc.rangeHasMark($from.pos, $to.pos, markType);
-  }
-  return has;
-}
 //overrided method from prosemirror Transform
 function markApplies(doc, ranges, type) {
   let returned = false;

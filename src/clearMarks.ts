@@ -67,8 +67,9 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
           tasks.push({node, pos, mark});
         }
       });
-      return true;
+
     }
+    return true;
   });
   if (!tasks.length) {
     // It should clear text alignment and line spacing.
