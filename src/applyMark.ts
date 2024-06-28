@@ -81,11 +81,6 @@ export function applyMark(
           }
           to = from + child.nodeSize;
           if (child && 0 < child.marks.length) {
-            // child.marks.forEach(function (mark) {
-            //   if (mark.type.name === markType.name && !mark.attrs.overridden && attrs) {
-            //     tr = tr.addMark(from, to, markType.create(attrs));
-            //   }
-            // });
             const result = child.marks.find(mark => mark.type.name === markType.name);
             if (!result) {
               tr = tr.addMark(from, to + to_add, markType.create(attrs));
@@ -95,15 +90,13 @@ export function applyMark(
             }
           }
           else {
-            // tr = tr.addMark(from, to, markType.create(attrs));
             tr = tr.addMark(from, to + to_add, markType.create(attrs));
           }
           from = to + to_add;
         });
       }
     }
-    else {
-      if (attrs) {
+    else if (attrs) {
         const nodeTr = tr.doc.nodeAt($from.pos);
         if ('link' === markType.name) {
           if (0 < nodeTr?.marks.length && hasMark(nodeTr.marks, 'mark-text-color')) {
@@ -136,11 +129,6 @@ export function applyMark(
                   }
                   from = to;
                 }
-
-                // if (!hasMark(child.marks, 'link')) {
-                //     tr = tr.addMark(from, to, markType.create(attrs));
-                // }
-                // from = to;
               }
             });
           }
@@ -169,10 +157,9 @@ export function applyMark(
               }
             });
           }
-          // tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
         }
       }
-    }
+    
   }
   return tr;
 }
