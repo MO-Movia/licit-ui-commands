@@ -192,11 +192,20 @@ export class PopUpManager {
         this._positions.set(bridge, positionKey);
         const bodyStyle = body.style;
         bodyStyle.position = 'absolute';
-        bodyStyle.left = `${x}px`;
-        bodyStyle.top = `${y}px`;
-        bodyStyle.setProperty('--czi-pop-up-anchor-offset-left', `${ax}px`);
-        bodyRect.x = x;
-        bodyRect.y = y;
+        if (bodyRect.w === 0 && bodyRect.h === 0) {
+          bodyStyle.left = `${x}px`;
+          bodyStyle.top = `${y}px`;
+          bodyRect.x = x;
+          bodyRect.y = y;
+      }
+      else {
+          bodyStyle.left = `${x - bodyRect.x}px`;
+          bodyStyle.top = `${y - bodyRect.y}px`;
+          bodyRect.x = x - bodyRect.x;
+          bodyRect.y = y - bodyRect.y;
+      }
+      bodyStyle.setProperty('--czi-pop-up-anchor-offset-left', `${ax}px`);
+
       }
 
       if (

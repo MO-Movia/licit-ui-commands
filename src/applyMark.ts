@@ -159,7 +159,7 @@ export function applyMark(
           }
         }
       }
-    
+
   }
   return tr;
 }
