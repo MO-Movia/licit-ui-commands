@@ -32,16 +32,6 @@ function markApplies(
 }
 
 function hasMark(marks: readonly Mark[], markType: string) {
-  let has = false;
-  marks.forEach(function (mark) {
-    if (mark.type.name === markType) {
-      has = true;
-    }
-    return has;
-  });
-  return has;
-}
-function ohasMark(marks: readonly Mark[], markType: string) {
   return marks.some(mark => mark.type.name === markType);
 }
 
