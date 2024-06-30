@@ -127,9 +127,6 @@ export function toggleCustomStyle(
       tr = state.tr.addStoredMark(markType.create(attrs));
     }
   }
-  // else if (!hasMark(posfrom, posto, tr, markType)) {
-  //   tr.addMark(posfrom, posto, markType.create(attrs));
-  // }
   else {
     // [FS] IRAD-1043 2020-10-27
     // No need to remove the applied custom style, if user select the same style multiple times.

@@ -1,5 +1,5 @@
 import { Transaction } from '@remirror/pm/state';
-import { MarkType, Node, Schema } from 'prosemirror-model';
+import { Mark, MarkType, Node, Schema } from 'prosemirror-model';
 import { SelectionRange, TextSelection } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 
@@ -31,7 +31,7 @@ function markApplies(
   return false;
 }
 
-function hasMark(marks, markType) {
+function hasMark(marks: readonly Mark[], markType: string) {
   let has = false;
   marks.forEach(function (mark) {
     if (mark.type.name === markType) {
@@ -41,6 +41,11 @@ function hasMark(marks, markType) {
   });
   return has;
 }
+function ohasMark(marks: readonly Mark[], markType: string) {
+  return marks.some(mark => mark.type.name === markType);
+}
+
+
 
 // https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.js
 export function applyMark(
@@ -97,68 +102,68 @@ export function applyMark(
       }
     }
     else if (attrs) {
-        const nodeTr = tr.doc.nodeAt($from.pos);
-        if ('link' === markType.name) {
-          if (0 < nodeTr?.marks.length && hasMark(nodeTr.marks, 'mark-text-color')) {
-            tr = tr.removeMark($from.pos, $to.pos, _schema.marks['mark-text-color']);
-          }
-          tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
+      const nodeTr = tr.doc.nodeAt($from.pos);
+      if ('link' === markType.name) {
+        if (0 < nodeTr?.marks.length && hasMark(nodeTr.marks, 'mark-text-color')) {
+          tr = tr.removeMark($from.pos, $to.pos, _schema.marks['mark-text-color']);
         }
-        else if ('mark-text-color' === markType.name) {
-          if (0 < nodeTr?.marks.length) {
-            if (!hasMark(nodeTr?.marks, 'link')) {
-              tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
-            }
-          }
-          else if (nodeTr instanceof Node) {
-            let from = $from.pos;
-            let to = 0;
-            nodeTr.descendants(function (child) {
-              if (child) {
-                const nodeTr_1 = tr.doc.nodeAt(from);
-                to = from + child.nodeSize;
-
-                if (nodeTr_1.childCount > 0) {
-                  if (!hasMark(child.marks, 'link')) {
-                    tr = tr.addMark(from, to + 1, markType.create(attrs));
-                  }
-                  from = to + 1;
-                } else {
-                  if (!hasMark(child.marks, 'link')) {
-                    tr = tr.addMark(from, to, markType.create(attrs));
-                  }
-                  from = to;
-                }
-              }
-            });
-          }
-        }
-        else {
-          const nodeTr = tr.doc.nodeAt($from.pos);
-          let from = $from.pos;
-          let to = 0;
-          if (undefined === isCustomStyleApplied) {
+        tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
+      }
+      else if ('mark-text-color' === markType.name) {
+        if (0 < nodeTr?.marks.length) {
+          if (!hasMark(nodeTr?.marks, 'link')) {
             tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
           }
-          else {
-            nodeTr.descendants(function (child) {
-              if (child) {
-                const nodeTr = tr.doc.nodeAt(from);
-                to = from + child.nodeSize;
-                if (nodeTr.childCount > 0) {
+        }
+        else if (nodeTr instanceof Node) {
+          let from = $from.pos;
+          let to = 0;
+          nodeTr.descendants(function (child) {
+            if (child) {
+              const nodeTr_1 = tr.doc.nodeAt(from);
+              to = from + child.nodeSize;
+
+              if (nodeTr_1.childCount > 0) {
+                if (!hasMark(child.marks, 'link')) {
                   tr = tr.addMark(from, to + 1, markType.create(attrs));
-                  from = to + 1;
-                } else {
-                  tr = tr.addMark(from, to, markType.create(attrs));
-                  from = to;
                 }
-
-
+                from = to + 1;
+              } else {
+                if (!hasMark(child.marks, 'link')) {
+                  tr = tr.addMark(from, to, markType.create(attrs));
+                }
+                from = to;
               }
-            });
-          }
+            }
+          });
         }
       }
+      else {
+        const nodeTr = tr.doc.nodeAt($from.pos);
+        let from = $from.pos;
+        let to = 0;
+        if (undefined === isCustomStyleApplied) {
+          tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
+        }
+        else {
+          nodeTr.descendants(function (child) {
+            if (child) {
+              const nodeTr = tr.doc.nodeAt(from);
+              to = from + child.nodeSize;
+              if (nodeTr.childCount > 0) {
+                tr = tr.addMark(from, to + 1, markType.create(attrs));
+                from = to + 1;
+              } else {
+                tr = tr.addMark(from, to, markType.create(attrs));
+                from = to;
+              }
+
+
+            }
+          });
+        }
+      }
+    }
 
   }
   return tr;
