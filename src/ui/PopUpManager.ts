@@ -97,13 +97,13 @@ export class PopUpManager {
         }
         if (details.autoDismiss && details.popupId) {
           const targetName = (e.target as HTMLElement).className;
-          if (targetName && targetName.startsWith('mocp')) {
+          if (targetName?.startsWith('mocp')) {
             this.isColorPicker = true;
             return;
           }
 
           if (this._bridges.size > 1) {
-     
+
             if (
               targetName === 'czi-icon format_line_spacing' ||
               targetName === 'czi-icon format_color_text' ||
@@ -156,9 +156,8 @@ export class PopUpManager {
 
     const bridgeToDetails = new Map();
     for (const [
-      bridge,
+      bridge
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      registeredAt,
     ] of this._bridges) {
       const details = bridge.getDetails();
       bridgeToDetails.set(bridge, details);
@@ -193,11 +192,20 @@ export class PopUpManager {
         this._positions.set(bridge, positionKey);
         const bodyStyle = body.style;
         bodyStyle.position = 'absolute';
-        bodyStyle.left = `${x - bodyRect.x}px`;
-        bodyStyle.top = `${y - bodyRect.y}px`;
-        bodyStyle.setProperty('--czi-pop-up-anchor-offset-left', `${ax}px`);
-        bodyRect.x = x - bodyRect.x;
-        bodyRect.y = y - bodyRect.y;
+        if (bodyRect.w === 0 && bodyRect.h === 0) {
+          bodyStyle.left = `${x}px`;
+          bodyStyle.top = `${y}px`;
+          bodyRect.x = x;
+          bodyRect.y = y;
+      }
+      else {
+          bodyStyle.left = `${x - bodyRect.x}px`;
+          bodyStyle.top = `${y - bodyRect.y}px`;
+          bodyRect.x = x - bodyRect.x;
+          bodyRect.y = y - bodyRect.y;
+      }
+      bodyStyle.setProperty('--czi-pop-up-anchor-offset-left', `${ax}px`);
+
       }
 
       if (
@@ -214,7 +222,6 @@ export class PopUpManager {
       const size = hoveredAnchors.size;
       for (const [
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        bridge,
         details,
       ] of bridgeToDetails) {
         const {anchor, body} = details;

@@ -1,14 +1,13 @@
-// import * as React from 'react';
-import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
-import {applyMark} from './applyMark';
-import {createPopUp} from './ui/createPopUp';
-import {findNodesWithSameMark} from './findNodesWithSameMark';
-import {isTextStyleMarkCommandEnabled} from './isTextStyleMarkCommandEnabled';
+import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import { applyMark } from './applyMark';
+import { createPopUp } from './ui/createPopUp';
+import { findNodesWithSameMark } from './findNodesWithSameMark';
+import { isTextStyleMarkCommandEnabled } from './isTextStyleMarkCommandEnabled';
 import nullthrows from 'nullthrows';
-import {EditorState, TextSelection, Transaction} from 'prosemirror-state';
-import {EditorView} from 'prosemirror-view';
-import {MARK_TEXT_HIGHLIGHT} from './MarkNames';
-import {Transform} from 'prosemirror-transform';
+import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
+import { MARK_TEXT_HIGHLIGHT } from './MarkNames';
+import { Transform } from 'prosemirror-transform';
 import { RuntimeService } from './runtime.service';
 import { ColorEditor } from '@modusoperandi/color-picker';
 
@@ -38,20 +37,20 @@ export class TextHighlightCommand extends UICommand {
       return Promise.resolve(undefined);
     }
 
-    const {doc, selection, schema} = state;
+    const { doc, selection, schema } = state;
     const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
-    const {from, to} = selection;
+    const { from, to } = selection;
     const result = findNodesWithSameMark(doc, from, to, markType);
     const hex = result ? result.mark.attrs.highlightColor : null;
     const anchor = event?.currentTarget;
     const node = state.tr.doc.nodeAt(from);
-    const Textmark = node?.marks.find(mark => mark?.attrs && mark.attrs?.highlightColor);
-    const Textcolor  = Textmark?.attrs?.highlightColor;
+    const Textmark = node?.marks.find(mark => mark?.attrs?.highlightColor);
+    const Textcolor = Textmark?.attrs?.highlightColor;
 
     return new Promise((resolve) => {
       this._popUp = createPopUp(
         ColorEditor,
-        { hex, runtime: RuntimeService.Runtime, Textcolor},
+        { hex, runtime: RuntimeService.Runtime, Textcolor },
         {
           anchor,
           popUpId: 'mo-menuList-child',
@@ -74,10 +73,10 @@ export class TextHighlightCommand extends UICommand {
     color?: string
   ): boolean => {
     if (dispatch && color !== undefined) {
-      const {schema} = state;
-      let {tr} = state;
+      const { schema } = state;
+      let { tr } = state;
       const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
-      const attrs = color ? {highlightColor: color} : null;
+      const attrs = color ? { highlightColor: color } : null;
       (tr as Transform) = applyMark(tr, schema, markType, attrs);
       if (tr.docChanged || tr.storedMarksSet) {
         // If selection is empty, the color is added to `storedMarks`, which
@@ -97,14 +96,14 @@ export class TextHighlightCommand extends UICommand {
     from: number,
     to: number
   ): Transform => {
-    const {schema} = state;
+    const { schema } = state;
     const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
-    const attrs = {highlightColor: this._color};
+    const attrs = { highlightColor: this._color };
     tr = applyMark(
       (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),
       schema,
       markType,
-      attrs
+      attrs, true
     );
     return tr;
   };

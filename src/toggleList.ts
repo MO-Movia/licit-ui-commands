@@ -86,7 +86,7 @@ export function unwrapNodesFromList(
   });
 }
 
-function wrapNodesWithList(
+export function wrapNodesWithList(
   tr: Transform,
   schema: Schema,
   listNodeType: NodeType,
@@ -105,7 +105,7 @@ function wrapNodesWithList(
   });
 }
 
-function wrapNodesWithListInternal(
+export function wrapNodesWithListInternal(
   memo: SelectionMemo,
   listNodeType: NodeType,
   listStyleType: string,
@@ -219,8 +219,8 @@ export function wrapItemsWithListInternal(
     return initialTr;
   }
 
-  const firstNodeID = firstNode.attrs.id;
-  const lastNodeID = lastNode.attrs.id;
+  const firstNodeID = firstNode.attrs?.id;
+  const lastNodeID = lastNode.attrs?.id;
   if (!firstNodeID || !lastNodeID) {
     return initialTr;
   }
@@ -377,7 +377,7 @@ function unwrapNodesFromSelection(
   return tr;
 }
 
-function unwrapNodesFromListInternal(
+export function unwrapNodesFromListInternal(
   memo: SelectionMemo,
   listNodePos: number,
   unwrapParagraphNode?: (Node) => Node

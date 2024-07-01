@@ -92,7 +92,7 @@ function createGroup(): Array<{[key: string]: TextLineSpacingCommand}> {
 export class TextLineSpacingCommand extends UICommand {
   _lineSpacing?: string;
 
-  static createGroup = createGroup;
+  static readonly createGroup = createGroup;
 
   constructor(lineSpacing?: string) {
     super();
