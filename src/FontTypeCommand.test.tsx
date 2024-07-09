@@ -295,4 +295,10 @@ describe('FontTypeCommand', () => {
   it('should be active', () => {
     expect(plugin.isActive()).toBeTruthy();
   });
+  it('should handle cancel',()=>{
+    expect(plugin.cancel()).toBeNull();
+  });
+  it('should handle renderLabel ',()=>{
+    expect(plugin.renderLabel({} as unknown as EditorState)).toBeDefined();
+  });
 });

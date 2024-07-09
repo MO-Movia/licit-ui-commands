@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { instance } from './PopUpManager';
 import { atAnchorBottomLeft, atViewportCenter } from './PopUpPosition';
-import {uuid} from './uuid';
+import { uuid } from './uuid';
 
 import type { PopUpDetails } from './PopUpManager';
 import type { Rect } from './rects';
@@ -35,7 +35,7 @@ export type PopUpHandle = {
 };
 
 export class PopUp extends React.PureComponent<PopUpProps> {
-    declare props: PopUpProps;
+  declare props: PopUpProps;
 
   _bridge = null;
   _id = uuid();
@@ -64,12 +64,13 @@ export class PopUp extends React.PureComponent<PopUpProps> {
     const { anchor, autoDismiss, position, modal, popUpId } = popUpParams;
     return {
       anchor,
-      autoDismiss: autoDismiss === false ? false : true,
+      autoDismiss: autoDismiss !== false
+      ,
       body: document.getElementById(this._id),
       close,
       modal: modal === true,
       position: position || (modal ? atViewportCenter : atAnchorBottomLeft),
-      popupId: popUpId ? popUpId : null
+      popupId: popUpId
     };
   };
 }

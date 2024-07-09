@@ -67,7 +67,7 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
           tasks.push({node, pos, mark});
         }
       });
-      return true;
+
     }
     return true;
   });

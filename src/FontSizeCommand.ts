@@ -8,13 +8,13 @@ import {Transform} from 'prosemirror-transform';
 import {EditorView} from 'prosemirror-view';
 import * as React from 'react';
 
-function setFontSize(tr: Transform, schema: Schema, pt: number): Transform {
+function setFontSize(tr: Transform, schema: Schema, pt: number, isCustomStyleApplied?: boolean): Transform {
   const markType = schema.marks[MARK_FONT_SIZE];
   if (!markType) {
     return tr;
   }
   const attrs = pt ? {pt} : null;
-  tr = applyMark(tr, schema, markType, attrs);
+  tr = applyMark(tr, schema, markType, attrs,isCustomStyleApplied);
   return tr;
 }
 
@@ -84,7 +84,8 @@ export class FontSizeCommand extends UICommand {
     tr = setFontSize(
       (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),
       schema,
-      this._pt
+      this._pt,
+      true
     );
     return tr;
   };
