@@ -1,4 +1,4 @@
-@import url("./czi-vars.css");
+@import url('./czi-vars.css');
 
 .czi-pop-up-modal-mask,
 .czi-pop-up-element {
@@ -8,6 +8,7 @@
   top: 0;
   z-index: 5000;
 }
+
 
 /* [FS] IRAD-1048 2020-10-07
  To handle child dialog window  */
