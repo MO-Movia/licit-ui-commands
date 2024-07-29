@@ -43,6 +43,7 @@ export class PopUpManager {
   unregister(bridge: PopUpBridge): void {
     this._bridges.delete(bridge);
     this._positions.delete(bridge);
+    this.isColorPicker = false;
     if (this._bridges.size === 0) {
       this._unobserve();
     }
@@ -87,7 +88,7 @@ export class PopUpManager {
   _onClick = (e: MouseEvent): void => {
     const now = Date.now();
     let detailsWithModalToDismiss;
-    let IsCustom = false;
+    const IsCustom = false;
     this.isColorPicker = false;
     for (const [bridge, registeredAt] of this._bridges) {
       if (now - registeredAt > CLICK_INTERVAL) {
@@ -101,42 +102,7 @@ export class PopUpManager {
             this.isColorPicker = true;
             return;
           }
-
-          if (this._bridges.size > 1) {
-
-            if (
-              targetName === 'czi-icon format_line_spacing' ||
-              targetName === 'czi-icon format_color_text' ||
-              targetName === 'czi-icon border_color'
-            ) {
-              return;
-            } else {
-              IsCustom = true;
-            }
-          } else {
-            detailsWithModalToDismiss = details;
-            const {close} = detailsWithModalToDismiss;
-            close();
-            detailsWithModalToDismiss = null;
-          }
         }
-      }
-    }
-    if (IsCustom) {
-      const arrOpenPopups = [];
-      let hasModel = false;
-      for (const [bridge] of this._bridges) {
-        const details = bridge.getDetails();
-        arrOpenPopups.push(details);
-        if (details.modal) {
-          hasModel = true;
-        }
-      }
-      if (!hasModel && !this.isColorPicker) {
-        arrOpenPopups.forEach((element) => {
-          const {close} = element;
-          close();
-        });
       }
     }
 
@@ -147,6 +113,7 @@ export class PopUpManager {
     const pointer = fromXY(e.clientX, e.clientY, 1);
     const bodyRect = body ? fromHTMlElement(body) : null;
     if (!bodyRect || !isIntersected(pointer, bodyRect)) {
+      this.isColorPicker = false;
       close();
     }
   };
@@ -156,8 +123,9 @@ export class PopUpManager {
 
     const bridgeToDetails = new Map();
     for (const [
-      bridge
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      bridge,
+      // eslint-disable-next-line no-unused-vars
+      registeredAt,
     ] of this._bridges) {
       const details = bridge.getDetails();
       bridgeToDetails.set(bridge, details);
@@ -197,15 +165,13 @@ export class PopUpManager {
           bodyStyle.top = `${y}px`;
           bodyRect.x = x;
           bodyRect.y = y;
-      }
-      else {
+        } else {
           bodyStyle.left = `${x - bodyRect.x}px`;
           bodyStyle.top = `${y - bodyRect.y}px`;
           bodyRect.x = x - bodyRect.x;
           bodyRect.y = y - bodyRect.y;
-      }
-      bodyStyle.setProperty('--czi-pop-up-anchor-offset-left', `${ax}px`);
-
+        }
+        bodyStyle.setProperty('--czi-pop-up-anchor-offset-left', `${ax}px`);
       }
 
       if (
@@ -217,11 +183,12 @@ export class PopUpManager {
         }
       }
     }
-    /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
+
     while (true) {
       const size = hoveredAnchors.size;
       for (const [
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line no-unused-vars
+        bridge,
         details,
       ] of bridgeToDetails) {
         const {anchor, body} = details;
@@ -251,7 +218,9 @@ export class PopUpManager {
           // Modal is handled separately at `onClick`
           !modal &&
           now - registeredAt > CLICK_INTERVAL &&
-          !hoveredAnchors.has(anchor) && !this.isColorPicker        ) {
+          !hoveredAnchors.has(anchor) &&
+          !this.isColorPicker
+        ) {
           close();
         }
       }
@@ -259,4 +228,6 @@ export class PopUpManager {
   };
 }
 
-export const instance = new PopUpManager();
+const instance = new PopUpManager();
+
+export default instance;
