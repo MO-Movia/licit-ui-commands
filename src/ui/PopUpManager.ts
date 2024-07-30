@@ -2,6 +2,7 @@ import {clamp} from './clamp';
 import {fromHTMlElement, fromXY, isIntersected} from './rects';
 import type {PositionHandler} from './PopUpPosition';
 import type {Rect} from './rects';
+/* eslint-disable */
 
 export type PopUpDetails = {
   anchor?: HTMLElement;
@@ -88,7 +89,6 @@ export class PopUpManager {
   _onClick = (e: MouseEvent): void => {
     const now = Date.now();
     let detailsWithModalToDismiss;
-    const IsCustom = false;
     this.isColorPicker = false;
     for (const [bridge, registeredAt] of this._bridges) {
       if (now - registeredAt > CLICK_INTERVAL) {
@@ -122,11 +122,7 @@ export class PopUpManager {
     this._rafID = 0;
 
     const bridgeToDetails = new Map();
-    for (const [
-      bridge,
-      // eslint-disable-next-line no-unused-vars
-      registeredAt,
-    ] of this._bridges) {
+    for (const [bridge, registeredAt] of this._bridges) {
       const details = bridge.getDetails();
       bridgeToDetails.set(bridge, details);
       const {anchor, body} = details;
@@ -186,11 +182,7 @@ export class PopUpManager {
 
     while (true) {
       const size = hoveredAnchors.size;
-      for (const [
-        // eslint-disable-next-line no-unused-vars
-        bridge,
-        details,
-      ] of bridgeToDetails) {
+      for (const [bridge, details] of bridgeToDetails) {
         const {anchor, body} = details;
         for (const ha of hoveredAnchors) {
           if (
