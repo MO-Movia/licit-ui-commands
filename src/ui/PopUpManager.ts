@@ -2,7 +2,6 @@ import {clamp} from './clamp';
 import {fromHTMlElement, fromXY, isIntersected} from './rects';
 import type {PositionHandler} from './PopUpPosition';
 import type {Rect} from './rects';
-/* eslint-disable */
 
 export type PopUpDetails = {
   anchor?: HTMLElement;
@@ -122,7 +121,7 @@ export class PopUpManager {
     this._rafID = 0;
 
     const bridgeToDetails = new Map();
-    for (const [bridge, registeredAt] of this._bridges) {
+    for (const [bridge] of this._bridges) {
       const details = bridge.getDetails();
       bridgeToDetails.set(bridge, details);
       const {anchor, body} = details;
@@ -156,17 +155,10 @@ export class PopUpManager {
         this._positions.set(bridge, positionKey);
         const bodyStyle = body.style;
         bodyStyle.position = 'absolute';
-        if (bodyRect.w === 0 && bodyRect.h === 0) {
-          bodyStyle.left = `${x}px`;
-          bodyStyle.top = `${y}px`;
-          bodyRect.x = x;
-          bodyRect.y = y;
-        } else {
-          bodyStyle.left = `${x - bodyRect.x}px`;
-          bodyStyle.top = `${y - bodyRect.y}px`;
-          bodyRect.x = x - bodyRect.x;
-          bodyRect.y = y - bodyRect.y;
-        }
+        bodyStyle.left = `${x}px`;
+        bodyStyle.top = `${y}px`;
+        bodyRect.x = x;
+        bodyRect.y = y;
         bodyStyle.setProperty('--czi-pop-up-anchor-offset-left', `${ax}px`);
       }
 
@@ -180,10 +172,14 @@ export class PopUpManager {
       }
     }
 
-    while (true) {
-      const size = hoveredAnchors.size;
-      for (const [bridge, details] of bridgeToDetails) {
-        const {anchor, body} = details;
+    let size;
+
+    do {
+      size = hoveredAnchors.size;
+
+      for (const [, details] of bridgeToDetails) {
+        const { anchor, body } = details;
+
         for (const ha of hoveredAnchors) {
           if (
             anchor &&
@@ -195,10 +191,7 @@ export class PopUpManager {
           }
         }
       }
-      if (hoveredAnchors.size === size) {
-        break;
-      }
-    }
+    } while (hoveredAnchors.size !== size);
 
     const now = Date.now();
     for (const [bridge, registeredAt] of this._bridges) {
