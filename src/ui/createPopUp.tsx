@@ -6,7 +6,7 @@ import type {PopUpParams, ViewProps} from './PopUp';
 import {PopUp} from './PopUp';
 // eslint-disable-next-line no-unused-vars
 import * as React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import {uuid} from './uuid';
 
 export type PopUpHandle = {
@@ -73,7 +73,7 @@ function getRootElement(
 ): HTMLElement | null {
   const root =
     popUpParams?.container ||
-      document?.getElementsByClassName('czi-editor-frameset')?.[0] ||
+    document?.getElementsByClassName('czi-editor-frameset')?.[0] ||
     document.documentElement;
   let element = document.getElementById(id);
   if (!element && forceCreation) {
@@ -120,7 +120,7 @@ function renderPopUp(
   popUpParams: PopUpParams
 ): void {
   const rootNode = getRootElement(rootId, true, popUpParams);
-  if (rootNode) {
+  if (rootNode && popUpParams.anchor !== 'skip') {
     const component = (
       <PopUp
         View={View}
@@ -129,7 +129,8 @@ function renderPopUp(
         viewProps={viewProps}
       />
     );
-    ReactDOM.render(component, rootNode);
+    const root = ReactDOM.createRoot(rootNode);
+    root.render(component);
   }
 
   if (modalsCount > 0) {
@@ -142,8 +143,7 @@ function renderPopUp(
 export function unrenderPopUp(rootId: string): void {
   const rootNode = getRootElement(rootId, false);
   if (rootNode) {
-    ReactDOM.unmountComponentAtNode(rootNode);
-    rootNode.parentElement?.removeChild(rootNode);
+    rootNode.remove();
   }
 
   if (modalsCount === 0) {
@@ -193,7 +193,6 @@ export function createPopUp(
     close: closePopUp,
     update: (nextViewProps) => {
       currentViewProps = nextViewProps || {};
-      render(currentViewProps, popUpParams);
     },
   };
 

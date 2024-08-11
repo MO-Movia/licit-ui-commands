@@ -87,14 +87,31 @@ export class PopUpManager {
 
   _onClick = (e: MouseEvent): void => {
     const now = Date.now();
-    let detailsWithModalToDismiss;
     this.isColorPicker = false;
+
+    const detailsWithModalToDismiss = this._findDetailsWithModalToDismiss(
+      e,
+      now
+    );
+
+    if (!detailsWithModalToDismiss) {
+      return;
+    }
+
+    this._handleModalDismiss(e, detailsWithModalToDismiss);
+  };
+
+  _findDetailsWithModalToDismiss = (e: MouseEvent, now: number) => {
+    let detailsWithModalToDismiss = null;
+
     for (const [bridge, registeredAt] of this._bridges) {
-      if (now - registeredAt > CLICK_INTERVAL) {
+      if (this._isClickStale(now, registeredAt)) {
         const details = bridge.getDetails();
-        if (details.modal && details.autoDismiss) {
+
+        if (this._shouldDismissModal(details, e)) {
           detailsWithModalToDismiss = details;
         }
+
         if (details.autoDismiss && details.popupId) {
           const targetName = (e.target as HTMLElement).className;
           if (targetName?.startsWith('mocp')) {
@@ -105,12 +122,22 @@ export class PopUpManager {
       }
     }
 
-    if (!detailsWithModalToDismiss) {
-      return;
-    }
-    const {body, close} = detailsWithModalToDismiss;
+    return detailsWithModalToDismiss;
+  };
+
+  _isClickStale = (now: number, registeredAt: number): boolean => {
+    return now - registeredAt > CLICK_INTERVAL;
+  };
+
+  _shouldDismissModal = (details: any, e: MouseEvent): boolean => {
+    return details.modal && details.autoDismiss;
+  };
+
+  _handleModalDismiss = (e: MouseEvent, details: any): void => {
+    const {body, close} = details;
     const pointer = fromXY(e.clientX, e.clientY, 1);
     const bodyRect = body ? fromHTMlElement(body) : null;
+
     if (!bodyRect || !isIntersected(pointer, bodyRect)) {
       this.isColorPicker = false;
       close();
@@ -120,19 +147,7 @@ export class PopUpManager {
   _syncPosition = (): void => {
     this._rafID = 0;
 
-    const bridgeToDetails = new Map();
-    for (const [bridge] of this._bridges) {
-      const details = bridge.getDetails();
-      bridgeToDetails.set(bridge, details);
-      const {anchor, body} = details;
-      if (body instanceof HTMLElement) {
-        details.bodyRect = fromHTMlElement(body);
-      }
-      if (anchor instanceof HTMLElement) {
-        details.anchorRect = fromHTMlElement(anchor);
-      }
-    }
-
+    const bridgeToDetails = this._getBridgeDetails();
     const pointer = fromXY(this._mx, this._my, 2);
     const hoveredAnchors = new Set();
     for (const [bridge, details] of bridgeToDetails) {
@@ -178,7 +193,7 @@ export class PopUpManager {
       size = hoveredAnchors.size;
 
       for (const [, details] of bridgeToDetails) {
-        const { anchor, body } = details;
+        const {anchor, body} = details;
 
         for (const ha of hoveredAnchors) {
           if (
@@ -211,6 +226,29 @@ export class PopUpManager {
       }
     }
   };
+  _getBridgeDetails(): Map<any, any> {
+    const bridgeToDetails = new Map();
+
+    for (const [bridge] of this._bridges) {
+      const details = bridge.getDetails();
+      bridgeToDetails.set(bridge, details);
+      this._setElementRects(details);
+    }
+
+    return bridgeToDetails;
+  }
+
+  _setElementRects(details: any): void {
+    const {anchor, body} = details;
+
+    if (body instanceof HTMLElement) {
+      details.bodyRect = fromHTMlElement(body);
+    }
+
+    if (anchor instanceof HTMLElement) {
+      details.anchorRect = fromHTMlElement(anchor);
+    }
+  }
 }
 
 const instance = new PopUpManager();
