@@ -153,6 +153,8 @@ export function applyMark(
           });
         }
       }
+    } else if (has && !isCustomStyleApplied && !attrs) {
+      tr = tr.removeMark($from.pos, $to.pos, markType);
     }
 
   }

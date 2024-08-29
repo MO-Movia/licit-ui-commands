@@ -1,4 +1,4 @@
-import {instance} from './PopUpManager';
+import instance from './PopUpManager';
 
 describe('PopUpManager', () => {
   let popUpManager;
