@@ -189,4 +189,64 @@ describe('PopUpManager', () => {
     instance._rafID = 1;
     expect(instance._syncPosition()).toBeUndefined();
   });
+
+  it('should return true if details.modal and details.autoDismiss are true', () => {
+    const details = { modal: true, autoDismiss: true, popupId: '' };
+    const event = new MouseEvent('click');
+
+    const result = instance.checkDismissConditions(details, event);
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false if details.autoDismiss is true, details.popupId exists, and target className starts with "mocp"', () => {
+    const details = { modal: false, autoDismiss: true, popupId: 'someId' };
+    const event = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      view: window
+    });
+
+    Object.defineProperty(event, 'target', { value: { className: 'mocp-something' } });
+
+    const result = instance.checkDismissConditions(details, event);
+
+    expect(result).toBe(false);
+    expect(instance.isColorPicker).toBe(true);
+  });
+
+  it('should return false if details.autoDismiss is false', () => {
+    const details = { modal: false, autoDismiss: false, popupId: 'someId' };
+    const event = new MouseEvent('click');
+
+    const result = instance.checkDismissConditions(details, event);
+
+    expect(result).toBe(false);
+  });
+
+  it('should return false if details.autoDismiss is true but target className does not start with "mocp"', () => {
+    const details = { modal: false, autoDismiss: true, popupId: 'someId' };
+    const event = new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window
+    });
+
+    Object.defineProperty(event, 'target', { value: { className: 'some-other-class' } });
+
+    const result = instance.checkDismissConditions(details, event);
+
+    expect(result).toBe(false);
+    instance.isColorPicker = false;
+    expect(instance.isColorPicker).toBe(false);
+});
+
+
+  it('should return false if details.autoDismiss is true but details.popupId does not exist', () => {
+    const details = { modal: false, autoDismiss: true, popupId: '' };
+    const event = new MouseEvent('click');
+    const result = instance.checkDismissConditions(details, event);
+    expect(result).toBe(false);
+  });
+
 });

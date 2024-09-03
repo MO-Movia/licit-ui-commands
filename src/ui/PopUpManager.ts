@@ -85,26 +85,22 @@ export class PopUpManager {
     this._rafID = requestAnimationFrame(this._syncPosition);
   };
 
-  _onClick = (e: MouseEvent): void => {
-    const now = Date.now();
-    let detailsWithModalToDismiss;
-    this.isColorPicker = false;
-    for (const [bridge, registeredAt] of this._bridges) {
-      if (now - registeredAt > CLICK_INTERVAL) {
-        const details = bridge.getDetails();
-        if (details.modal && details.autoDismiss) {
-          detailsWithModalToDismiss = details;
-        }
-        if (details.autoDismiss && details.popupId) {
-          const targetName = (e.target as HTMLElement).className;
-          if (targetName?.startsWith('mocp')) {
-            this.isColorPicker = true;
-            return;
-          }
-        }
-      }
+  checkDismissConditions = (details,e:MouseEvent):boolean =>{
+    if (details.modal && details.autoDismiss) {
+      return true;
     }
 
+    if (details.autoDismiss && details.popupId) {
+      const targetName = (e.target as HTMLElement).className;
+      if (targetName?.startsWith('mocp')) {
+        this.isColorPicker = true;
+        return false;
+      }
+    }
+    return false;
+  };
+
+  dismissModal = (detailsWithModalToDismiss,e:MouseEvent) =>{
     if (!detailsWithModalToDismiss) {
       return;
     }
@@ -117,34 +113,81 @@ export class PopUpManager {
     }
   };
 
+  _onClick = (e: MouseEvent): void => {
+    const now = Date.now();
+    let detailsWithModalToDismiss;
+    this.isColorPicker = false;
+    for (const [bridge, registeredAt] of this._bridges) {
+      if (now - registeredAt > CLICK_INTERVAL) {
+        const details = bridge.getDetails();
+        if (this.checkDismissConditions(details, e)) {
+          detailsWithModalToDismiss = details;
+        }
+      }
+    }
+    this.dismissModal(detailsWithModalToDismiss, e);
+
+  };
+
   _syncPosition = (): void => {
     this._rafID = 0;
+    const bridgeToDetails = this.collectBridgeDetails();
+    const hoveredAnchors = this.calculateHoveredAnchors(bridgeToDetails);
 
+    this.updatePositions(bridgeToDetails);
+    this.resolveNestedAnchors(bridgeToDetails, hoveredAnchors);
+    this.handleAutoDismiss(bridgeToDetails, hoveredAnchors);
+  };
+
+  private collectBridgeDetails() {
     const bridgeToDetails = new Map();
+
     for (const [bridge] of this._bridges) {
       const details = bridge.getDetails();
-      bridgeToDetails.set(bridge, details);
-      const {anchor, body} = details;
+      const { anchor, body } = details;
+
       if (body instanceof HTMLElement) {
         details.bodyRect = fromHTMlElement(body);
       }
       if (anchor instanceof HTMLElement) {
         details.anchorRect = fromHTMlElement(anchor);
       }
+
+      if (!details.bodyRect && !details.anchorRect) continue;
+
+      bridgeToDetails.set(bridge, details);
     }
 
-    const pointer = fromXY(this._mx, this._my, 2);
-    const hoveredAnchors = new Set();
-    for (const [bridge, details] of bridgeToDetails) {
-      const {anchor, bodyRect, anchorRect, position, body} = details;
-      if (!bodyRect && !anchorRect) {
-        continue;
-      }
+    return bridgeToDetails;
+  }
 
-      const {x, y} = position(anchorRect, bodyRect);
+  private calculateHoveredAnchors(bridgeToDetails): Set<HTMLElement> {
+    const hoveredAnchors = new Set<HTMLElement>();
+    const pointer = fromXY(this._mx, this._my, 2);
+
+    bridgeToDetails.forEach(details => {
+      const { anchor, bodyRect, anchorRect } = details;
+
+      if (isIntersected(pointer, bodyRect || DUMMY_RECT, 0) || isIntersected(pointer, anchorRect || DUMMY_RECT, 0)) {
+        if (anchor) {
+          hoveredAnchors.add(anchor);
+        }
+      }
+    });
+
+    return hoveredAnchors;
+  }
+
+  private updatePositions(bridgeToDetails): void {
+    bridgeToDetails.forEach((details, bridge) => {
+      const { body, anchorRect, bodyRect, position } = details;
+
+      if (!body || !bodyRect) return;
+
+      const { x, y } = position(anchorRect, bodyRect);
       const positionKey = `${x}-${y}`;
 
-      if (body && bodyRect && this._positions.get(bridge) !== positionKey) {
+      if (this._positions.get(bridge) !== positionKey) {
         const ax = anchorRect
           ? clamp(
               0,
@@ -152,63 +195,69 @@ export class PopUpManager {
               bodyRect.w - anchorRect.w / 2
             )
           : 0;
+
         this._positions.set(bridge, positionKey);
-        const bodyStyle = body.style;
-        bodyStyle.position = 'absolute';
-        bodyStyle.left = `${x}px`;
-        bodyStyle.top = `${y}px`;
+
+        Object.assign(body.style, {
+          position: 'absolute',
+          left: `${x}px`,
+          top: `${y}px`,
+          '--czi-pop-up-anchor-offset-left': `${ax}px`,
+        });
+
         bodyRect.x = x;
         bodyRect.y = y;
-      bodyStyle.setProperty('--czi-pop-up-anchor-offset-left', `${ax}px`);
-
       }
+    });
+  }
 
-      if (
-        isIntersected(pointer, bodyRect || DUMMY_RECT, 0) ||
-        isIntersected(pointer, anchorRect || DUMMY_RECT, 0)
-      ) {
-        if (anchor) {
-          hoveredAnchors.add(anchor);
-        }
-      }
-    }
-    let size;
+  private resolveNestedAnchors(
+    bridgeToDetails,
+    hoveredAnchors: Set<HTMLElement>
+  ): void {
+    let previousSize;
 
     do {
-      size = hoveredAnchors.size;
+      previousSize = hoveredAnchors.size;
 
-      for (const [, details] of bridgeToDetails) {
+      bridgeToDetails.forEach(details => {
         const { anchor, body } = details;
 
-        for (const ha of hoveredAnchors) {
-          if (
-            anchor &&
-            body &&
-            !hoveredAnchors.has(anchor) &&
-            body.contains(ha)
-          ) {
+        hoveredAnchors.forEach(ha => {
+          if (anchor && body && !hoveredAnchors.has(anchor) && body.contains(ha)) {
             hoveredAnchors.add(anchor);
           }
-        }
-      }
-    } while (hoveredAnchors.size !== size);
+        });
+      });
+    } while (hoveredAnchors.size !== previousSize);
+  }
 
+  private handleAutoDismiss(
+    bridgeToDetails,
+    hoveredAnchors: Set<HTMLElement>
+  ): void {
     const now = Date.now();
+
     for (const [bridge, registeredAt] of this._bridges) {
       const details = bridgeToDetails.get(bridge);
+
       if (details) {
-        const {autoDismiss, anchor, close, modal} = details;
+        const { autoDismiss, anchor, close, modal } = details;
+
         if (
           autoDismiss &&
-          // Modal is handled separately at `onClick`
           !modal &&
           now - registeredAt > CLICK_INTERVAL &&
-          !hoveredAnchors.has(anchor) && !this.isColorPicker        ) {
+          !hoveredAnchors.has(anchor) &&
+          !this.isColorPicker
+        ) {
           close();
         }
       }
     }
-  };
+  }
+
+
 }
 
 const instance = new PopUpManager();

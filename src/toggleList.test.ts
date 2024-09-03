@@ -3,7 +3,6 @@ import {Node, NodeType, Schema} from 'prosemirror-model';
 import {Transform} from 'prosemirror-transform';
 import { SelectionMemo } from './transformAndPreserveTextSelection';
 
-// import { ContentNodeWithPos } from 'prosemirror-utils/dist/types';
 describe('toggleList', () => {
   let schema;
   let trr;

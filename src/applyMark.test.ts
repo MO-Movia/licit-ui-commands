@@ -1,7 +1,8 @@
 import {applyMark} from './index';
 import {EditorState, TextSelection} from 'prosemirror-state';
-import {Mark, MarkType, Schema,Node} from 'prosemirror-model';
+import {Mark, MarkType, Schema,Node, ResolvedPos} from 'prosemirror-model';
 import {Transform} from 'prosemirror-transform';
+import {applyTextColorMark,applyCustomStyleToNode} from './applyMark';
 
 describe('applyMark', () => {
   let schema;
@@ -410,4 +411,85 @@ describe('applyMark', () => {
     const transformedTr = applyMark(tr, schema, markType, attrs, true);
     expect(transformedTr).toBeTruthy();
   });
+
+  it('should return the original transform if no node is found at $from.pos', () => {
+    const  addMark = ()=>{return {addMark:addMark,doc:dummyDoc};};
+    let markType = schema.marks.bold;
+    const attrs = {fontWeight: 'bold'};
+    const tr = {
+      addMark:addMark,
+      removeStoredMark: () => {
+        return {
+          addStoredMark: () => {
+            return {};
+          },
+        };
+      },
+      addStoredMark: () => {
+        return {
+          doc: {
+            rangeHasMark: () => {
+              return true;
+            },
+          },
+        };
+      },
+      doc: dummyDoc,
+      selection: {
+        $cursor: null,
+        ranges: [{$from: {depth: 1, pos: 1}, $to: {depth: 1, pos: 2}}],
+      },
+
+    } as unknown as Transform;
+
+    markType = {
+      create: jest.fn().mockReturnValue({ type: 'textColor' }),
+    } as unknown as MarkType;
+
+    const $from = {
+      pos: 1,
+    } as ResolvedPos;
+
+    const $to = {
+      pos: 10,
+    } as ResolvedPos;
+    const result = applyTextColorMark(tr, markType, $from, $to, attrs);
+    expect(result).toBeDefined();
+  });
+
+  it('should call applyCustomStyleToNode method',() =>{
+    const  addMark = ()=>{return {addMark:addMark,doc:dummyDoc};};
+    const markType = schema.marks.bold;
+    const attrs = {fontWeight: 'bold'};
+    const tr = {
+      addMark:addMark,
+      removeStoredMark: () => {
+        return {
+          addStoredMark: () => {
+            return {};
+          },
+        };
+      },
+      addStoredMark: () => {
+        return {
+          doc: {
+            rangeHasMark: () => {
+              return true;
+            },
+          },
+        };
+      },
+      doc: dummyDoc,
+      selection: {
+        $cursor: null,
+        ranges: [{$from: {depth: 1, pos: 1}, $to: {depth: 1, pos: 2}}],
+      },
+
+    } as unknown as Transform;
+    const $from = {
+      pos: 1,
+    } as ResolvedPos;
+    expect(applyCustomStyleToNode(tr, markType, $from,attrs)).toBeDefined();
+  });
+
 });

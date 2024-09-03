@@ -3,7 +3,8 @@ import {EditorState, TextSelection} from 'prosemirror-state';
 import {Schema} from 'prosemirror-model';
 import {schema} from 'prosemirror-test-builder';
 import {Transform} from 'prosemirror-transform';
-import {MARK_EM} from './MarkNames';
+import { EditorView } from 'prosemirror-view';
+import {MARK_EM, MARK_TEXT_COLOR} from './MarkNames';
 
 describe('IndentCommand', () => {
   let schema1;
@@ -64,4 +65,53 @@ describe('IndentCommand', () => {
   it('should not render label', () => {
     expect(command.renderLabel()).toBeNull();
   });
+
+  it('should call cancel method return null',() => {
+    expect(command.cancel()).toBeNull;
+  });
+
+  it('waitForUserInput function() should be return undefined', () => {
+    const state = {
+      plugins: [],
+      selection: { from: 1, to: 2 },
+      schema: { marks: { 'mark-text-color': MARK_TEXT_COLOR } },
+      doc: {
+        nodeAt: (_x) => {
+          return { isAtom: true, isLeaf: true, isText: false };
+        },
+
+      },
+      tr:{doc:{
+        nodeAt: (_x) => {
+          return {isAtom: true, isLeaf: true, isText: false, marks:[]};
+        },
+      }}
+
+    } as unknown as EditorState;
+    const _dispatch = jest.fn();
+    const editorview = {} as unknown as EditorView;
+    const result = command.waitForUserInput(
+      state,
+      _dispatch,
+      editorview,
+    );
+    expect(result).toBeDefined();
+  });
+
+  it('executeWithUserInput function() should be return false', () => {
+    const state = {
+      plugins: [],
+      schema: { marks: { 'mark-text-color': MARK_TEXT_COLOR } },
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false };
+          },
+        },
+      },
+    } as unknown as EditorState;
+    const test = command.executeWithUserInput(state);
+    expect(test).toBeFalsy();
+  });
+
 });

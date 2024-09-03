@@ -153,7 +153,7 @@ export function toggleCustomStyle(
 }
 
 //overrided method from prosemirror Transform
-function markApplies(doc, ranges, type) {
+export function markApplies(doc, ranges, type) {
   let returned = false;
   const loop = function (i) {
     const ref = ranges[i];

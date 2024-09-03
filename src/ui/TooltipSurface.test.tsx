@@ -13,7 +13,7 @@ describe('TooltipSurface', () => {
       <TooltipSurface tooltip={tooltip}>Hover Me</TooltipSurface>
     );
 
-    const tooltipSurface = getByRole('tooltip');
+    const tooltipSurface = getByRole('menu');
     expect(tooltipSurface).toBeDefined();
 
     fireEvent.mouseEnter(tooltipSurface);

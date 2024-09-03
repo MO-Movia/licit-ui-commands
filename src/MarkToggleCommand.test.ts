@@ -2,6 +2,8 @@ import { MarkToggleCommand, toggleCustomStyle } from './MarkToggleCommand';
 import { EditorState } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 import { Schema, Mark } from 'prosemirror-model';
+import { EditorView } from 'prosemirror-view';
+import React from 'react';
 
 describe('MarkToggleCommand', () => {
   let plugin!: MarkToggleCommand;
@@ -502,8 +504,7 @@ describe('MarkToggleCommand', () => {
           $cursor: {
             parentOffset: 0,
             marks: () => {
-              // Implement the logic for the marks function here
-              return; // Return the appropriate value based on the logic
+              return;
             },
           },
           ranges: [
@@ -544,7 +545,7 @@ describe('MarkToggleCommand', () => {
           empty: 0,
           $cursor: {
             parentOffset: 0,
-            marks: () => [] as Mark[], // Use Mark[] instead of any[]
+            marks: () => [] as Mark[],
           },
           ranges: [{ $from: { depth: 1, pos: 0 }, $to: { pos: 1 } }],
         },
@@ -566,5 +567,34 @@ describe('MarkToggleCommand', () => {
 
   it('should not render label', () => {
     expect(plugin.renderLabel()).toBeNull();
+  });
+
+  it('should call cancel method and return null',() => {
+    expect(plugin.cancel()).toBeNull;
+  });
+
+  it('should return a resolved promise with undefined', async () => {
+    const mockState = {} as EditorState;
+    const mockDispatch = jest.fn();
+    const mockView = {} as EditorView;
+    const mockEvent = {} as React.SyntheticEvent;
+    const result = await plugin.waitForUserInput(mockState, mockDispatch, mockView, mockEvent);
+    expect(result).toBeUndefined();
+    expect(mockDispatch).not.toHaveBeenCalled();
+  });
+
+  it('should work when no optional parameters are passed', async () => {
+    const mockState = {} as EditorState;
+    const result = await plugin.waitForUserInput(mockState);
+    expect(result).toBeUndefined();
+  });
+
+  it('should return false', () => {
+    const mockState = {} as EditorState;
+    const mockDispatch = jest.fn();
+    const mockView = {} as EditorView;
+    const mockInputs = 'some input string';
+    const result = plugin.executeWithUserInput(mockState, mockDispatch, mockView, mockInputs);
+    expect(result).toBe(false);
   });
 });

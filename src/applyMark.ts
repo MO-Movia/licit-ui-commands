@@ -1,5 +1,5 @@
 import { Transaction } from '@remirror/pm/state';
-import { Mark, MarkType, Node, Schema } from 'prosemirror-model';
+import { Mark, MarkType, Node, ResolvedPos, Schema } from 'prosemirror-model';
 import { SelectionRange, TextSelection } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 
@@ -35,6 +35,137 @@ function hasMark(marks: readonly Mark[], markType: string) {
   return marks.some(mark => mark.type.name === markType);
 }
 
+export function applyCustomStyleToNode(
+  tr: Transform,
+  markType: MarkType,
+  $from: ResolvedPos,
+  attrs?: Record<string, unknown>
+): Transform {
+  const nodeTr = tr.doc.nodeAt($from.pos);
+  let from = $from.pos;
+
+  if (nodeTr) {
+    nodeTr.descendants((child) => {
+      const nodeTr_1 = tr.doc.nodeAt(from);
+      const to_add = nodeTr_1?.childCount > 0 ? 1 : 0;
+      const to = from + child.nodeSize;
+
+      if (child && child.marks.length > 0) {
+        const existingMark = child.marks.find(mark => mark.type.name === markType.name);
+        tr = tr.addMark(from, to + to_add, markType.create(existingMark ? existingMark.attrs : attrs));
+      } else {
+        tr = tr.addMark(from, to + to_add, markType.create(attrs));
+      }
+
+      from = to + to_add;
+    });
+  }
+  return tr;
+}
+
+export function applyTextColorMark(
+  tr: Transform,
+  markType: MarkType,
+  $from: ResolvedPos,
+  $to: ResolvedPos,
+  attrs?: Record<string, unknown>
+): Transform {
+  const nodeTr = tr.doc.nodeAt($from.pos);
+
+  if (!nodeTr) return tr;
+
+  if (nodeTr.marks.length > 0) {
+    // If there are existing marks, check if 'link' is not applied
+    if (!hasMark(nodeTr.marks, 'link')) {
+      return tr.addMark($from.pos, $to.pos, markType.create(attrs));
+    }
+  } else if (nodeTr instanceof Node) {
+    let from = $from.pos;
+    let to = 0;
+
+    // Iterate over descendants
+    nodeTr.descendants((child) => {
+      const nodeTr_1 = tr.doc.nodeAt(from);
+      to = from + child.nodeSize;
+
+      if (nodeTr_1.childCount > 0) {
+        // Apply the mark if the child doesn't have a 'link' mark
+        if (!hasMark(child.marks, 'link')) {
+          tr = tr.addMark(from, to + 1, markType.create(attrs));
+        }
+        from = to + 1;
+      } else {
+        // Apply the mark if the child doesn't have a 'link' mark
+        if (!hasMark(child.marks, 'link')) {
+          tr = tr.addMark(from, to, markType.create(attrs));
+        }
+        from = to;
+      }
+    });
+  }
+
+  return tr;
+}
+
+
+
+
+function applyMarkToNode(
+  tr: Transform,
+  schema: Schema,
+  markType: MarkType,
+  $from: ResolvedPos,
+  $to: ResolvedPos,
+  attrs?: Record<string, unknown>,
+  isCustomStyleApplied?: boolean
+): Transform {
+  const nodeTr = tr.doc.nodeAt($from.pos);
+
+  if (!nodeTr) return tr;
+
+  if (markType.name === 'link') {
+    if (nodeTr.marks.length > 0 && hasMark(nodeTr.marks, 'mark-text-color')) {
+      tr = tr.removeMark($from.pos, $to.pos, schema.marks['mark-text-color']);
+    }
+    return tr.addMark($from.pos, $to.pos, markType.create(attrs));
+  }
+
+  if (markType.name === 'mark-text-color') {
+    tr = applyTextColorMark(tr, markType, $from, $to, attrs);
+  }
+
+  if (typeof isCustomStyleApplied === 'undefined') {
+    return tr.addMark($from.pos, $to.pos, markType.create(attrs));
+  } else {
+    let from = $from.pos;
+    let to = 0;
+    nodeTr.descendants((child) => {
+      const nodeTr_1 = tr.doc.nodeAt(from);
+      to = from + child.nodeSize;
+      if (nodeTr_1.childCount > 0) {
+        tr = tr.addMark(from, to + 1, markType.create(attrs));
+        from = to + 1;
+      } else {
+        tr = tr.addMark(from, to, markType.create(attrs));
+        from = to;
+      }
+    });
+  }
+  return tr;
+}
+
+function hasMarkInRanges(
+  tr: Transform,
+  ranges,
+  markType: MarkType
+): boolean {
+  for (const { $from, $to } of ranges) {
+    if (tr.doc.rangeHasMark($from.pos, $to.pos, markType)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 
 // https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.js
@@ -57,103 +188,19 @@ export function applyMark(
     tr = (tr as Transaction).removeStoredMark(markType);
     return (tr as Transaction).addStoredMark(markType.create(attrs));
   }
-  let has = false;
-  for (let i = 0; !has && i < ranges.length; i++) {
-    const { $from, $to } = ranges[i];
-    has = tr.doc.rangeHasMark($from.pos, $to.pos, markType);
-  }
+  const has = false;
+  hasMarkInRanges(tr, ranges, markType);
+
   for (const { $from, $to } of ranges) {
     if (has && isCustomStyleApplied) {
-      const nodeTr = tr.doc.nodeAt($from.pos);
-      let from = $from.pos;
-      let to = 1;
-      if (nodeTr) {
-        nodeTr.descendants(function (child) {
-          const nodeTr_1 = tr.doc.nodeAt(from);
-          let to_add = 0;
-          if (nodeTr_1.childCount > 0) {
-            to_add = 1;
-          }
-          to = from + child.nodeSize;
-          if (child && 0 < child.marks.length) {
-            const result = child.marks.find(mark => mark.type.name === markType.name);
-            if (!result) {
-              tr = tr.addMark(from, to + to_add, markType.create(attrs));
-            }
-            else {
-              tr = tr.addMark(from, to + to_add, markType.create(result?.attrs));
-            }
-          }
-          else {
-            tr = tr.addMark(from, to + to_add, markType.create(attrs));
-          }
-          from = to + to_add;
-        });
-      }
+
+      applyCustomStyleToNode( tr,markType,$from,attrs);
     }
-    else if (attrs) {
-      const nodeTr = tr.doc.nodeAt($from.pos);
-      if ('link' === markType.name) {
-        if (0 < nodeTr?.marks.length && hasMark(nodeTr.marks, 'mark-text-color')) {
-          tr = tr.removeMark($from.pos, $to.pos, _schema.marks['mark-text-color']);
-        }
-        tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
-      }
-      else if ('mark-text-color' === markType.name) {
-        if (0 < nodeTr?.marks.length) {
-          if (!hasMark(nodeTr?.marks, 'link')) {
-            tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
-          }
-        }
-        else if (nodeTr instanceof Node) {
-          let from = $from.pos;
-          let to = 0;
-          nodeTr.descendants(function (child) {
-            if (child) {
-              const nodeTr_1 = tr.doc.nodeAt(from);
-              to = from + child.nodeSize;
 
-              if (nodeTr_1.childCount > 0) {
-                if (!hasMark(child.marks, 'link')) {
-                  tr = tr.addMark(from, to + 1, markType.create(attrs));
-                }
-                from = to + 1;
-              } else {
-                if (!hasMark(child.marks, 'link')) {
-                  tr = tr.addMark(from, to, markType.create(attrs));
-                }
-                from = to;
-              }
-            }
-          });
-        }
-      }
-      else {
-        const nodeTr = tr.doc.nodeAt($from.pos);
-        let from = $from.pos;
-        let to = 0;
-        if (undefined === isCustomStyleApplied) {
-          tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
-        }
-        else {
-          nodeTr.descendants(function (child) {
-            if (child) {
-              const nodeTr = tr.doc.nodeAt(from);
-              to = from + child.nodeSize;
-              if (nodeTr.childCount > 0) {
-                tr = tr.addMark(from, to + 1, markType.create(attrs));
-                from = to + 1;
-              } else {
-                tr = tr.addMark(from, to, markType.create(attrs));
-                from = to;
-              }
-
-
-            }
-          });
-        }
-      }
-    } else if (has && !isCustomStyleApplied && !attrs) {
+    if (attrs) {
+      tr = applyMarkToNode(tr, _schema, markType, $from, $to, attrs, isCustomStyleApplied);
+    }
+    else if (has && !isCustomStyleApplied && !attrs) {
       tr = tr.removeMark($from.pos, $to.pos, markType);
     }
 

@@ -1,9 +1,10 @@
 import { HeadingCommand } from './HeadingCommand';
 import { EditorState } from 'prosemirror-state';
-import { MARK_FONT_TYPE } from './MarkNames';
+import { MARK_FONT_TYPE, MARK_TEXT_COLOR } from './MarkNames';
 import { Transform } from 'prosemirror-transform';
 import { Schema } from 'prosemirror-model';
 import { schema } from 'prosemirror-test-builder';
+import { EditorView } from 'prosemirror-view';
 import * as toggleHeading from './toggleHeading';
 describe('HeadingCommand', () => {
   let plugin!: HeadingCommand;
@@ -89,5 +90,54 @@ describe('HeadingCommand', () => {
         null as unknown as Transform,
       )
     ).toBeNull();
+  });
+
+  it('should call cancel method and returns null',() => {
+    expect(command.cancel()).toBeNull;
+  });
+
+  it('executeWithUserInput function() should be return false', () => {
+    const state = {
+      plugins: [],
+      schema: { marks: { 'mark-text-color': MARK_TEXT_COLOR } },
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false };
+          },
+        },
+      },
+    } as unknown as EditorState;
+    const test = command.executeWithUserInput(state);
+    expect(test).toBeFalsy();
+  });
+
+  it('waitForUserInput function() should be return undefined', () => {
+    const state = {
+      plugins: [],
+      selection: { from: 1, to: 2 },
+      schema: { marks: { 'mark-text-color': MARK_TEXT_COLOR } },
+      doc: {
+        nodeAt: (_x) => {
+          return { isAtom: true, isLeaf: true, isText: false };
+        },
+      },
+      tr:{doc:{
+        nodeAt: (_x) => {
+          return {isAtom: true, isLeaf: true, isText: false, marks:[]};
+        },
+      }}
+    } as unknown as EditorState;
+
+    const _dispatch = jest.fn();
+    const editorview = {} as unknown as EditorView;
+
+    const result = plugin.waitForUserInput(
+      state,
+      _dispatch,
+      editorview,
+    );
+
+    expect(result).toBeDefined();
   });
 });

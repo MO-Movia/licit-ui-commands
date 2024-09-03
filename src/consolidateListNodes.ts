@@ -98,65 +98,66 @@ function linkOrderedListCounters(tr: Transform): Transform {
 
   let listsBefore = null;
   tr.doc.nodesBetween(from, to, (node, pos, parentNode) => {
-    let willTraverseNodeChildren = true;
     if (isListNode(node)) {
-      // List Node can't be nested, no need to traverse its children.
-      willTraverseNodeChildren = false;
-      const indent = node.attrs.indent || 0;
-      const start = node.attrs.start || 1;
-      const {name, following} = node.attrs;
-      if (name) {
-        namedLists.add(name);
-      }
-
-      if (listsBefore) {
-        if (start === 1 && isOrderedListNode(node)) {
-          // Look backward until we could find another ordered list node to
-          // link with.
-          let counterIsLinked;
-          listsBefore.some(({ node: { type }, indent: listIndent }) => {
-            if (listIndent < indent || (listIndent === indent && type !== node.type)) {
-              // Restart counter if:
-              // 1. We encounter a list with a lesser indent (moving to a higher level).
-              // 2. We encounter a different type of list at the same indent level.
-              counterIsLinked = false;
-              return true;
-            }
-
-            if (listIndent === indent) {
-              // Continue counter if:
-              // We encounter the same type of list at the same indent level.
-              counterIsLinked = true;
-              return true;
-            }
-
-            return false;
-          });
-
-          if (counterIsLinked !== undefined) {
-            tr = setCounterLinked(tr, pos, counterIsLinked);
-          }
-        }
-      } else {
-        // Found the first list among a new Lists Island.
-        // ------
-        // 1. AAA <- Counter restarts here.
-        // 2. BBB
-        listsBefore = [];
-        if (isOrderedListNode(node)) {
-          // The list may follow a previous list that is among another Lists
-          // Island. If so, do not reset the list counter.
-          const counterIsLinked = namedLists.has(following);
-          tr = setCounterLinked(tr, pos, counterIsLinked);
-        }
-      }
-      listsBefore.unshift({parentNode, indent, node});
+      handleListNode(node, pos, parentNode);
+      return false; // Prevent traversal of list node children
     } else {
-      // Not traversing within any list node. No lists need to be updated.
-      listsBefore = null;
+      listsBefore = null; // Reset the list tracking when not in a list node
     }
-    return willTraverseNodeChildren;
+    return true; // Continue traversal for other nodes
   });
+
+  function handleListNode(node, pos, parentNode) {
+    const { indent = 0, start = 1, name, following } = node.attrs;
+
+    if (name) namedLists.add(name);
+
+    if (listsBefore) {
+      handleExistingLists(node, pos, indent, start);
+    } else {
+      startNewList(node, pos, following);
+    }
+
+    listsBefore.unshift({ parentNode, indent, node });
+  }
+
+  function handleExistingLists(node, pos, indent, start) {
+    if (start === 1 && isOrderedListNode(node)) {
+      const counterIsLinked = checkCounterLink(node, indent);
+      if (counterIsLinked !== undefined) {
+        tr = setCounterLinked(tr, pos, counterIsLinked);
+      }
+    }
+  }
+
+  function startNewList(node, pos, following) {
+    listsBefore = [];
+    if (isOrderedListNode(node)) {
+      const counterIsLinked = namedLists.has(following);
+      tr = setCounterLinked(tr, pos, counterIsLinked);
+    }
+  }
+
+  function checkCounterLink(node, indent) {
+    let counterIsLinked;
+    listsBefore.some(({ node: { type }, indent: listIndent }) => {
+      if (shouldRestartCounter(listIndent, indent, type, node.type)) {
+        counterIsLinked = false;
+        return true;
+      }
+      if (listIndent === indent) {
+        counterIsLinked = true;
+        return true;
+      }
+      return false;
+    });
+    return counterIsLinked;
+  }
+
+  function shouldRestartCounter(listIndent, indent, listType, nodeType) {
+    return listIndent < indent || (listIndent === indent && listType !== nodeType);
+  }
+
   return tr;
 }
 

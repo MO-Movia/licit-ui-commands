@@ -12,6 +12,14 @@ type TooltipSurfaceProps = {
 };
 
 class TooltipView extends React.PureComponent<TooltipSurfaceProps> {
+
+  constructor(props:TooltipSurfaceProps) {
+    super(props);
+      this.state = {
+      children: props.children
+      };
+  }
+
   render(): React.ReactElement {
     const {tooltip} = this.props;
     return (
@@ -44,7 +52,8 @@ export class TooltipSurface extends React.PureComponent<TooltipSurfaceProps> {
         onMouseDown={tooltip && this._onMouseLeave}
         onMouseEnter={tooltip && this._onMouseEnter}
         onMouseLeave={tooltip && this._onMouseLeave}
-        role="tooltip"
+        role="menu"
+        tabIndex={0}
       >
         {children}
       </span>

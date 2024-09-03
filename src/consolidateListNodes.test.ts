@@ -114,4 +114,5 @@ describe('consolidateListNodes', () => {
     const consolidatedListNode = transformedTr.doc.content.firstChild;
     expect(consolidatedListNode?.attrs.counterReset).toBe(undefined);
   });
+
 });

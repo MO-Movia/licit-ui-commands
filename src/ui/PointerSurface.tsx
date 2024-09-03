@@ -13,12 +13,12 @@ export type PointerSurfaceProps = {
   onClick?: (val, e: React.SyntheticEvent) => void;
   onMouseEnter?: (val, e: React.SyntheticEvent) => void;
   style?: Record<string, unknown>;
-  target?: string;
   title?: string;
   value?: string | number | Record<string, unknown> | EditorView;
 };
 
 export class PointerSurface extends React.PureComponent {
+
   declare props: PointerSurfaceProps;
 
   _clicked = false;
@@ -49,7 +49,7 @@ export class PointerSurface extends React.PureComponent {
         onMouseEnter={disabled ? preventEventDefault : this._onMouseEnter}
         onMouseLeave={disabled ? null : this._onMouseLeave}
         onMouseUp={disabled ? preventEventDefault : this._onMouseUp}
-        role="button"
+        role='button'
         style={style}
         tabIndex={disabled ? null : 0}
         title={title}
