@@ -1,11 +1,11 @@
 import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
-
+import * as React from 'react';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import updateIndentLevel from './updateIndentLevel';
+import { updateIndentLevel } from './updateIndentLevel';
 
-class IndentCommand extends UICommand {
+export class IndentCommand extends UICommand {
   _delta: number;
 
   constructor(delta: number) {
@@ -14,16 +14,14 @@ class IndentCommand extends UICommand {
   }
 
   isActive = (_state: EditorState): boolean => {
-    return false;
+    return true;
   };
-
 
   execute = (
     state: EditorState,
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-
     const { selection, schema } = state;
     let { tr } = state;
     tr = tr.setSelection(selection);
@@ -48,6 +46,30 @@ class IndentCommand extends UICommand {
     const trx = updateIndentLevel(state, tr, schema, this._delta, null);
     return trx.tr;
   };
-}
 
-export default IndentCommand;
+  waitForUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _event?: React.SyntheticEvent
+  ): Promise<undefined> => {
+    return Promise.resolve(undefined);
+  };
+
+  executeWithUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _inputs?: string
+  ): boolean => {
+    return false;
+  };
+
+  cancel(): void {
+    return null;
+  }
+
+  renderLabel() {
+    return null;
+  }
+}

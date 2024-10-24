@@ -1,17 +1,17 @@
-import * as React from 'react';
-import ColorEditor from './ui/ColorEditor';
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import applyMark from './applyMark';
-import createPopUp from './ui/createPopUp';
-import findNodesWithSameMark from './findNodesWithSameMark';
-import isTextStyleMarkCommandEnabled from './isTextStyleMarkCommandEnabled';
+import { ColorEditor } from '@modusoperandi/color-picker';
+import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import {applyMark} from './applyMark';
+import {createPopUp} from './ui/createPopUp';
+import {findNodesWithSameMark} from './findNodesWithSameMark';
+import {isTextStyleMarkCommandEnabled} from './isTextStyleMarkCommandEnabled';
 import nullthrows from 'nullthrows';
-import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
-import { MARK_TEXT_COLOR } from './MarkNames';
-import { Transform } from 'prosemirror-transform';
+import {EditorState, TextSelection, Transaction} from 'prosemirror-state';
+import {EditorView} from 'prosemirror-view';
+import {MARK_TEXT_COLOR} from './MarkNames';
+import {Transform} from 'prosemirror-transform';
+import { RuntimeService } from './runtime.service';
 
-class TextColorCommand extends UICommand {
+export class TextColorCommand extends UICommand {
   _popUp = null;
   _color = '';
 
@@ -27,7 +27,7 @@ class TextColorCommand extends UICommand {
     state: EditorState,
     _dispatch?: (tr: Transform) => void,
     _view?: EditorView,
-    event?: React.SyntheticEvent
+    event?: Event
   ): Promise<undefined> => {
     if (this._popUp) {
       return Promise.resolve(undefined);
@@ -37,19 +37,23 @@ class TextColorCommand extends UICommand {
       return Promise.resolve(undefined);
     }
 
-    const { doc, selection, schema } = state;
+    const {doc, selection, schema} = state;
     const markType = schema.marks[MARK_TEXT_COLOR];
     const anchor = event ? event.currentTarget : null;
-    const { from, to } = selection;
+    const {from, to} = selection;
     const result = findNodesWithSameMark(doc, from, to, markType);
     const hex = result ? result.mark.attrs.color : null;
+    const node = state.tr.doc.nodeAt(from);
+    const Textmark = node?.marks.find(mark => mark?.attrs?.color);
+    const Textcolor  = Textmark?.attrs?.color;
     return new Promise((resolve) => {
       this._popUp = createPopUp(
         ColorEditor,
-        { hex },
+        { hex, runtime: RuntimeService.Runtime, Textcolor},
         {
           anchor,
           popUpId: 'mo-menuList-child',
+          autoDismiss: true,
           onClose: (val) => {
             if (this._popUp) {
               this._popUp = null;
@@ -68,9 +72,9 @@ class TextColorCommand extends UICommand {
     color?: string
   ): boolean => {
     if (dispatch && color !== undefined) {
-      const { schema } = state;
+      const {schema} = state;
       const markType = schema.marks[MARK_TEXT_COLOR];
-      const attrs = color ? { color } : null;
+      const attrs = color ? {color} : null;
       const tr = applyMark(state.tr, schema, markType, attrs);
       if (tr.docChanged || (tr as Transaction).storedMarksSet) {
         // If selection is empty, the color is added to `storedMarks`, which
@@ -90,9 +94,9 @@ class TextColorCommand extends UICommand {
     from: number,
     to: number
   ): Transform => {
-    const { schema } = state;
+    const {schema} = state;
     const markType = schema.marks[MARK_TEXT_COLOR];
-    const attrs = { color: this._color };
+    const attrs = {color: this._color};
     const storedmarks = (tr as Transaction).storedMarks;
     // [FS] IRAD-1043 2020-10-27
     // Issue fix on removing the  custom style if user click on the same style menu multiple times
@@ -106,6 +110,16 @@ class TextColorCommand extends UICommand {
     (tr as Transaction).storedMarks = storedmarks;
     return tr;
   };
-}
 
-export default TextColorCommand;
+  cancel(): void {
+    return null;
+  }
+
+  isActive(): boolean {
+    return true;
+  }
+
+  renderLabel() {
+    return null;
+  }
+}

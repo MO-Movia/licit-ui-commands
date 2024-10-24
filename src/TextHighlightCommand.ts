@@ -1,17 +1,17 @@
-import * as React from 'react';
-import ColorEditor from './ui/ColorEditor';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import applyMark from './applyMark';
-import createPopUp from './ui/createPopUp';
-import findNodesWithSameMark from './findNodesWithSameMark';
-import isTextStyleMarkCommandEnabled from './isTextStyleMarkCommandEnabled';
+import { applyMark } from './applyMark';
+import { createPopUp } from './ui/createPopUp';
+import { findNodesWithSameMark } from './findNodesWithSameMark';
+import { isTextStyleMarkCommandEnabled } from './isTextStyleMarkCommandEnabled';
 import nullthrows from 'nullthrows';
-import {EditorState, TextSelection, Transaction} from 'prosemirror-state';
-import {EditorView} from 'prosemirror-view';
-import {MARK_TEXT_HIGHLIGHT} from './MarkNames';
-import {Transform} from 'prosemirror-transform';
+import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
+import { MARK_TEXT_HIGHLIGHT } from './MarkNames';
+import { Transform } from 'prosemirror-transform';
+import { RuntimeService } from './runtime.service';
+import { ColorEditor } from '@modusoperandi/color-picker';
 
-class TextHighlightCommand extends UICommand {
+export class TextHighlightCommand extends UICommand {
   _popUp = null;
   _color = '';
 
@@ -27,7 +27,7 @@ class TextHighlightCommand extends UICommand {
     state: EditorState,
     _dispatch?: (tr: Transform) => void,
     _view?: EditorView,
-    event?: React.SyntheticEvent
+    event?: Event
   ): Promise<undefined> => {
     if (this._popUp) {
       return Promise.resolve(undefined);
@@ -42,13 +42,19 @@ class TextHighlightCommand extends UICommand {
     const { from, to } = selection;
     const result = findNodesWithSameMark(doc, from, to, markType);
     const hex = result ? result.mark.attrs.highlightColor : null;
-    const anchor =  event?.currentTarget;
+    const anchor = event?.currentTarget;
+    const node = state.tr.doc.nodeAt(from);
+    const Textmark = node?.marks.find(mark => mark?.attrs?.highlightColor);
+    const Textcolor = Textmark?.attrs?.highlightColor;
+
     return new Promise((resolve) => {
       this._popUp = createPopUp(
         ColorEditor,
-        { hex },
+        { hex, runtime: RuntimeService.Runtime, Textcolor },
         {
           anchor,
+          popUpId: 'mo-menuList-child',
+          autoDismiss: true,
           onClose: (val) => {
             if (this._popUp) {
               this._popUp = null;
@@ -90,17 +96,27 @@ class TextHighlightCommand extends UICommand {
     from: number,
     to: number
   ): Transform => {
-    const {schema} = state;
+    const { schema } = state;
     const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
-    const attrs = {highlightColor: this._color};
+    const attrs = { highlightColor: this._color };
     tr = applyMark(
       (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),
       schema,
       markType,
-      attrs
+      attrs, true
     );
     return tr;
   };
-}
 
-export default TextHighlightCommand;
+  cancel(): void {
+    return null;
+  }
+
+  isActive(): boolean {
+    return true;
+  }
+
+  renderLabel() {
+    return null;
+  }
+}

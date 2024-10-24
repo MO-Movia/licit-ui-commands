@@ -1,16 +1,13 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import {shallow, configure} from 'enzyme';
 import Adapter from '@cfaester/enzyme-adapter-react-18';
-import { configure } from 'enzyme';
-import { PointerSurface } from './PointerSurface';
+import {PointerSurface} from './PointerSurface';
 
-configure({ adapter: new Adapter() });
-
+configure({adapter: new Adapter()});
 
 declare let describe: jest.Describe;
 declare let it: jest.It;
 declare const expect: jest.Expect;
-
 
 describe('PointerSurface', () => {
   it('renders without crashing', () => {
@@ -69,10 +66,12 @@ describe('PointerSurface', () => {
     const preventDefaultMock = jest.fn();
     const value = 'test value';
 
-    const wrapper = shallow(<PointerSurface onMouseEnter={onMouseEnterMock} value={value} />);
+    const wrapper = shallow(
+      <PointerSurface onMouseEnter={onMouseEnterMock} value={value} />
+    );
     const instance = wrapper.instance();
 
-    const syntheticEvent = { preventDefault: preventDefaultMock };
+    const syntheticEvent = {preventDefault: preventDefaultMock};
 
     instance._onMouseEnter(syntheticEvent);
 
@@ -109,7 +108,7 @@ describe('PointerSurface', () => {
       preventDefault: jest.fn(),
       which: 1,
       button: 0,
-      currentTarget: { setAttribute: setCurrentTargetMock },
+      currentTarget: {setAttribute: setCurrentTargetMock},
     } as unknown as React.MouseEvent;
 
     instance._onMouseDown(mouseEvent);
@@ -117,7 +116,11 @@ describe('PointerSurface', () => {
     expect(mouseEvent.preventDefault).toHaveBeenCalled();
     expect(instance['_clicked']).toBe(false);
     expect(instance.state.pressed).toBe(true);
-    expect(addEventListenerMock).toHaveBeenCalledWith('mouseup', instance._onMouseUpCapture, true);
+    expect(addEventListenerMock).toHaveBeenCalledWith(
+      'mouseup',
+      instance._onMouseUpCapture,
+      true
+    );
     expect(instance['_mul']).toBe(true);
   });
 
@@ -125,7 +128,9 @@ describe('PointerSurface', () => {
     const onClickMock = jest.fn();
     const value = 'test value';
 
-    const wrapper = shallow(<PointerSurface onClick={onClickMock} value={value} />);
+    const wrapper = shallow(
+      <PointerSurface onClick={onClickMock} value={value} />
+    );
     const instance = wrapper.instance();
 
     instance['_pressedTarget'] = document.createElement('div');
@@ -154,7 +159,7 @@ describe('PointerSurface', () => {
 
     instance['_mul'] = true;
     instance['_pressedTarget'] = document.createElement('div');
-    instance.setState({ pressed: true });
+    instance.setState({pressed: true});
 
     const mouseEvent = {
       target: document.createElement('div'),
@@ -162,11 +167,13 @@ describe('PointerSurface', () => {
 
     instance._onMouseUpCapture(mouseEvent);
 
-    expect(removeEventListenerMock).toHaveBeenCalledWith('mouseup', instance._onMouseUpCapture, true);
+    expect(removeEventListenerMock).toHaveBeenCalledWith(
+      'mouseup',
+      instance._onMouseUpCapture,
+      true
+    );
     expect(containsMock).not.toHaveBeenCalledWith(instance['_pressedTarget']);
     expect(instance['_clicked']).toBe(false);
     expect(instance.state.pressed).toBe(false);
   });
 });
-
-

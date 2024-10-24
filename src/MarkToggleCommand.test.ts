@@ -1,9 +1,7 @@
-import MarkToggleCommand from './MarkToggleCommand';
+import { MarkToggleCommand, toggleCustomStyle } from './index';
 import { EditorState } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
-import { toggleCustomStyle } from './MarkToggleCommand';
-import { Schema } from 'prosemirror-model';
-import { Mark } from 'prosemirror-model';
+import { Schema, Mark } from 'prosemirror-model';
 
 describe('MarkToggleCommand', () => {
   let plugin!: MarkToggleCommand;
@@ -14,10 +12,8 @@ describe('MarkToggleCommand', () => {
     expect(plugin).toBeTruthy();
   });
 
-
   it('should call when executeCustom function return first false', () => {
     const state = {
-
       selection: {
         node: null,
         anchor: 0,
@@ -26,11 +22,23 @@ describe('MarkToggleCommand', () => {
         to: 2,
       },
       plugins: [],
-      tr: { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } } },
-      schema: { marks: { 'mark-font-type': undefined, } },
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false };
+          },
+        },
+      },
+      schema: { marks: { 'mark-font-type': undefined } },
     } as unknown as EditorState;
 
-    const tr = { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } } } as unknown as Transform;
+    const tr = {
+      doc: {
+        nodeAt: (_x) => {
+          return { isAtom: true, isLeaf: true, isText: false };
+        },
+      },
+    } as unknown as Transform;
 
     const test = plugin.executeCustom(state, tr, 2, 2);
     expect(test).toBe(false);
@@ -38,7 +46,6 @@ describe('MarkToggleCommand', () => {
 
   it('should call when executeCustom function return second false', () => {
     const state = {
-
       selection: {
         node: null,
         anchor: 0,
@@ -47,11 +54,23 @@ describe('MarkToggleCommand', () => {
         to: 2,
       },
       plugins: [],
-      tr: { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } } },
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false };
+          },
+        },
+      },
       schema: { marks: 'vlaue' },
     } as unknown as EditorState;
 
-    const tr = { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } } } as unknown as Transform;
+    const tr = {
+      doc: {
+        nodeAt: (_x) => {
+          return { isAtom: true, isLeaf: true, isText: false };
+        },
+      },
+    } as unknown as Transform;
 
     const test = plugin.executeCustom(state, tr, 1, 2);
     expect(test).toBe(false);
@@ -59,7 +78,6 @@ describe('MarkToggleCommand', () => {
 
   it('should call when isActive function return false', () => {
     const state = {
-
       selection: {
         node: null,
         anchor: 0,
@@ -68,13 +86,18 @@ describe('MarkToggleCommand', () => {
         to: 2,
       },
       plugins: [],
-      tr: { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } } },
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false };
+          },
+        },
+      },
       schema: { marks: 'value' },
     } as unknown as EditorState;
 
     const test = plugin.isActive(state);
     expect(test).toBe(false);
-
   });
 
   it('should call when execute function return false', () => {
@@ -112,60 +135,53 @@ describe('MarkToggleCommand', () => {
         text: {
           inline: true,
         },
-
       },
     });
     const dummyDoc = mySchema.node('doc', null, [
-      mySchema.node('heading', { marks: [] }, [
-        mySchema.text('Heading 1',),
-      ]),
+      mySchema.node('heading', { marks: [] }, [mySchema.text('Heading 1')]),
       mySchema.node('paragraph', { marks: [] }, [
-        mySchema.text('This is a paragraph',),
+        mySchema.text('This is a paragraph'),
       ]),
       mySchema.node('bullet_list', { marks: [] }, [
         mySchema.node('list_item', { marks: [] }, [
           mySchema.node('paragraph', { marks: [] }, [
-            mySchema.text('List item 1',),
+            mySchema.text('List item 1'),
           ]),
         ]),
         mySchema.node('list_item', { marks: [] }, [
           mySchema.node('paragraph', { marks: [] }, [
-            mySchema.text('List item 2',),
+            mySchema.text('List item 2'),
           ]),
         ]),
       ]),
       mySchema.node('blockquote', { marks: [] }, [
         mySchema.node('paragraph', { marks: [] }, [
-          mySchema.text('This is a blockquote',),
+          mySchema.text('This is a blockquote'),
         ]),
       ]),
     ]);
     const state = {
-
       selection: {
         node: null,
         anchor: 0,
         head: 0,
         from: 5,
         to: 2,
-        ranges: [{ $from: { depth: 1, pos: 0 }, $to: { pos: 1 } }]
+        ranges: [{ $from: { depth: 1, pos: 0 }, $to: { pos: 1 } }],
       },
       plugins: [],
       tr: null,
       schema: { marks: 'value' },
-      doc: dummyDoc
+      doc: dummyDoc,
     } as unknown as EditorState;
 
     const test = plugin.execute(state);
     expect(test).toBe(true);
-
   });
 
   it('should call when excute function return false', () => {
     const state = {
-      doc: {
-
-      },
+      doc: {},
       selection: {
         node: null,
         anchor: 0,
@@ -174,22 +190,23 @@ describe('MarkToggleCommand', () => {
         to: 2,
       },
       plugins: [],
-      tr: { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } } },
-      schema: { marks: { 'mark-font-type': undefined, } },
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false };
+          },
+        },
+      },
+      schema: { marks: { 'mark-font-type': undefined } },
     } as unknown as EditorState;
-
 
     const test = plugin.execute(state);
     expect(test).toBe(false);
-
   });
-
 
   it('should call when excute function return false', () => {
     const state = {
-      doc: {
-
-      },
+      doc: {},
       selection: {
         node: null,
         anchor: 0,
@@ -198,20 +215,22 @@ describe('MarkToggleCommand', () => {
         to: 2,
       },
       plugins: [],
-      tr: { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } } },
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false };
+          },
+        },
+      },
       schema: { marks: 'value' },
     } as unknown as EditorState;
     const test = plugin.execute(state);
     expect(test).toBe(false);
-
-
   });
 
   it('should call when excute function return tr', () => {
     const state = {
-      doc: {
-
-      },
+      doc: {},
       selection: {
         node: null,
         anchor: 0,
@@ -220,14 +239,26 @@ describe('MarkToggleCommand', () => {
         to: 2,
         empty: 1,
         ranges: 3,
-        $cursor: 6
+        $cursor: 6,
       },
       plugins: [],
-      tr: { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } } },
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false };
+          },
+        },
+      },
       schema: { marks: 'vlaue' },
     } as unknown as EditorState;
 
-    const tr = { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } } } as unknown as Transform;
+    const tr = {
+      doc: {
+        nodeAt: (_x) => {
+          return { isAtom: true, isLeaf: true, isText: false };
+        },
+      },
+    } as unknown as Transform;
 
     const test = plugin.executeCustom(state, tr, 2, 2);
     expect(test).toBe(tr);
@@ -271,26 +302,34 @@ describe('MarkToggleCommand', () => {
           },
         ],
         $cursor: { parentOffset: 0 },
-
       },
       plugins: [],
-      tr: { doc: { nodeAt: (_x) => ({ isAtom: true, isLeaf: true, isText: false }) } },
+      tr: {
+        doc: { nodeAt: (_x) => ({ isAtom: true, isLeaf: true, isText: false }) },
+      },
       schema: { marks: 'value' },
     } as unknown as EditorState;
 
-    const tr = { doc: { nodeAt: (_x) => ({ isAtom: true, isLeaf: true, isText: false }) } } as unknown as Transform;
+    const tr = {
+      doc: { nodeAt: (_x) => ({ isAtom: true, isLeaf: true, isText: false }) },
+    } as unknown as Transform;
 
     const test = plugin.executeCustom(state, tr, 1, 21);
     expect(test).toBeDefined();
   });
 
-
   it('should call when excute function return true', () => {
     const state = {
       doc: {
-        type: { allowsMarkType: (_x) => { return true; }, },
+        type: {
+          allowsMarkType: (_x) => {
+            return true;
+          },
+        },
 
-        nodesBetween: (_x, _y, _z: (node) => { return }) => { ''; },
+        nodesBetween: (_x, _y, _z: (node) => { return }) => {
+          ('');
+        },
       },
       selection: {
         node: null,
@@ -298,27 +337,55 @@ describe('MarkToggleCommand', () => {
         head: 0,
         from: 1,
         to: 2,
-        ranges: [{
-          $from: {
-            pos: 1,
-            depth: 0,
-          },
-          $to: {
-            pos: 5,
-          },
+        ranges: [
+          {
+            $from: {
+              pos: 1,
+              depth: 0,
+            },
+            $to: {
+              pos: 5,
+            },
 
-          from: 1,
-          to: 5,
-        }],
+            from: 1,
+            to: 5,
+          },
+        ],
         $cursor: { parentOffset: 0 },
-
       },
       plugins: [],
-      tr: { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } } },
-      schema: { marks: { 'bold': { create: (_attributes) => { return 'created_attrs'; } } } },
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false };
+          },
+        },
+      },
+      schema: {
+        marks: {
+          bold: {
+            create: (_attributes) => {
+              return 'created_attrs';
+            },
+          },
+        },
+      },
     } as unknown as EditorState;
 
-    const tr = { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } }, addMark: (_x, _y, _z) => { return ''; } } as unknown as Transform;
+    const tr = {
+      doc: {
+        nodeAt: (_x) => {
+          return { isAtom: true, isLeaf: true, isText: false, descendants: () => { } };
+        },
+        rangeHasMark: (_X) => {
+          return {};
+        },
+        nodesBetween:()=>{return {};}
+      },
+      addMark: (_x, _y, _z) => {
+        return '';
+      },
+    } as unknown as Transform;
 
     const test = plugin.executeCustom(state, tr, 1, 21);
     expect(test).toBeDefined();
@@ -326,7 +393,9 @@ describe('MarkToggleCommand', () => {
   it('should call when isActive function return false', () => {
     const state = {
       doc: {
-        nodeAt: (_x) => { return ''; }
+        nodeAt: (_x) => {
+          return '';
+        },
       },
       selection: {
         node: null,
@@ -336,13 +405,26 @@ describe('MarkToggleCommand', () => {
         to: 3,
       },
       plugins: [],
-      tr: { doc: { nodeAt: (_x) => { return { isAtom: true, isLeaf: true, isText: false }; } } },
-      schema: { marks: { 'bold': { create: (_attributes) => { return 'created_attrs'; } } } },
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false };
+          },
+        },
+      },
+      schema: {
+        marks: {
+          bold: {
+            create: (_attributes) => {
+              return 'created_attrs';
+            },
+          },
+        },
+      },
     } as unknown as EditorState;
 
     const test = plugin.isActive(state);
     expect(test).toBe(false);
-
   });
   describe('toggleCustomStyle', () => {
     const mySchema = new Schema({
@@ -379,37 +461,40 @@ describe('MarkToggleCommand', () => {
         text: {
           inline: true,
         },
-
       },
     });
     const dummyDoc = mySchema.node('doc', null, [
-      mySchema.node('heading', { marks: [] }, [
-        mySchema.text('Heading 1',),
-      ]),
+      mySchema.node('heading', { marks: [] }, [mySchema.text('Heading 1')]),
       mySchema.node('paragraph', { marks: [] }, [
-        mySchema.text('This is a paragraph',),
+        mySchema.text('This is a paragraph'),
       ]),
       mySchema.node('bullet_list', { marks: [] }, [
         mySchema.node('list_item', { marks: [] }, [
           mySchema.node('paragraph', { marks: [] }, [
-            mySchema.text('List item 1',),
+            mySchema.text('List item 1'),
           ]),
         ]),
         mySchema.node('list_item', { marks: [] }, [
           mySchema.node('paragraph', { marks: [] }, [
-            mySchema.text('List item 2',),
+            mySchema.text('List item 2'),
           ]),
         ]),
       ]),
       mySchema.node('blockquote', { marks: [] }, [
         mySchema.node('paragraph', { marks: [] }, [
-          mySchema.text('This is a blockquote',),
+          mySchema.text('This is a blockquote'),
         ]),
       ]),
     ]);
     it('should return tr when selection is empty and no stored marks', () => {
-
-      const mt = { isInSet: () => { return; }, create: () => { return {}; } };
+      const mt = {
+        isInSet: () => {
+          return;
+        },
+        create: () => {
+          return {};
+        },
+      };
       const attrs = {};
       const state = {
         selection: {
@@ -430,8 +515,12 @@ describe('MarkToggleCommand', () => {
         },
         doc: dummyDoc,
         tr: {
-          removeStoredMark: () => { return {}; },
-          addStoredMark: () => { return {}; },
+          removeStoredMark: () => {
+            return {};
+          },
+          addStoredMark: () => {
+            return {};
+          },
         },
       } as unknown as EditorState;
 
@@ -440,7 +529,14 @@ describe('MarkToggleCommand', () => {
       expect(test).toStrictEqual({});
     });
     it('should return tr when selection is empty and no stored marks', () => {
-      const mt = { isInSet: () => { return true; }, create: () => { return {}; } };
+      const mt = {
+        isInSet: () => {
+          return true;
+        },
+        create: () => {
+          return {};
+        },
+      };
       const attrs = {};
       const state = {
         storedMarks: true,
@@ -448,16 +544,27 @@ describe('MarkToggleCommand', () => {
           empty: 0,
           $cursor: {
             parentOffset: 0,
-            marks: () => ([] as Mark[]), // Use Mark[] instead of any[]
+            marks: () => [] as Mark[], // Use Mark[] instead of any[]
           },
           ranges: [{ $from: { depth: 1, pos: 0 }, $to: { pos: 1 } }],
         },
         doc: dummyDoc,
-        tr: { removeStoredMark: () => { return {}; }, addStoredMark: () => { return {}; } }
+        tr: {
+          removeStoredMark: () => {
+            return {};
+          },
+          addStoredMark: () => {
+            return {};
+          },
+        },
       } as unknown as EditorState;
       const tr = {} as unknown as Transform;
       const test = toggleCustomStyle(mt, attrs, state, tr, 1, 1);
       expect(test).toStrictEqual({});
     });
+  });
+
+  it('should not render label', () => {
+    expect(plugin.renderLabel()).toBeNull();
   });
 });

@@ -1,14 +1,11 @@
 import { EditorState } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
-import { ContentNodeWithPos, findParentNodeOfType } from 'prosemirror-utils';
 import { EditorView } from 'prosemirror-view';
-
-import { HEADING } from './NodeNames';
-import noop from './noop';
-import toggleHeading from './toggleHeading';
+import { toggleHeading } from './toggleHeading';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import * as React from 'react';
 
-class HeadingCommand extends UICommand {
+export class HeadingCommand extends UICommand {
   _level: number;
 
   constructor(level: number) {
@@ -39,11 +36,33 @@ class HeadingCommand extends UICommand {
     }
   };
 
-  _findHeading(state: EditorState): ContentNodeWithPos | void {
-    const heading = state.schema.nodes[HEADING];
-    const fn = heading ? findParentNodeOfType(heading) : noop;
-    return fn(state.selection);
-  }
-}
+  waitForUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _event?: React.SyntheticEvent
+  ): Promise<undefined> => {
+    return Promise.resolve(undefined);
+  };
 
-export default HeadingCommand;
+  executeWithUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _inputs?: string
+  ): boolean => {
+    return false;
+  };
+
+  cancel(): void {
+    return null;
+  }
+
+  renderLabel = () => {
+    return null;
+  };
+
+  executeCustom = (_state: EditorState, tr: Transform): Transform => {
+    return tr;
+  };
+}

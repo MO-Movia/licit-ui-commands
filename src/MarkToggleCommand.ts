@@ -1,11 +1,12 @@
-import {toggleMark} from 'prosemirror-commands';
-import {EditorState} from 'prosemirror-state';
-import {Transform} from 'prosemirror-transform';
-import {EditorView} from 'prosemirror-view';
-import findNodesWithSameMark from './findNodesWithSameMark';
-import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import { toggleMark } from 'prosemirror-commands';
+import { EditorState } from 'prosemirror-state';
+import { Transform } from 'prosemirror-transform';
+import { EditorView } from 'prosemirror-view';
+import { findNodesWithSameMark } from './findNodesWithSameMark';
+import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import * as React from 'react';
 
-class MarkToggleCommand extends UICommand {
+export class MarkToggleCommand extends UICommand {
   _markName: string;
 
   constructor(markName: string) {
@@ -14,14 +15,36 @@ class MarkToggleCommand extends UICommand {
   }
 
   isActive = (state: EditorState): boolean => {
-    const {schema, doc, selection} = state;
-    const {from, to} = selection;
+    const { schema, doc, selection } = state;
+    const { from, to } = selection;
     const markType = schema.marks[this._markName];
     if (markType && from < to) {
       return !!findNodesWithSameMark(doc, from, to - 1, markType);
     }
     return false;
   };
+
+  waitForUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _event?: React.SyntheticEvent
+  ): Promise<undefined> => {
+    return Promise.resolve(undefined);
+  };
+
+  executeWithUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _inputs?: string
+  ): boolean => {
+    return false;
+  };
+
+  cancel(): void {
+    return null;
+  }
 
   execute = (
     state: EditorState,
@@ -34,9 +57,7 @@ class MarkToggleCommand extends UICommand {
       return false;
     }
 
-
-
-    const {from, to} = selection;
+    const { from, to } = selection;
     if (tr && to === from + 1) {
       const node = tr.doc.nodeAt(from);
       if (node.isAtom && !node.isText && node.isLeaf) {
@@ -45,7 +66,7 @@ class MarkToggleCommand extends UICommand {
       }
     }
 
-    // TODO: Replace `toggleMark` with transform that does not change scroll
+    //Replace `toggleMark` with transform that does not change scroll
     // position.
     return toggleMark(markType)(state, dispatch);
   };
@@ -58,7 +79,7 @@ class MarkToggleCommand extends UICommand {
     posfrom: number,
     posto: number
   ) => {
-    const {schema} = state;
+    const { schema } = state;
     const markType = schema.marks[this._markName];
     if (!markType) {
       return false;
@@ -74,6 +95,10 @@ class MarkToggleCommand extends UICommand {
 
     return toggleCustomStyle(markType, null, state, tr, posfrom, posto);
   };
+
+  renderLabel() {
+    return null;
+  }
 }
 
 // [FS] IRAD-1042 2020-09-30
@@ -97,16 +122,36 @@ export function toggleCustomStyle(
   if ($cursor && $cursor.parentOffset === 0 && posfrom === posto) {
     if (markType.isInSet(state.storedMarks || $cursor.marks())) {
       tr = state.tr.removeStoredMark(markType);
-    } else {
+    }
+    else {
       tr = state.tr.addStoredMark(markType.create(attrs));
     }
-  } else {
+  }
+  else {
     // [FS] IRAD-1043 2020-10-27
     // No need to remove the applied custom style, if user select the same style multiple times.
-    tr.addMark(posfrom, posto, markType.create(attrs));
+    let from = posfrom;
+    let to = 0;
+    tr.doc.nodesBetween(posfrom, posto, (node, pos) => {
+      from = pos;
+      to = from + node.nodeSize;
+      if (node && 0 < node.marks.length) {
+        const result = node.marks.find(mark => mark.type.name === markType.name);
+        if (!result) {
+          attrs = { overridden: false };
+          tr = tr.addMark(from, to, markType.create(attrs));
+        }
+        else {
+          attrs = { overridden: true };
+          tr = tr.addMark(from, to, markType.create(attrs));
+        }
+        from = to;
+      }
+    });
   }
   return tr;
 }
+
 //overrided method from prosemirror Transform
 function markApplies(doc, ranges, type) {
   let returned = false;
@@ -138,4 +183,3 @@ function markApplies(doc, ranges, type) {
   }
   return returned;
 }
-export default MarkToggleCommand;

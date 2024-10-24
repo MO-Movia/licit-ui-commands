@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 import PopUpManager from './PopUpManager';
-import { atAnchorBottomLeft, atViewportCenter } from './PopUpPosition';
-import uuid from './uuid';
+import {atAnchorBottomLeft, atViewportCenter} from './PopUpPosition';
+import {uuid} from './uuid';
 
 import type { PopUpDetails } from './PopUpManager';
 import type { Rect } from './rects';
@@ -34,8 +34,8 @@ export type PopUpHandle = {
   update: (props: Record<string, unknown>) => void;
 };
 
-class PopUp extends React.PureComponent<PopUpProps> {
-  props: PopUpProps;
+export class PopUp extends React.PureComponent<PopUpProps> {
+  declare props: PopUpProps;
 
   _bridge = null;
   _id = uuid();
@@ -51,7 +51,7 @@ class PopUp extends React.PureComponent<PopUpProps> {
   }
 
   componentDidMount(): void {
-    this._bridge = { getDetails: this._getDetails };
+    this._bridge = {getDetails: this._getDetails};
     PopUpManager.register(this._bridge);
   }
 
@@ -64,14 +64,14 @@ class PopUp extends React.PureComponent<PopUpProps> {
     const { anchor, autoDismiss, position, modal, popUpId } = popUpParams;
     return {
       anchor,
-      autoDismiss: autoDismiss === false ? false : true,
+      autoDismiss: autoDismiss !== false
+      ,
       body: document.getElementById(this._id),
       close,
       modal: modal === true,
       position: position || (modal ? atViewportCenter : atAnchorBottomLeft),
-      popupId: popUpId ? popUpId : null
+      popupId: popUpId
     };
   };
 }
 
-export default PopUp;

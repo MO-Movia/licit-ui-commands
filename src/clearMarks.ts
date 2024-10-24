@@ -64,10 +64,10 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
     if (node?.marks.length) {
       node.marks.some((mark) => {
         if (markTypesToRemove.has(mark.type)) {
-          tasks.push({ node, pos, mark });
+          tasks.push({node, pos, mark});
         }
       });
-      return true;
+
     }
     return true;
   });

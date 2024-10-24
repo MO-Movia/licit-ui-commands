@@ -1,18 +1,22 @@
-// contextProvider.js
-import React, { createContext } from 'react';
+import React, { createContext, Component, ReactNode } from 'react';
 
-const ThemeContext = createContext('light');
-const ThemeConsumer = ThemeContext.Consumer;
+// Create a context with a default theme
+const ThemeContext = createContext<string>('light');
 
-const ThemeProvider = ({ children, theme }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [currentTheme, setCurrentTheme] = React.useState(theme);
+// Define a provider component that will wrap your application
+class ThemeProvider extends Component<{ children: ReactNode; theme: string }> {
+  render() {
+    const { children, theme } = this.props;
 
-  return (
-    <ThemeContext.Provider value={currentTheme}>
-      {children}
-    </ThemeContext.Provider>
-  );
-};
+    return (
+      <ThemeContext.Provider value={theme}>
+        {children}
+      </ThemeContext.Provider>
+    );
+  }
+}
 
-export { ThemeProvider, ThemeConsumer, ThemeContext };
+export { ThemeProvider,ThemeContext };
+
+
+

@@ -1,10 +1,8 @@
-import consolidateListNodes from './consolidateListNodes';
-import { doc, li, ol, p, ul } from 'prosemirror-test-builder';
-import { EditorState } from 'prosemirror-state';
-import { schema } from 'prosemirror-schema-basic';
-import { Transaction } from 'prosemirror-state';
-import { Schema } from 'prosemirror-model';
-
+import {consolidateListNodes} from './consolidateListNodes';
+import {doc, li, ol, p, ul} from 'prosemirror-test-builder';
+import {EditorState, Transaction} from 'prosemirror-state';
+import {schema} from 'prosemirror-schema-basic';
+import {Schema} from 'prosemirror-model';
 
 describe('consolidateListNodes', () => {
   it('should consolidate list nodes', () => {
@@ -14,7 +12,7 @@ describe('consolidateListNodes', () => {
     };
     const schema1 = new Schema({
       nodes: {
-        doc: { content: 'paragraph+' },
+        doc: {content: 'paragraph+'},
         paragraph: {
           content: 'text*',
           toDOM() {
@@ -33,30 +31,32 @@ describe('consolidateListNodes', () => {
       schema: schema1,
     });
 
-    const { tr } = state;
+    const {tr} = state;
 
     const transformedTr = consolidateListNodes(tr);
     expect(transformedTr.doc).toBeDefined();
   });
 
-
   it('should handle linkOrderedListCounters', () => {
-    const tr = { doc: { nodeSize: 2 }, getMeta: () => { return null; } } as unknown as Transaction;
+    const tr = {
+      doc: {nodeSize: 2},
+      getMeta: () => {
+        return null;
+      },
+    } as unknown as Transaction;
     expect(consolidateListNodes(tr)).toBeDefined();
   });
-
 
   it('should consolidate list nodes', () => {
     const state = EditorState.create({
       doc: doc(p('Item 1')),
       schema: schema,
     });
-    const { tr } = state;
+    const {tr} = state;
 
     const transformedTr = consolidateListNodes(tr);
     expect(transformedTr.doc).toBeDefined();
   });
-
 
   it('should return the transaction if dryrun meta property is set', () => {
     const textNode = schema.text('Hello, World!');
@@ -67,7 +67,6 @@ describe('consolidateListNodes', () => {
     const transformedTr = consolidateListNodes(tr);
     expect(transformedTr).toBe(tr);
   });
-
 
   it('should join multiple list nodes until no more can be joined', () => {
     const state = EditorState.create({
@@ -80,13 +79,12 @@ describe('consolidateListNodes', () => {
       schema: schema,
     });
 
-    const { tr } = state;
+    const {tr} = state;
 
     const transformedTr = consolidateListNodes(tr);
     expect(transformedTr.doc.content.childCount).toBe(1);
     expect(transformedTr.doc.content.firstChild?.content.childCount).toBe(4);
   });
-
 
   it('should update the counterReset attribute of a list node', () => {
     const state = EditorState.create({
@@ -94,7 +92,7 @@ describe('consolidateListNodes', () => {
       schema: schema,
     });
 
-    const { tr } = state;
+    const {tr} = state;
 
     const pos = 1;
 
@@ -105,15 +103,11 @@ describe('consolidateListNodes', () => {
   });
   it('should consolidate list nodes and handle counter linking', () => {
     const state = EditorState.create({
-      doc: doc(
-        ol(li(p('Item 1'))),
-        ul(li(p('Item 2'))),
-        ol(li(p('Item 3')))
-      ),
+      doc: doc(ol(li(p('Item 1'))), ul(li(p('Item 2'))), ol(li(p('Item 3')))),
       schema: schema,
     });
 
-    const { tr } = state;
+    const {tr} = state;
 
     const transformedTr = consolidateListNodes(tr);
     expect(transformedTr.doc.content.childCount).toBe(3);

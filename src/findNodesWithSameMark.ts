@@ -14,7 +14,7 @@ type Result = {
 
 // If nodes within the same range have the same mark, returns
 // the first node.
-export default function findNodesWithSameMark(
+export function findNodesWithSameMark(
   doc: Node,
   from: number,
   to: number,

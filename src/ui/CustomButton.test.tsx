@@ -1,18 +1,15 @@
 import Adapter from '@cfaester/enzyme-adapter-react-18';
-import { configure, shallow } from 'enzyme';
-import CustomButton from './CustomButton';
-import { PointerSurface } from './PointerSurface';
-import { TooltipSurface } from './TooltipSurface';
+import {configure, shallow} from 'enzyme';
+import {CustomButton} from './CustomButton';
+import {PointerSurface} from './PointerSurface';
+import {TooltipSurface} from './TooltipSurface';
 import React from 'react';
 
-
-configure({ adapter: new Adapter() });
-
+configure({adapter: new Adapter()});
 
 declare let describe: jest.Describe;
 declare let it: jest.It;
 declare const expect: jest.Expect;
-
 
 describe('CustomButton', () => {
   it('should render the component with icon and label', () => {

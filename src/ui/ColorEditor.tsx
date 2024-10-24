@@ -1,8 +1,8 @@
-import  Color  from 'color';
+import Color from 'color';
 import * as React from 'react';
 
-import CustomButton from './CustomButton';
-import clamp from './clamp';
+import {CustomButton} from './CustomButton';
+import {clamp} from './clamp';
 
 import './czi-color-editor.css';
 
@@ -11,7 +11,7 @@ function generateGreyColors(count: number): Array<Color> {
   const interval = cc / count;
   const colors = [];
   while (cc > 0) {
-    const color = Color({ r: cc, g: cc, b: cc });
+    const color = Color({r: cc, g: cc, b: cc});
     cc -= interval;
     cc = Math.floor(cc);
     colors.unshift(color);
@@ -38,8 +38,8 @@ function generateRainbowColors(
   return colors;
 }
 
-class ColorEditor extends React.PureComponent {
-  props: {
+export class ColorEditor extends React.PureComponent {
+    declare props: {
     close: (string) => void;
     hex?: string;
   };
@@ -80,7 +80,7 @@ class ColorEditor extends React.PureComponent {
   ): React.ReactElement<CustomButton> => {
     const selectedColor = this.props.hex;
     const hex = color.hex().toLowerCase();
-    const style = { backgroundColor: hex };
+    const style = {backgroundColor: hex};
     const active = selectedColor && selectedColor.toLowerCase() === hex;
     return (
       <CustomButton
@@ -99,4 +99,3 @@ class ColorEditor extends React.PureComponent {
     this.props.close(hex);
   };
 }
-export default ColorEditor;

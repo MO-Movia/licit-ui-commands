@@ -13,10 +13,12 @@ type CustomButtonProps = PointerSurfaceProps & {
   theme?: string
 };
 
-class CustomButton extends React.PureComponent<CustomButtonProps> {
-props: CustomButtonProps;
+export class CustomButton extends React.PureComponent<CustomButtonProps> {
+  declare props: CustomButtonProps;
+
   render(): React.ReactNode {
     const {icon, label, className, title, theme, ...pointerProps} = this.props;
+    // const { theme, setTheme } = useTheme();
     const klass = cx(className, 'czi-custom-button', theme);
     return (
       <ThemeProvider theme={theme}>
@@ -31,4 +33,3 @@ props: CustomButtonProps;
   }
 }
 
-export default CustomButton;

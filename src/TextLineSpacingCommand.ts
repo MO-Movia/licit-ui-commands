@@ -1,30 +1,28 @@
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import {
-  Transaction,
-  EditorState,
-} from 'prosemirror-state';
-import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
-import { EditorView } from 'prosemirror-view';
-import { Schema } from 'prosemirror-model';
-import { Transform } from 'prosemirror-transform';
+import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import {Transaction, EditorState} from 'prosemirror-state';
+import {BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
+import {EditorView} from 'prosemirror-view';
+import {Schema} from 'prosemirror-model';
+import {Transform} from 'prosemirror-transform';
 import {
   DOUBLE_LINE_SPACING,
   SINGLE_LINE_SPACING,
   LINE_SPACING_115,
   LINE_SPACING_150,
 } from './ui/toCSSLineSpacing';
+import * as React from 'react';
 
 export function setTextLineSpacing(
   tr: Transform,
   schema: Schema,
   lineSpacing?: string
 ): Transform {
-  const { selection, doc } = tr as Transaction;
+  const {selection, doc} = tr as Transaction;
   if (!selection || !doc) {
     return tr;
   }
 
-  const { from, to } = selection;
+  const {from, to} = selection;
   const paragraph = schema.nodes[PARAGRAPH];
   const heading = schema.nodes[HEADING];
   const listItem = schema.nodes[LIST_ITEM];
@@ -52,7 +50,7 @@ export function setTextLineSpacing(
           nodeType,
         });
       }
-      return nodeType === listItem ? true : false;
+      return nodeType === listItem;
     }
     return true;
   });
@@ -62,8 +60,8 @@ export function setTextLineSpacing(
   }
 
   tasks.forEach((job) => {
-    const { node, pos, nodeType } = job;
-    let { attrs } = node;
+    const {node, pos, nodeType} = job;
+    let {attrs} = node;
     if (lineSpacingValue) {
       attrs = {
         ...attrs,
@@ -91,10 +89,10 @@ function createGroup(): Array<{[key: string]: TextLineSpacingCommand}> {
   return [group];
 }
 
-class TextLineSpacingCommand extends UICommand {
+export class TextLineSpacingCommand extends UICommand {
   _lineSpacing?: string;
 
-  static createGroup = createGroup;
+  static readonly createGroup = createGroup;
 
   constructor(lineSpacing?: string) {
     super();
@@ -127,12 +125,34 @@ class TextLineSpacingCommand extends UICommand {
     return this.isActive(state) || this.execute(state);
   };
 
+  waitForUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _event?: React.SyntheticEvent
+  ): Promise<undefined> => {
+    return Promise.resolve(undefined);
+  };
+
+  executeWithUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _inputs?: string
+  ): boolean => {
+    return false;
+  };
+
+  cancel(): void {
+    return null;
+  }
+
   execute = (
     state: EditorState,
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    const { schema, selection } = state;
+    const {schema, selection} = state;
     const tr = setTextLineSpacing(
       state.tr.setSelection(selection),
       schema,
@@ -145,6 +165,12 @@ class TextLineSpacingCommand extends UICommand {
       return false;
     }
   };
-}
 
-export default TextLineSpacingCommand;
+  renderLabel() {
+    return null;
+  }
+
+  executeCustom = (_state: EditorState, tr: Transform): Transform => {
+    return tr;
+  };
+}

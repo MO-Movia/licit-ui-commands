@@ -1,8 +1,8 @@
-import isOrderedListNode from './isOrderedListNode';
-import isListNode from './isListNode';
-import { Fragment, Node } from 'prosemirror-model';
-import { Transform } from 'prosemirror-transform';
-import { Transaction } from 'prosemirror-state';
+import {isOrderedListNode} from './isOrderedListNode';
+import {isListNode} from './isListNode';
+import {Fragment, Node} from 'prosemirror-model';
+import {Transform} from 'prosemirror-transform';
+import {Transaction} from 'prosemirror-state';
 
 type JointInfo = {
   content: Fragment;
@@ -34,7 +34,7 @@ type JointInfo = {
 // List nodes with the same list type and indent level among the same Lists
 // Island will be joined into one list node.
 // Note that this transform may change the current user selection.
-export default function consolidateListNodes(tr: Transaction): Transform {
+export function consolidateListNodes(tr: Transaction): Transform {
   if (tr.getMeta('dryrun')) {
     // This transform is potentially expensive to perform, so skip it if
     // the transform is performed as "dryrun".
@@ -47,7 +47,7 @@ export default function consolidateListNodes(tr: Transaction): Transform {
   while (continueLoop) {
     const jointInfo = traverseDocAndFindJointInfo(tr.doc, prevJointInfo);
     if (jointInfo) {
-      const { deleteFrom, deleteTo, insertAt, content } = jointInfo;
+      const {deleteFrom, deleteTo, insertAt, content} = jointInfo;
       tr = tr.delete(deleteFrom, deleteTo);
       tr = tr.insert(insertAt, content);
       prevJointInfo = jointInfo;
@@ -104,7 +104,7 @@ function linkOrderedListCounters(tr: Transform): Transform {
       willTraverseNodeChildren = false;
       const indent = node.attrs.indent || 0;
       const start = node.attrs.start || 1;
-      const { name, following } = node.attrs;
+      const {name, following} = node.attrs;
       if (name) {
         namedLists.add(name);
       }
@@ -114,47 +114,22 @@ function linkOrderedListCounters(tr: Transform): Transform {
           // Look backward until we could find another ordered list node to
           // link with.
           let counterIsLinked;
-          listsBefore.some((list, _index) => {
-            if (list.node.type !== node.type && list.indent === indent) {
-              // This encounters different type of list node (e.g a bullet
-              // list node), we need to restart the counter.
-              // ------
-              // 1. AAA
-              // 2. BBB
-              // ------
-              // -. CCC
-              // -. DDD
-              // ------
-              // 1. DDD <- Counter restarts here.
-              // 2. EEE
-              // ------
+          listsBefore.some(({ node: { type }, indent: listIndent }) => {
+            if (listIndent < indent || (listIndent === indent && type !== node.type)) {
+              // Restart counter if:
+              // 1. We encounter a list with a lesser indent (moving to a higher level).
+              // 2. We encounter a different type of list at the same indent level.
               counterIsLinked = false;
               return true;
-            } else if (list.indent < indent) {
-              // This encounters an ordered list node that has less indent.
-              // we need to restart the counter.
-              // ------
-              // 1. AAA
-              // 2. BBB
-              // ------
-              //   1. DDD <- Counter restarts here.
-              //   2. EEE
-              // ------
-              counterIsLinked = false;
-              return true;
-            } else if (list.indent === indent) {
-              // This encounters an ordered list node that has same indent.
-              // Do not Restart the counter.
-              // ------
-              // 1. AAA
-              // 2. BBB
-              // ------
-              // 3. DDD <- Counter continues here.
-              // 4. EEE
-              // ------
+            }
+
+            if (listIndent === indent) {
+              // Continue counter if:
+              // We encounter the same type of list at the same indent level.
               counterIsLinked = true;
               return true;
             }
+
             return false;
           });
 
@@ -175,7 +150,7 @@ function linkOrderedListCounters(tr: Transform): Transform {
           tr = setCounterLinked(tr, pos, counterIsLinked);
         }
       }
-      listsBefore.unshift({ parentNode, indent, node });
+      listsBefore.unshift({parentNode, indent, node});
     } else {
       // Not traversing within any list node. No lists need to be updated.
       listsBefore = null;
@@ -194,7 +169,7 @@ function setCounterLinked(
   const currentValue = node.attrs.counterReset || null;
   const nextValue = linked ? 'none' : null;
   if (nextValue !== currentValue) {
-    const nodeAttrs = { ...node.attrs, counterReset: nextValue };
+    const nodeAttrs = {...node.attrs, counterReset: nextValue};
     tr = tr.setNodeMarkup(pos, node.type, nodeAttrs, node.marks);
   }
   return tr;

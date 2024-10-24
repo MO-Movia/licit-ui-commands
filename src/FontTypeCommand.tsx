@@ -1,31 +1,26 @@
 import { Schema } from 'prosemirror-model';
-import {
-  TextSelection,
-  EditorState,
-  Transaction,
-} from 'prosemirror-state';
+import { TextSelection, EditorState, Transaction } from 'prosemirror-state';
 
 import { Transform } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
 import * as React from 'react';
 
 import { MARK_FONT_TYPE } from './MarkNames';
-import applyMark from './applyMark';
+import { applyMark } from './applyMark';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import noop from './noop';
 
-function setFontType(tr: Transform, schema: Schema, name: string): Transform {
+function setFontType(tr: Transform, schema: Schema, name: string, isCustomStyleApplied?: boolean): Transform {
   const markType = schema.marks[MARK_FONT_TYPE];
   if (!markType) {
     return tr;
   }
 
   const attrs = name ? { name } : null;
-  tr = applyMark(tr, schema, markType, attrs);
+  tr = applyMark(tr, schema, markType, attrs, isCustomStyleApplied);
   return tr;
 }
 
-class FontTypeCommand extends UICommand {
+export class FontTypeCommand extends UICommand {
   _label = null;
   _name = '';
   _popUp = null;
@@ -33,9 +28,7 @@ class FontTypeCommand extends UICommand {
   constructor(name: string) {
     super();
     this._name = name;
-    this._label = name ? (
-      <span style={{ fontFamily: name }}>{name}</span>
-    ) : null;
+    this._label = name ? <span style={{ fontFamily: name }}>{name}</span> : null;
   }
 
   renderLabel = (_state: EditorState): HTMLElement => {
@@ -67,7 +60,6 @@ class FontTypeCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    dispatch = dispatch || noop;
     const { schema } = state;
     // commnted selection because selection removes the storedMarks;
     // {selection}
@@ -77,7 +69,7 @@ class FontTypeCommand extends UICommand {
       // If selection is empty, the color is added to `storedMarks`, which
       // works like `toggleMark`
       // (see https://prosemirror.net/docs/ref/#commands.toggleMark).
-      dispatch(tr);
+      dispatch?.(tr);
       return true;
     }
     return false;
@@ -90,14 +82,39 @@ class FontTypeCommand extends UICommand {
     from: number,
     to: number
   ): Transform => {
-    const {schema} = state;
+    const { schema } = state;
     tr = setFontType(
       (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),
       schema,
-      this._name
+      this._name,
+      true
     );
     return tr;
   };
-}
 
-export default FontTypeCommand;
+  waitForUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _event?: React.SyntheticEvent
+  ): Promise<undefined> => {
+    return Promise.resolve(undefined);
+  };
+
+  executeWithUserInput = (
+    _state: EditorState,
+    _dispatch?: (tr: Transform) => void,
+    _view?: EditorView,
+    _inputs?: string
+  ): boolean => {
+    return false;
+  };
+
+  cancel(): void {
+    return null;
+  }
+
+  isActive(): boolean {
+    return true;
+  }
+}

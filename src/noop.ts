@@ -1,5 +1,4 @@
-const noop = function (): void {
+export const noop = function (): void {
   //do nothing
 };
-
-export default noop;
+noop();

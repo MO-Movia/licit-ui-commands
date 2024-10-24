@@ -32,6 +32,7 @@
 .czi-custom-button.dark {
   background: #444;
   border-color: transparent;
+  color: #c7c7c7;
 }
 
 .czi-custom-button.light {

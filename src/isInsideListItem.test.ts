@@ -1,5 +1,5 @@
-import { Schema } from 'prosemirror-model';
-import isInsideListItem from './isInsideListItem';
+import {Schema} from 'prosemirror-model';
+import {isInsideListItem} from './isInsideListItem';
 
 describe('isInsideListItem', () => {
   it('should return true if the position is inside a list item', () => {
@@ -22,9 +22,7 @@ describe('isInsideListItem', () => {
 
     const doc = schema.nodes.doc.create(null, [
       schema.nodes.listItem.create(null, [
-        schema.nodes.paragraph.create(null, [
-          schema.text('Sample text'),
-        ]),
+        schema.nodes.paragraph.create(null, [schema.text('Sample text')]),
       ]),
     ]);
     const result = isInsideListItem(doc, 4);
@@ -52,9 +50,7 @@ describe('isInsideListItem', () => {
 
     const doc = schema.nodes.doc.create(null, [
       schema.nodes.listItem.create(null, [
-        schema.nodes.paragraph.create(null, [
-          schema.text('Sample text'),
-        ]),
+        schema.nodes.paragraph.create(null, [schema.text('Sample text')]),
       ]),
     ]);
     const result = isInsideListItem(doc, 1);
@@ -81,9 +77,7 @@ describe('isInsideListItem', () => {
     });
 
     const doc = schema.nodes.doc.create(null, [
-      schema.nodes.paragraph.create(null, [
-        schema.text('Sample text'),
-      ]),
+      schema.nodes.paragraph.create(null, [schema.text('Sample text')]),
     ]);
     const result = isInsideListItem(doc, 2);
 

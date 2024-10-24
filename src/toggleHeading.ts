@@ -1,21 +1,21 @@
-import { Transaction } from 'prosemirror-state';
-import { Schema } from 'prosemirror-model';
-import { Transform } from 'prosemirror-transform';
+import {Transaction} from 'prosemirror-state';
+import {Schema} from 'prosemirror-model';
+import {Transform} from 'prosemirror-transform';
 
-import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
-import compareNumber from './compareNumber';
-import isInsideListItem from './isInsideListItem';
-import isListNode from './isListNode';
-import { clearMarks } from './clearMarks';
-import { unwrapNodesFromList } from './toggleList';
+import {BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
+import {compareNumber} from './compareNumber';
+import {isInsideListItem} from './isInsideListItem';
+import {isListNode} from './isListNode';
+import {clearMarks} from './clearMarks';
+import {unwrapNodesFromList} from './toggleList';
 
-export default function toggleHeading(
+export function toggleHeading(
   tr: Transform,
   schema: Schema,
   level: number
 ): Transform {
-  const { nodes } = schema;
-  const { selection, doc } = tr as Transaction;
+  const {nodes} = schema;
+  const {selection, doc} = tr as Transaction;
 
   const blockquote = nodes[BLOCKQUOTE];
   const heading = nodes[HEADING];

@@ -1,4 +1,4 @@
-import HeadingCommand from './HeadingCommand';
+import { HeadingCommand } from './HeadingCommand';
 import { EditorState } from 'prosemirror-state';
 import { MARK_FONT_TYPE } from './MarkNames';
 import { Transform } from 'prosemirror-transform';
@@ -17,11 +17,9 @@ describe('HeadingCommand', () => {
       marks: schema.spec.marks,
     });
     command = new HeadingCommand(1);
-
   });
   it('should create', () => {
     expect(plugin).toBeTruthy();
-
   });
   const state = {
     doc: {
@@ -44,9 +42,8 @@ describe('HeadingCommand', () => {
       head: 0,
     },
     plugins: [],
-    schema: { marks: { 'mark-font-type': MARK_FONT_TYPE, } },
+    schema: { marks: { 'mark-font-type': MARK_FONT_TYPE } },
   } as unknown as EditorState;
-
 
   it('should call when execute function return true', () => {
     const test = plugin.isActive(state);
@@ -65,11 +62,32 @@ describe('HeadingCommand', () => {
   });
 
   it('execute function() should be return false', () => {
-    const state = { schema: {}, selection: {}, tr: { setSelection: () => { return {}; } } } as unknown as EditorState;
-    jest.spyOn(toggleHeading, 'default').mockReturnValue({ docChanged: false } as unknown as Transform);
+    const state = {
+      schema: {},
+      selection: {},
+      tr: {
+        setSelection: () => {
+          return {};
+        },
+      },
+    } as unknown as EditorState;
+    jest
+      .spyOn(toggleHeading, 'toggleHeading')
+      .mockReturnValue({ docChanged: false } as unknown as Transform);
     const test = plugin.execute(state);
     expect(test).toBeFalsy();
-
   });
 
+  it('should not render label', () => {
+    expect(command.renderLabel()).toBeNull();
+  });
+
+  it('should execute custom', () => {
+    expect(
+      command.executeCustom(
+        null as unknown as EditorState,
+        null as unknown as Transform,
+      )
+    ).toBeNull();
+  });
 });

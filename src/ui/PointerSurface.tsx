@@ -1,8 +1,8 @@
 import cx from 'classnames';
 import * as React from 'react';
 
-import preventEventDefault from './preventEventDefault';
-import { EditorView } from 'prosemirror-view';
+import {preventEventDefault} from './preventEventDefault';
+import {EditorView} from 'prosemirror-view';
 
 export type PointerSurfaceProps = {
   active?: boolean;
@@ -15,12 +15,12 @@ export type PointerSurfaceProps = {
   style?: Record<string, unknown>;
   target?: string;
   title?: string;
-  value?: string | number | Record<string, unknown> | EditorView;
+  value?: string | number | Record<string, unknown> | EditorView|any;
   hasChild?: boolean;
 };
 
 export class PointerSurface extends React.PureComponent {
-  props: PointerSurfaceProps;
+  declare props: PointerSurfaceProps;
 
   _clicked = false;
   _mul = false;
@@ -35,7 +35,8 @@ export class PointerSurface extends React.PureComponent {
     const { pressed } = this.state;
 
     const buttonClassName = cx(className, {
-      active: active,
+      //  classs added fro active style. temp commeneted
+      // active: active,
       disabled: disabled,
       pressed: pressed,
     });
@@ -46,7 +47,7 @@ export class PointerSurface extends React.PureComponent {
         aria-pressed={pressed}
         className={buttonClassName}
         id={id}
-        onKeyPress={disabled ? preventEventDefault : this._onMouseUp}
+        onKeyDown={disabled ? preventEventDefault : this._onMouseUp}
         onMouseDown={disabled ? preventEventDefault : this._onMouseDown}
         onMouseEnter={disabled ? preventEventDefault : this._onMouseEnter}
         onMouseLeave={disabled ? null : this._onMouseLeave}
@@ -72,13 +73,13 @@ export class PointerSurface extends React.PureComponent {
   _onMouseEnter = (e: React.SyntheticEvent): void => {
     this._pressedTarget = null;
     e.preventDefault();
-    const { onMouseEnter, value } = this.props;
-    onMouseEnter && onMouseEnter(value, e);
+    const {onMouseEnter, value} = this.props;
+    onMouseEnter?.(value, e);
   };
 
   _onMouseLeave = (e: React.MouseEvent): void => {
     this._pressedTarget = null;
-    const mouseUpEvent: MouseEvent = e as unknown as MouseEvent; //TODO
+    const mouseUpEvent: MouseEvent = e as unknown as MouseEvent;
     this._onMouseUpCapture(mouseUpEvent);
   };
 
@@ -130,5 +131,3 @@ export class PointerSurface extends React.PureComponent {
     this.setState({ pressed: false });
   };
 }
-
-// export default PointerSurface;

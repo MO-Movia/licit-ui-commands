@@ -2,9 +2,9 @@ import './czi-tooltip-surface.css';
 import './czi-animations.css';
 
 import * as React from 'react';
-import createPopUp from './createPopUp';
-import { atAnchorBottomCenter } from './PopUpPosition';
-import uuid from './uuid';
+import {createPopUp} from './createPopUp';
+import {atAnchorBottomCenter} from './PopUpPosition';
+import {uuid} from './uuid';
 
 type TooltipSurfaceProps = {
   tooltip: string;
@@ -13,7 +13,7 @@ type TooltipSurfaceProps = {
 
 class TooltipView extends React.PureComponent<TooltipSurfaceProps> {
   render(): React.ReactElement {
-    const { tooltip } = this.props;
+    const {tooltip} = this.props;
     return (
       <div className="czi-tooltip-view czi-animation-fade-in">{tooltip}</div>
     );
@@ -24,17 +24,17 @@ export class TooltipSurface extends React.PureComponent<TooltipSurfaceProps> {
   _id = uuid();
   _popUp = null;
 
-  props: {
+  declare props: {
     tooltip: string;
     children?;
   };
 
   componentWillUnmount(): void {
-    this._popUp && this._popUp.close();
+    this._popUp?.close();
   }
 
   render(): React.ReactElement {
-    const { tooltip, children } = this.props;
+    const {tooltip, children} = this.props;
     return (
       <span
         aria-label={tooltip}
@@ -71,7 +71,7 @@ export class TooltipSurface extends React.PureComponent<TooltipSurfaceProps> {
 
   _onMouseLeave = (e): void => {
     if(e && e.target && e.target.nodeName!=='IMG'){
-    this._popUp && this._popUp.close();
+    this._popUp?.close();
     this._popUp = null;
     }
   };
@@ -80,5 +80,3 @@ export class TooltipSurface extends React.PureComponent<TooltipSurfaceProps> {
     this._popUp = null;
   };
 }
-
-//export default TooltipSurface;
