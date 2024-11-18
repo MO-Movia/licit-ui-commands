@@ -13,7 +13,6 @@ export type PointerSurfaceProps = {
   onClick?: (val, e: React.SyntheticEvent) => void;
   onMouseEnter?: (val, e: React.SyntheticEvent) => void;
   style?: Record<string, unknown>;
-  target?: string;
   title?: string;
   value?: string | number | Record<string, unknown> | EditorView;
 };

@@ -39,17 +39,17 @@ describe('createPopUp', () => {
   it('creates a pop-up and returns a handle', () => {
     const View = () => <div>Mocked View</div>;
     const viewProps = {};
-    const popUpParams = {modal: true};
-
+    const popUpParams = {modal: true, anchor: 'skip'};
     const handle = createPopUp(View, viewProps, popUpParams);
-
     expect(handle).toBeDefined();
     expect(handle.close).toBeDefined();
     expect(handle.update).toBeDefined();
   });
+
   it('should handle showModalMask', () => {
     expect(showModalMask(true)).toBeUndefined();
   });
+
   it('should handle hideModalMask when element?.parentElement', () => {
     const el = document.createElement('div');
     const e = document.createElement('div');
