@@ -139,13 +139,17 @@ export function wrapNodesWithListInternal(
         };
         tr = tr.setNodeMarkup(pos, listNodeType, listNodeAttrs, node.marks);
       }
-      items && lists.push(items);
+      if (items) {
+        lists.push(items);
+      }
       items = null;
       return false;
     }
 
     if (/table/.test(nodeName)) {
-      items && lists.push(items);
+      if (items) {
+        lists.push(items);
+      }
       items = null;
       return true;
     }
@@ -154,12 +158,16 @@ export function wrapNodesWithListInternal(
       items = items || [];
       items.push({node, pos});
     } else {
-      items?.length && lists.push(items);
+      if (items?.length) {
+        lists.push(items);
+      }
       items = null;
     }
     return true;
   });
-  items?.length && lists.push(items);
+  if (items?.length) {
+    lists.push(items);
+  }
 
   lists = lists.filter((items) => items.length > 0);
   if (!lists.length) {

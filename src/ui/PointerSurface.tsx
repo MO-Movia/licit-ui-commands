@@ -103,8 +103,10 @@ export class PointerSurface extends React.PureComponent {
     e.preventDefault();
 
     if (this._clicked || e.type === 'keypress') {
-      const {onClick, value, disabled} = this.props;
-      !disabled && onClick && onClick(value, e);
+      const { onClick, value, disabled } = this.props;
+      if (!disabled && onClick) {
+        onClick(value, e);
+      }
     }
 
     this._pressedTarget = null;

@@ -199,7 +199,7 @@ describe('TextHighlightCommand', () => {
 
     const test = plugin.isEnabled(state);
     expect(mock).toHaveBeenLastCalledWith(state, 'mark-text-highlight');
-    expect(test).toBeFalsy;
+    expect(test).toBeFalsy();
   });
 
   it('should call when executeCustom function return true', () => {
@@ -227,7 +227,7 @@ describe('TextHighlightCommand', () => {
     jest
       .spyOn(isNodeSelectionForNodeType, 'isNodeSelectionForNodeType')
       .mockReturnValue(true);
-    expect(test).toBeTruthy;
+    expect(test).toBeTruthy();
   });
   it('waitForUserInput function() should be return undefined', () => {
     const state = {
@@ -239,11 +239,13 @@ describe('TextHighlightCommand', () => {
           return {isAtom: true, isLeaf: true, isText: false};
         },
       },
-      tr:{doc:{
-        nodeAt: (_x) => {
-          return {isAtom: true, isLeaf: true, isText: false, marks:[]};
-        },
-      }}
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false, marks: [] };
+          },
+        }
+      }
     } as unknown as EditorState;
 
     const _dispatch = jest.fn();
@@ -316,11 +318,13 @@ describe('TextHighlightCommand', () => {
           return {isAtom: true, isLeaf: true, isText: false};
         },
       },
-      tr:{doc:{
-        nodeAt: (_x) => {
-          return {isAtom: true, isLeaf: true, isText: false, marks:[]};
-        },
-      }}
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false, marks: [] };
+          },
+        }
+      }
     } as unknown as EditorState;
 
     const _dispatch = jest.fn();

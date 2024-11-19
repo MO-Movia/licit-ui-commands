@@ -56,7 +56,9 @@ export class PopUp extends React.PureComponent<PopUpProps> {
   }
 
   componentWillUnmount(): void {
-    this._bridge && PopUpManager.unregister(this._bridge);
+    if (this._bridge) {
+      PopUpManager.unregister(this._bridge);
+    }
   }
 
   _getDetails = (): PopUpDetails => {

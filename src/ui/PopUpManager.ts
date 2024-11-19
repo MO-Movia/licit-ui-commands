@@ -47,7 +47,9 @@ export class PopUpManager {
     if (this._bridges.size === 0) {
       this._unobserve();
     }
-    this._rafID && cancelAnimationFrame(this._rafID);
+    if (this._rafID) {
+      cancelAnimationFrame(this._rafID);
+    }
   }
 
   _observe(): void {
@@ -65,23 +67,31 @@ export class PopUpManager {
     document.removeEventListener('click', this._onClick, false);
     window.removeEventListener('scroll', this._onScroll, true);
     window.removeEventListener('resize', this._onResize, true);
-    this._rafID && cancelAnimationFrame(this._rafID);
+    if (this._rafID) {
+      cancelAnimationFrame(this._rafID);
+    }
   }
 
   _onScroll = (_e: Event): void => {
-    this._rafID && cancelAnimationFrame(this._rafID);
+    if (this._rafID) {
+      cancelAnimationFrame(this._rafID);
+    }
     this._rafID = requestAnimationFrame(this._syncPosition);
   };
 
   _onResize = (_e: Event): void => {
-    this._rafID && cancelAnimationFrame(this._rafID);
+    if (this._rafID) {
+      cancelAnimationFrame(this._rafID);
+    }
     this._rafID = requestAnimationFrame(this._syncPosition);
   };
 
   _onMouseChange = (e: MouseEvent): void => {
     this._mx = Math.round(e.clientX);
     this._my = Math.round(e.clientY);
-    this._rafID && cancelAnimationFrame(this._rafID);
+    if (this._rafID) {
+      cancelAnimationFrame(this._rafID);
+    }
     this._rafID = requestAnimationFrame(this._syncPosition);
   };
 
