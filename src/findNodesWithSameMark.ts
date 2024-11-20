@@ -1,77 +1,93 @@
 import {Mark, MarkType, Node} from 'prosemirror-model';
 
-type Result = {
+interface Result {
   mark: Mark;
   from: {
-    node: Node;
+    node: Node | null;
     pos: number;
   };
   to: {
-    node: Node;
+    node: Node | null;
     pos: number;
   };
-};
+}
 
-// If nodes within the same range have the same mark, returns
-// the first node.
+function findFirstMark(
+  doc: Node,
+  from: number,
+  to: number,
+  markType: MarkType
+) {
+  let firstMark = null;
+  let fromNode = null;
+  let toNode = null;
+
+  for (let ii = from; ii <= to; ii++) {
+    const node = doc.nodeAt(ii);
+    if (!node?.marks) {
+      return null;
+    }
+    const mark = node.marks.find((mark) => mark.type === markType);
+    if (!mark || (firstMark && mark !== firstMark)) {
+      return null;
+    }
+    if (!firstMark) {
+      firstMark = mark;
+      fromNode = node;
+    }
+    toNode = node;
+  }
+
+  return {firstMark, fromNode, toNode};
+}
+
+function extendMarkRange(
+  doc: Node,
+  from: number,
+  to: number,
+  markType: MarkType,
+  firstMark: Mark
+) {
+  let fromPos = from;
+  let toPos = to;
+  let node = null;
+
+  for (let ii = from - 1; ii >= 0; ii--) {
+    node = doc.nodeAt(ii);
+    if (
+      !node?.marks.find((mark) => mark.type === markType && mark === firstMark)
+    ) {
+      break;
+    }
+    fromPos = ii;
+  }
+
+  for (let ii = to + 1, jj = doc.nodeSize - 2; ii <= jj; ii++) {
+    node = doc.nodeAt(ii);
+    if (
+      !node?.marks.find((mark) => mark.type === markType && mark === firstMark)
+    ) {
+      break;
+    }
+    toPos = ii;
+  }
+
+  return {fromPos, toPos};
+}
+
 export function findNodesWithSameMark(
   doc: Node,
   from: number,
   to: number,
   markType: MarkType
 ): Result | null {
-  let ii = from;
-  const finder = (mark) => mark.type === markType;
-  let firstMark = null;
-  let fromNode = null;
-  let toNode = null;
-
-  while (ii <= to) {
-    const node = doc.nodeAt(ii);
-    if (!node?.marks) {
-      return null;
-    }
-    const mark = node.marks.find(finder);
-    if (!mark) {
-      return null;
-    }
-    if (firstMark && mark !== firstMark) {
-      return null;
-    }
-    fromNode = fromNode || node;
-    firstMark = firstMark || mark;
-    toNode = node;
-    ii++;
+  const firstMarkResult = findFirstMark(doc, from, to, markType);
+  if (!firstMarkResult) {
+    return null;
   }
 
-  let fromPos = from;
-  let toPos = to;
-
-  let jj = 0;
-  ii = from - 1;
-  while (ii > jj) {
-    const node = doc.nodeAt(ii);
-    const mark = node?.marks.find(finder);
-    if (!mark || mark !== firstMark) {
-      break;
-    }
-    fromPos = ii;
-    fromNode = node;
-    ii--;
-  }
-
-  ii = to + 1;
-  jj = doc.nodeSize - 2;
-  while (ii < jj) {
-    const node = doc.nodeAt(ii);
-    const mark = node?.marks.find(finder);
-    if (!mark || mark !== firstMark) {
-      break;
-    }
-    toPos = ii;
-    toNode = node;
-    ii++;
-  }
+  const {firstMark, fromNode, toNode} = firstMarkResult;
+  const {fromPos, toPos} = extendMarkRange(doc, from, to, markType, firstMark);
 
   return {
     mark: firstMark,

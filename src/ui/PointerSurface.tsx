@@ -13,7 +13,6 @@ export type PointerSurfaceProps = {
   onClick?: (val, e: React.SyntheticEvent) => void;
   onMouseEnter?: (val, e: React.SyntheticEvent) => void;
   style?: Record<string, unknown>;
-  target?: string;
   title?: string;
   value?: string | number | Record<string, unknown> | EditorView;
 };
@@ -104,8 +103,10 @@ export class PointerSurface extends React.PureComponent {
     e.preventDefault();
 
     if (this._clicked || e.type === 'keypress') {
-      const {onClick, value, disabled} = this.props;
-      !disabled && onClick && onClick(value, e);
+      const { onClick, value, disabled } = this.props;
+      if (!disabled && onClick) {
+        onClick(value, e);
+      }
     }
 
     this._pressedTarget = null;

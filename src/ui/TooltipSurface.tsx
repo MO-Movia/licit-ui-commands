@@ -8,7 +8,6 @@ import {uuid} from './uuid';
 
 type TooltipSurfaceProps = {
   tooltip: string;
-  children?;
 };
 
 class TooltipView extends React.PureComponent<TooltipSurfaceProps> {
