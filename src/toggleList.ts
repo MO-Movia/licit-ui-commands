@@ -1,6 +1,5 @@
 import {consolidateListNodes} from './consolidateListNodes';
 import {compareNumber} from './compareNumber';
-import nullthrows from 'nullthrows';
 import {Fragment, Node, NodeType, Schema} from 'prosemirror-model';
 import {TextSelection, Transaction} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
@@ -175,8 +174,8 @@ export function wrapNodesWithListInternal(
   }
 
   lists.sort((a, b) => {
-    const pa = nullthrows(a[0]).pos;
-    const pb = nullthrows(b[0]).pos;
+    const pa = a[0]?.pos;
+    const pb = b[0]?.pos;
     return pa >= pb ? 1 : -1;
   });
 

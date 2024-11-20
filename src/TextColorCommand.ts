@@ -4,7 +4,6 @@ import {applyMark} from './applyMark';
 import {createPopUp} from './ui/createPopUp';
 import {findNodesWithSameMark} from './findNodesWithSameMark';
 import {isTextStyleMarkCommandEnabled} from './isTextStyleMarkCommandEnabled';
-import nullthrows from 'nullthrows';
 import {EditorState, TextSelection, Transaction} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
 import {MARK_TEXT_COLOR} from './MarkNames';
@@ -32,7 +31,7 @@ export class TextColorCommand extends UICommand {
     if (this._popUp) {
       return Promise.resolve(undefined);
     }
-    const target = nullthrows(event).currentTarget;
+    const target = event?.currentTarget;
     if (!(target instanceof HTMLElement)) {
       return Promise.resolve(undefined);
     }
