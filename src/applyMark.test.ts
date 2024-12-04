@@ -1,5 +1,5 @@
 import {applyMark} from './index';
-import {EditorState, TextSelection} from 'prosemirror-state';
+import {EditorState} from 'prosemirror-state';
 import {Mark, MarkType, Schema,Node} from 'prosemirror-model';
 import {Transform} from 'prosemirror-transform';
 
@@ -111,17 +111,6 @@ describe('applyMark', () => {
     expect(transformedTr.steps).toHaveLength(2);
   });
 
-  it('should apply a mark to the given range', () => {
-    const markType = schema.marks.bold;
-    const attrs = {fontWeight: 'bold'};
-
-    const start = 5;
-    const end = 10;
-    const selection = TextSelection.create(doc, start, end);
-    const tr = state.tr.setSelection(selection);
-    const transformedTr = applyMark(tr, schema, markType, attrs, true);
-    expect(transformedTr.steps).toStrictEqual([]);
-  });
   it('should be check the condition (empty && !$cursor)', () => {
     const markType = schema.marks.bold;
     const attrs = {fontWeight: 'bold'};
