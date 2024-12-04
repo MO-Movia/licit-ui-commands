@@ -1,7 +1,7 @@
-import {Transaction} from '@remirror/pm/state';
-import {MarkType, Node, ResolvedPos, Schema} from 'prosemirror-model';
-import {SelectionRange, TextSelection} from 'prosemirror-state';
-import {Transform} from 'prosemirror-transform';
+import { Transaction } from '@remirror/pm/state';
+import { MarkType, Node, ResolvedPos, Schema } from 'prosemirror-model';
+import { SelectionRange, TextSelection } from 'prosemirror-state';
+import { Transform } from 'prosemirror-transform';
 
 interface MyNode {
   inlineContent: boolean; // Assuming inlineContent is of type boolean
@@ -15,7 +15,7 @@ function markApplies(
   ranges: readonly SelectionRange[],
   type: MarkType
 ) {
-  for (const {$from, $to} of ranges) {
+  for (const { $from, $to } of ranges) {
     let can = $from.depth === 0 ? doc.type.allowsMarkType(type) : false;
     doc.nodesBetween($from.pos, $to.pos, (node: MyNode) => {
       if (can) {
@@ -42,7 +42,7 @@ export function applyMark(
     return tr;
   }
 
-  const {empty, $cursor, ranges} = (tr as Transaction)
+  const { empty, $cursor, ranges } = (tr as Transaction)
     .selection as TextSelection;
 
   if ((empty && !$cursor) || !markApplies(tr.doc, ranges, markType)) {
@@ -54,11 +54,11 @@ export function applyMark(
     return (tr as Transaction).addStoredMark(markType.create(attrs));
   }
 
-  const hasMarkInRanges = ranges.some(({$from, $to}) =>
+  const hasMarkInRanges = ranges.some(({ $from, $to }) =>
     tr.doc.rangeHasMark($from.pos, $to.pos, markType)
   );
 
-  for (const {$from, $to} of ranges) {
+  for (const { $from, $to } of ranges) {
     if (hasMarkInRanges && isCustomStyleApplied) {
       tr = addCustomMark(tr, $from.pos, markType, attrs);
     } else if (attrs) {
@@ -90,7 +90,7 @@ function addCustomMark(
 
   if (node) {
     node.descendants((child) => {
-      const to = from + child.nodeSize;
+      const to = from + child.nodeSize + 1;
       const mark = child.marks.find((mark) => mark.type.name === markType.name);
       tr = tr.addMark(
         from,
@@ -121,7 +121,7 @@ export function addMarkWithAttributes(
     }
     tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
   } else if (markType.name === 'mark-text-color') {
-    tr = handleTextColorMark(tr, $from, markType, attrs, node);
+    tr = handleTextColorMark(tr, $from, markType, attrs, node, $to);
   } else {
     tr = addMarksToNode(
       tr,
@@ -142,13 +142,16 @@ function handleTextColorMark(
   $from: ResolvedPos,
   markType: MarkType,
   attrs: Record<string, unknown>,
-  node: Node | null
+  node: Node | null,
+  $to: ResolvedPos,
 ): Transform {
   if (node) {
     let from = $from.pos;
-
+    if (0 === node.content.size) {
+      tr = tr.addMark(from, $to.pos, markType.create(attrs));
+    }
     node.descendants((child) => {
-      const to = from + child.nodeSize;
+      const to = from + child.nodeSize + 1;
 
       if (!child.marks.some((mark) => mark.type.name === 'link')) {
         tr = tr.addMark(from, to, markType.create(attrs));
@@ -171,8 +174,11 @@ function addMarksToNode(
   isCustomStyleApplied?: boolean
 ): Transform {
   if (node) {
+    if (0 === node.content.size) {
+      tr = tr.addMark(from, to, markType.create(attrs));
+    }
     node.descendants((child) => {
-      const childTo = from + child.nodeSize;
+      const childTo = from + child.nodeSize + 1;
 
       if (!child.marks.some((mark) => mark.type.name === 'link')) {
         tr = tr.addMark(
