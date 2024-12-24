@@ -149,7 +149,7 @@ function handleTextColorMark(
   // KNITE-1469 2024-12-23
   // Issue fix: Custom style not get applied after override the style in the paragraph.
   if (isCustomStyleApplied) {
-    tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
+    tr = tr.addMark($from.pos, $to.pos + 1, markType.create(attrs));
   }
   else {
     if (node) {
@@ -183,7 +183,7 @@ function addMarksToNode(
   // KNITE-1469 2024-12-23
   // Issue fix: Custom style not get applied after override the style in the paragraph.
   if (isCustomStyleApplied || isCustomStyleApplied === undefined) {
-    tr = tr.addMark(from, to, markType.create(attrs));
+    tr = tr.addMark(from, to + 1, markType.create(attrs));
   }
   else {
     if (node) {
