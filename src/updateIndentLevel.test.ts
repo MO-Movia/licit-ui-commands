@@ -437,4 +437,92 @@ describe('updateIndentLevel', () => {
     const test = setNodeIndentMarkup(state, tr, 9, 7);
     expect(test).toBeDefined();
   });
+
+  it('should return tr inside setListNodeIndent function with actual document', () => {
+    const state = {} as unknown as EditorState;
+    const tr = {
+      doc: dummyDoc,
+      selection: {from: 1, to: 2},
+    } as unknown as Transform;
+    const sc = {
+      nodes: {
+        paragraph: PARAGRAPH,
+        heading: HEADING,
+        blockquote: BLOCKQUOTE,
+        list_item: LIST_ITEM,
+      },
+    } as unknown as Schema;
+    const view = {} as unknown as EditorView;
+
+    jest.spyOn(isListNode, 'isListNode').mockReturnValue(false);
+    const test = updateIndentLevel(state, tr, sc, 5, view);
+    expect(test).toBeTruthy();
+  });
+
+  it('should return tr inside setListNodeIndent function()', () => {
+    const state = {} as unknown as EditorState;
+    const tr = {
+      doc: dummyDoc,
+      selection: {from: 1, to: 2},
+      getMeta: () => {
+        return 'dryrun';
+      },
+      delete: () => {
+        return;
+      },
+    } as unknown as Transform;
+    const sc = {
+      nodes: {
+        paragraph: PARAGRAPH,
+        heading: HEADING,
+        blockquote: BLOCKQUOTE,
+        list_item: LIST_ITEM,
+      },
+    } as unknown as Schema;
+    const view = {} as unknown as EditorView;
+    jest.spyOn(isListNode, 'isListNode').mockReturnValue(true) as unknown as Node;
+    jest
+      .spyOn(consolidateListNodes, 'consolidateListNodes')
+      .mockReturnValue(tr as unknown as Transform);
+    const test = updateIndentLevel(state, tr, sc, 5, view);
+    expect(test).toBeTruthy();
+  });
+
+  it('should check the condition inside setListNodeIndent function() !listItem', () => {
+    const state = {} as unknown as EditorState;
+    const tr = {
+      doc: dummyDoc,
+      selection: {from: 1, to: 2},
+      getMeta: () => {
+        return 'dryrun';
+      },
+    } as unknown as Transform;
+    const sc = {
+      nodes: {paragraph: PARAGRAPH, heading: HEADING, blockquote: BLOCKQUOTE},
+    } as unknown as Schema;
+    const view = {} as unknown as EditorView;
+    jest.spyOn(isListNode, 'isListNode').mockReturnValue(true) as unknown as Node;
+    const test = updateIndentLevel(state, tr, sc, 5, view);
+    expect(test).toBeTruthy();
+  });
+
+  it('should check the condition !doc', () => {
+    const state = {} as unknown as EditorState;
+    const tr = {selection: {from: 1, to: 2}} as unknown as Transform;
+    const sc = {} as unknown as Schema;
+    const view = {} as unknown as EditorView;
+
+    const test = updateIndentLevel(state, tr, sc, 5, view);
+    expect(test).toBeTruthy();
+  });
+
+  it('should check the condition !selection', () => {
+    const state = {} as unknown as EditorState;
+    const tr = {doc: dummyDoc} as unknown as Transform;
+    const sc = {} as unknown as Schema;
+    const view = {} as unknown as EditorView;
+
+    const test = updateIndentLevel(state, tr, sc, 5, view);
+    expect(test).toBeTruthy();
+  });
 });

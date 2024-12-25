@@ -5,7 +5,7 @@ import {
   unrenderPopUp,
   hideModalMask,
   showModalMask,
-} from './createPopUp'; // Adjust the path accordingly
+} from './createPopUp';
 
 jest.mock('react-dom', () => ({
   render: jest.fn(),
@@ -56,5 +56,57 @@ describe('createPopUp', () => {
     e.appendChild(el);
     jest.spyOn(document, 'getElementById').mockReturnValue(el);
     expect(hideModalMask()).toBeUndefined();
+  });
+
+  it('creates a pop-up with undefined viewProps (branch coverage)', () => {
+    const View = () => <div>Mocked View</div>;
+    const popUpParams = {modal: false};
+    const handle = createPopUp(View, undefined, popUpParams);
+    expect(handle).toBeDefined();
+    expect(ReactDOM.render).toHaveBeenCalled();
+  });
+
+  it('creates a pop-up with undefined popUpParams', () => {
+    const View = () => <div>Mocked View</div>;
+    const popUpParams = {};
+    const handle = createPopUp(View, undefined, popUpParams);
+    expect(handle).toBeDefined();
+    expect(handle.close).toBeDefined();
+    expect(handle.update).toBeDefined();
+  });
+
+  it('creates a pop-up with both viewProps and popUpParams undefined', () => {
+    const View = () => <div>Mocked View</div>;
+    const popUpParams = {};
+    const handle = createPopUp(View, undefined, popUpParams);
+    expect(handle).toBeDefined();
+    expect(handle.close).toBeDefined();
+    expect(handle.update).toBeDefined();
+  });
+
+  it('handles undefined popUpParams gracefully', () => {
+    const View = () => <div>Mocked View</div>;
+    const popUpParams = {};
+    const handle = createPopUp(View, undefined, popUpParams); 
+    expect(handle).toBeDefined();
+    expect(handle.close).toBeDefined();
+    expect(handle.update).toBeDefined();
+  });
+
+  it('handles falsy popUpParams (empty string) gracefully', () => {
+    const View = () => <div>Mocked View</div>;
+    const handle = createPopUp(View, undefined, ''); 
+    expect(handle).toBeDefined();
+    expect(handle.close).toBeDefined();
+    expect(handle.update).toBeDefined();
+  });
+
+  it('handles valid popUpParams', () => {
+    const View = () => <div>Mocked View</div>;
+    const popUpParams = { popUpId: 'test-id' };
+    const handle = createPopUp(View, undefined, popUpParams); 
+    expect(handle).toBeDefined();
+    expect(handle.close).toBeDefined();
+    expect(handle.update).toBeDefined();
   });
 });
