@@ -98,6 +98,7 @@ describe('TextHighlightCommand', () => {
         return 'red';
       },
       editorview,
+      null
     );
 
     expect(test).toBeTruthy();

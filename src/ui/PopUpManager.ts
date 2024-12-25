@@ -100,9 +100,7 @@ export class PopUpManager {
     let detailsWithModalToDismiss;
     this.isColorPicker = false;
     for (const [bridge, registeredAt] of this._bridges) {
-      if (now - registeredAt <= CLICK_INTERVAL) {
-        continue;
-      }
+      if (now - registeredAt > CLICK_INTERVAL) {
       const details = bridge.getDetails();
       if (details.modal && details.autoDismiss) {
         detailsWithModalToDismiss = details;
@@ -114,6 +112,7 @@ export class PopUpManager {
           return;
         }
       }
+    }
     }
 
     if (!detailsWithModalToDismiss) {
