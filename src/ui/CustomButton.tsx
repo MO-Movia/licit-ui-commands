@@ -1,4 +1,3 @@
-import './czi-custom-button.css';
 import {PointerSurface} from './PointerSurface';
 import * as React from 'react';
 import {TooltipSurface} from './TooltipSurface';

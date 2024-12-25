@@ -9,7 +9,6 @@ import * as isNodeSelectionForNodeType from './isNodeSelectionForNodeType';
 import {MATH} from './NodeNames';
 import {Mark, Node} from 'prosemirror-model';
 import * as findNodesWithSameMark from './findNodesWithSameMark';
-// import * as React from 'react';
 
 describe('TextHighlightCommand', () => {
   let plugin!: TextHighlightCommand;
@@ -99,7 +98,6 @@ describe('TextHighlightCommand', () => {
         return 'red';
       },
       editorview,
-      null
     );
 
     expect(test).toBeTruthy();

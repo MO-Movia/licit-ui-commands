@@ -1,10 +1,6 @@
-import './czi-vars.css';
-import './czi-pop-up.css';
-
 import type {PopUpParams, ViewProps} from './PopUp';
 
 import {PopUp} from './PopUp';
-// eslint-disable-next-line no-unused-vars
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import {uuid} from './uuid';

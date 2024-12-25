@@ -151,22 +151,20 @@ function handleTextColorMark(
   if (isCustomStyleApplied) {
     tr = tr.addMark($from.pos, $to.pos + 1, markType.create(attrs));
   }
-  else {
-    if (node) {
-      let from = $from.pos;
-      if (0 === node.content.size) {
-        tr = tr.addMark(from, $to.pos, markType.create(attrs));
-      }
-      node.descendants((child) => {
-        const to = from + child.nodeSize + 1;
-
-        if (!child.marks.some((mark) => mark.type.name === 'link')) {
-          tr = tr.addMark(from, to, markType.create(attrs));
-        }
-
-        from = to + (child.childCount > 0 ? 1 : 0);
-      });
+  else if (node) {
+    let from = $from.pos;
+    if (0 === node.content.size) {
+      tr = tr.addMark(from, $to.pos, markType.create(attrs));
     }
+    node.descendants((child) => {
+      const to = from + child.nodeSize + 1;
+
+      if (!child.marks.some((mark) => mark.type.name === 'link')) {
+        tr = tr.addMark(from, to, markType.create(attrs));
+      }
+
+      from = to + (child.childCount > 0 ? 1 : 0);
+    });
   }
   return tr;
 }
@@ -185,25 +183,23 @@ function addMarksToNode(
   if (isCustomStyleApplied || isCustomStyleApplied === undefined) {
     tr = tr.addMark(from, to + 1, markType.create(attrs));
   }
-  else {
-    if (node) {
-      if (0 === node.content.size) {
-        tr = tr.addMark(from, to, markType.create(attrs));
-      }
-      node.descendants((child) => {
-        const childTo = from + child.nodeSize + 1;
-
-        if (!child.marks.some((mark) => mark.type.name === 'link')) {
-          tr = tr.addMark(
-            from,
-            childTo + (child.childCount > 0 ? 1 : 0),
-            markType.create(attrs)
-          );
-        }
-
-        from = childTo + (child.childCount > 0 ? 1 : 0);
-      });
+  else if (node) {
+    if (0 === node.content.size) {
+      tr = tr.addMark(from, to, markType.create(attrs));
     }
+    node.descendants((child) => {
+      const childTo = from + child.nodeSize + 1;
+
+      if (!child.marks.some((mark) => mark.type.name === 'link')) {
+        tr = tr.addMark(
+          from,
+          childTo + (child.childCount > 0 ? 1 : 0),
+          markType.create(attrs)
+        );
+      }
+
+      from = childTo + (child.childCount > 0 ? 1 : 0);
+    });
   }
   return tr;
 }
