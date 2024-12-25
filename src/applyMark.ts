@@ -90,7 +90,7 @@ function addCustomMark(
 
   if (node) {
     node.descendants((child) => {
-      const to = from + child.nodeSize + 1;
+      const to = from + child.nodeSize;
       const mark = child.marks.find((mark) => mark.type.name === markType.name);
       tr = tr.addMark(
         from,
@@ -121,7 +121,7 @@ export function addMarkWithAttributes(
     }
     tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
   } else if (markType.name === 'mark-text-color') {
-    tr = handleTextColorMark(tr, $from, markType, attrs, node, $to);
+    tr = handleTextColorMark(tr, $from, markType, attrs, node, $to, isCustomStyleApplied);
   } else {
     tr = addMarksToNode(
       tr,
@@ -144,8 +144,14 @@ function handleTextColorMark(
   attrs: Record<string, unknown>,
   node: Node | null,
   $to: ResolvedPos,
+  isCustomStyleApplied?: boolean
 ): Transform {
-  if (node) {
+  // KNITE-1469 2024-12-23
+  // Issue fix: Custom style not get applied after override the style in the paragraph.
+  if (isCustomStyleApplied) {
+    tr = tr.addMark($from.pos, $to.pos + 1, markType.create(attrs));
+  }
+  else if (node) {
     let from = $from.pos;
     if (0 === node.content.size) {
       tr = tr.addMark(from, $to.pos, markType.create(attrs));
@@ -160,7 +166,6 @@ function handleTextColorMark(
       from = to + (child.childCount > 0 ? 1 : 0);
     });
   }
-
   return tr;
 }
 
@@ -173,7 +178,12 @@ function addMarksToNode(
   node: Node | null,
   isCustomStyleApplied?: boolean
 ): Transform {
-  if (node) {
+  // KNITE-1469 2024-12-23
+  // Issue fix: Custom style not get applied after override the style in the paragraph.
+  if (isCustomStyleApplied || isCustomStyleApplied === undefined) {
+    tr = tr.addMark(from, to + 1, markType.create(attrs));
+  }
+  else if (node) {
     if (0 === node.content.size) {
       tr = tr.addMark(from, to, markType.create(attrs));
     }
@@ -190,9 +200,6 @@ function addMarksToNode(
 
       from = childTo + (child.childCount > 0 ? 1 : 0);
     });
-  } else if (isCustomStyleApplied === undefined) {
-    tr = tr.addMark(from, to, markType.create(attrs));
   }
-
   return tr;
 }

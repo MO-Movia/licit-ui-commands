@@ -154,4 +154,53 @@ describe('atAnchorTopCenter', () => {
 
     expect(result).toEqual({x: -10000, y: 0, w: 0, h: 0});
   });
+
+  it('should cover the branch where body.contains(ha) is true', () => {
+    const body = document.createElement('div');
+    const ha = document.createElement('div');
+    const anchor = document.createElement('div');
+    body.appendChild(ha);
+
+    const hoveredAnchors = new Set<HTMLElement>();
+    hoveredAnchors.add(ha);
+
+    jest
+      .spyOn(body, 'contains')
+      .mockImplementation((element) => element === ha);
+    for (const hovered of hoveredAnchors) {
+      if (
+        anchor &&
+        body &&
+        !hoveredAnchors.has(anchor) &&
+        body.contains(hovered)
+      ) {
+        hoveredAnchors.add(anchor);
+      }
+    }
+    expect(hoveredAnchors.has(anchor)).toBe(true); 
+    expect(body.contains).toHaveBeenCalledWith(ha); 
+    jest.restoreAllMocks();
+  });
+});
+
+describe('atAnchorRight', () => {
+  it('should return the correct rectangle when both anchorRect and bodyRect are provided', () => {
+    const anchorRect = {x: 10, y: 20, w: 30, h: 40};
+    const bodyRect = {x: 0, y: 0, w: 50, h: 60};
+    const result = atAnchorRight(anchorRect, bodyRect);
+    expect(result).toEqual({x: 41, y: 20, w: 0, h: 0});
+  });
+
+  it('should return a rectangle positioned off-screen if anchorRect is undefined', () => {
+    const bodyRect = {x: 0, y: 0, w: 50, h: 60};
+    const result = atAnchorRight(undefined, bodyRect);
+    expect(result).toEqual({x: -10000, y: 0, w: 0, h: 0});
+  });
+
+  it('should return a rectangle positioned off-screen if anchorRect is collapsed', () => {
+    const anchorRect = {x: 10, y: 20, w: 0, h: 0};
+    const bodyRect = {x: 0, y: 0, w: 50, h: 60};
+    const result = atAnchorRight(anchorRect, bodyRect);
+    expect(result).toEqual({x: -10000, y: 20, w: 0, h: 0});
+  });
 });

@@ -45,8 +45,8 @@ describe('findNodesWithSameMark', () => {
     expect(result).not.toBeNull();
     if (result) {
       expect(result.mark.type.name).toBe('strong');
-      expect(result.from.node.type.name).toBe('text');
-      expect(result.to.node.type.name).toBe('text');
+      expect(result.from.node?.type.name).toBe('text');
+      expect(result.to.node?.type.name).toBe('text');
       expect(result.to.pos).toBe(9);
     }
   });

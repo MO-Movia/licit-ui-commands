@@ -45,7 +45,6 @@ describe('PointerSurface', () => {
 
     fireEvent.mouseEnter(button, {preventDefault: preventDefaultMock});
 
-    // expect(onMouseEnterMock).not.toHaveBeenCalledWith(value, expect.any(Object));
     expect(preventDefaultMock).not.toHaveBeenCalled();
   });
 

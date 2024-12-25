@@ -101,18 +101,18 @@ export class PopUpManager {
     this.isColorPicker = false;
     for (const [bridge, registeredAt] of this._bridges) {
       if (now - registeredAt > CLICK_INTERVAL) {
-        const details = bridge.getDetails();
-        if (details.modal && details.autoDismiss) {
-          detailsWithModalToDismiss = details;
-        }
-        if (details.autoDismiss && details.popupId) {
-          const targetName = (e.target as HTMLElement).className;
-          if (targetName?.startsWith('mocp')) {
-            this.isColorPicker = true;
-            return;
-          }
+      const details = bridge.getDetails();
+      if (details.modal && details.autoDismiss) {
+        detailsWithModalToDismiss = details;
+      }
+      if (details.autoDismiss && details.popupId) {
+        const targetName = (e.target as HTMLElement).className;
+        if (targetName?.startsWith('mocp')) {
+          this.isColorPicker = true;
+          return;
         }
       }
+    }
     }
 
     if (!detailsWithModalToDismiss) {
