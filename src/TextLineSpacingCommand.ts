@@ -152,13 +152,24 @@ export class TextLineSpacingCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    const {schema, selection} = state;
-    const tr = setTextLineSpacing(
+    const { schema, selection } = state;
+    let tr = setTextLineSpacing(
       state.tr.setSelection(selection),
       schema,
       this._lineSpacing
     );
     if (tr.docChanged) {
+      // [KNITE-1465] 26-12-2024
+      // set the value of overriddenLineSpacing to true if the user override the line spacing style.
+      if (
+        selection.$head?.parent?.attrs?.lineSpacing !== this._lineSpacing
+      ) {
+        tr = tr?.setNodeAttribute(
+          selection.head - selection?.$head?.parentOffset - 1,
+          'overriddenLineSpacing',
+          true
+        );
+      }
       dispatch?.(tr as Transaction);
       return true;
     } else {

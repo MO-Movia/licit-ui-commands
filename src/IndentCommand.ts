@@ -27,6 +27,17 @@ export class IndentCommand extends UICommand {
     tr = tr.setSelection(selection);
     const trx = updateIndentLevel(state, tr, schema, this._delta, _view);
     if (trx.docChanged) {
+      // [KNITE-1465] 24-12-2024
+      // set the value of overriddenIndent to true if the user override the indent style.
+      if (
+        selection.$head.parent.attrs.indent !== this._delta
+      ) {
+        tr = tr.setNodeAttribute(
+          selection.head - selection.$head.parentOffset - 1,
+          'overriddenIndent',
+          true
+        );
+      }
       dispatch?.(trx.tr);
     }
     return true;
