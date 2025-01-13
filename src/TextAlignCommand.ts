@@ -1,7 +1,7 @@
-import {Schema} from 'prosemirror-model';
-import {EditorState, TextSelection, Transaction} from 'prosemirror-state';
-import {Transform} from 'prosemirror-transform';
-import {EditorView} from 'prosemirror-view';
+import { Schema } from 'prosemirror-model';
+import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
+import { Transform } from 'prosemirror-transform';
+import { EditorView } from 'prosemirror-view';
 import * as React from 'react';
 import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
@@ -134,13 +134,25 @@ export class TextAlignCommand extends UICommand {
       if (
         selection.$head.parent.attrs.align !== this._alignment
       ) {
-        tr = tr.setNodeAttribute(
-          selection.head - selection.$head.parentOffset - 1,
-          'overriddenAlign',
-          true
-        );
+        const nodePos = Math.max(0, selection.head - selection.$head.parentOffset - 1);
+        const node = tr.doc.nodeAt(nodePos);
+        if(node){
+          const newAttrs = { 
+            ...node.attrs, 
+            overriddenAlign: true, 
+            overriddenAlignValue: this._alignment 
+          };
+         tr = tr.setNodeMarkup(nodePos, null, newAttrs);
+
+        // const nodePos = Math.max(0, selection.head - selection.$head.parentOffset - 1);
+        // tr = tr.setNodeAttribute(
+        //   nodePos,
+        //   'overriddenAlign',
+        //   true
+        // );
       }
       dispatch?.(tr);
+    }
       return true;
     } else {
       return false;

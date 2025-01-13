@@ -1,9 +1,9 @@
-import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
-import {Transaction, EditorState} from 'prosemirror-state';
-import {BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
-import {EditorView} from 'prosemirror-view';
-import {Schema} from 'prosemirror-model';
-import {Transform} from 'prosemirror-transform';
+import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import { Transaction, EditorState } from 'prosemirror-state';
+import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
+import { EditorView } from 'prosemirror-view';
+import { Schema } from 'prosemirror-model';
+import { Transform } from 'prosemirror-transform';
 import {
   DOUBLE_LINE_SPACING,
   SINGLE_LINE_SPACING,
@@ -17,12 +17,12 @@ export function setTextLineSpacing(
   schema: Schema,
   lineSpacing?: string
 ): Transform {
-  const {selection, doc} = tr as Transaction;
+  const { selection, doc } = tr as Transaction;
   if (!selection || !doc) {
     return tr;
   }
 
-  const {from, to} = selection;
+  const { from, to } = selection;
   const paragraph = schema.nodes[PARAGRAPH];
   const heading = schema.nodes[HEADING];
   const listItem = schema.nodes[LIST_ITEM];
@@ -60,8 +60,8 @@ export function setTextLineSpacing(
   }
 
   tasks.forEach((job) => {
-    const {node, pos, nodeType} = job;
-    let {attrs} = node;
+    const { node, pos, nodeType } = job;
+    let { attrs } = node;
     if (lineSpacingValue) {
       attrs = {
         ...attrs,
@@ -79,7 +79,7 @@ export function setTextLineSpacing(
   return tr;
 }
 
-function createGroup(): Array<{[key: string]: TextLineSpacingCommand}> {
+function createGroup(): Array<{ [key: string]: TextLineSpacingCommand }> {
   const group = {
     Single: new TextLineSpacingCommand(SINGLE_LINE_SPACING),
     '1.15': new TextLineSpacingCommand(LINE_SPACING_115),
@@ -100,8 +100,8 @@ export class TextLineSpacingCommand extends UICommand {
   }
 
   isActive = (state: EditorState): boolean => {
-    const {selection, doc, schema} = state;
-    const {from, to} = selection;
+    const { selection, doc, schema } = state;
+    const { from, to } = selection;
     const paragraph = schema.nodes[PARAGRAPH];
     const heading = schema.nodes[HEADING];
     let keepLooking = true;
@@ -164,13 +164,24 @@ export class TextLineSpacingCommand extends UICommand {
       if (
         selection.$head?.parent?.attrs?.lineSpacing !== this._lineSpacing
       ) {
-        tr = tr?.setNodeAttribute(
-          selection.head - selection?.$head?.parentOffset - 1,
-          'overriddenLineSpacing',
-          true
-        );
+        // const nodePos = Math.max(0, selection.head - selection.$head.parentOffset - 1);
+        // tr = tr?.setNodeAttribute(
+        //   nodePos,
+        //   'overriddenLineSpacing',
+        //   true
+        // );
+        const nodePos = Math.max(0, selection.head - selection.$head.parentOffset - 1);
+        const node = tr.doc.nodeAt(nodePos);
+        if(node){
+          const newAttrs = { 
+            ...node.attrs, 
+            overriddenLineSpacing: true, 
+            overriddenLineSpacingValue: this._lineSpacing 
+          };
+         tr = tr.setNodeMarkup(nodePos, null, newAttrs);
       }
       dispatch?.(tr as Transaction);
+    }
       return true;
     } else {
       return false;

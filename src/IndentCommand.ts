@@ -29,15 +29,21 @@ export class IndentCommand extends UICommand {
     if (trx.docChanged) {
       // [KNITE-1465] 24-12-2024
       // set the value of overriddenIndent to true if the user override the indent style.
-      if (
-        selection.$head.parent.attrs.indent !== this._delta
-      ) {
-        tr = tr.setNodeAttribute(
-          selection.head - selection.$head.parentOffset - 1,
-          'overriddenIndent',
-          true
-        );
+      const nodePos = (trx.tr as Transaction).selection.$from.before(1);
+      let paraNode = trx.tr.doc.nodeAt(nodePos);
+      if (paraNode) {
+        if (
+          Number(selection.$head.parent.attrs.indent) !== Number(paraNode.attrs.indent)
+        ) {          
+            const newAttrs = {
+              ...paraNode.attrs,
+              overriddenIndent: true,
+              overriddenIndentValue: paraNode.attrs.indent
+            };
+            tr = tr.setNodeMarkup(nodePos, null, newAttrs);           
+        }
       }
+
       dispatch?.(trx.tr);
     }
     return true;
