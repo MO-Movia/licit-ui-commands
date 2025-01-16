@@ -129,7 +129,6 @@ export class TextAlignCommand extends UICommand {
       this._alignment
     );
     if (tr.docChanged) {
-      // [KNITE-1465] 24-12-2024
       // set the value of overriddenAlign to true if the user override the align style.
       if (
         selection.$head.parent.attrs.align !== this._alignment
@@ -143,13 +142,6 @@ export class TextAlignCommand extends UICommand {
             overriddenAlignValue: this._alignment 
           };
          tr = tr.setNodeMarkup(nodePos, null, newAttrs);
-
-        // const nodePos = Math.max(0, selection.head - selection.$head.parentOffset - 1);
-        // tr = tr.setNodeAttribute(
-        //   nodePos,
-        //   'overriddenAlign',
-        //   true
-        // );
       }
       dispatch?.(tr);
     }
@@ -158,7 +150,6 @@ export class TextAlignCommand extends UICommand {
       return false;
     }
   };
-  // [FS] IRAD-1087 2020-10-01
   // New method to execute new styling implementation  text align
   executeCustom = (
     state: EditorState,

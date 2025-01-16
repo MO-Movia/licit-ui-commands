@@ -159,17 +159,10 @@ export class TextLineSpacingCommand extends UICommand {
       this._lineSpacing
     );
     if (tr.docChanged) {
-      // [KNITE-1465] 26-12-2024
       // set the value of overriddenLineSpacing to true if the user override the line spacing style.
       if (
         selection.$head?.parent?.attrs?.lineSpacing !== this._lineSpacing
       ) {
-        // const nodePos = Math.max(0, selection.head - selection.$head.parentOffset - 1);
-        // tr = tr?.setNodeAttribute(
-        //   nodePos,
-        //   'overriddenLineSpacing',
-        //   true
-        // );
         const nodePos = Math.max(0, selection.head - selection.$head.parentOffset - 1);
         const node = tr.doc.nodeAt(nodePos);
         if(node){
