@@ -1,22 +1,22 @@
-import {Schema} from 'prosemirror-model';
-import {EditorState, TextSelection, Transaction} from 'prosemirror-state';
-import {Transform} from 'prosemirror-transform';
-import {EditorView} from 'prosemirror-view';
+import { Schema } from 'prosemirror-model';
+import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
+import { Transform } from 'prosemirror-transform';
+import { EditorView } from 'prosemirror-view';
 import * as React from 'react';
-import {BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
-import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
+import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 
 export function setTextAlign(
   tr: Transform,
   schema: Schema,
   alignment?: string
 ): Transform {
-  const {selection, doc} = tr as Transaction;
+  const { selection, doc } = tr as Transaction;
   if (!selection || !doc) {
     return tr;
   }
-  const {from, to} = selection;
-  const {nodes} = schema;
+  const { from, to } = selection;
+  const { nodes } = schema;
 
   const blockquote = nodes[BLOCKQUOTE];
   const listItem = nodes[LIST_ITEM];
@@ -46,8 +46,8 @@ export function setTextAlign(
   }
 
   tasks.forEach((job) => {
-    const {node, pos, nodeType} = job;
-    let {attrs} = node;
+    const { node, pos, nodeType } = job;
+    let { attrs } = node;
     if (alignment) {
       attrs = {
         ...attrs,
@@ -74,8 +74,8 @@ export class TextAlignCommand extends UICommand {
   }
 
   isActive = (state: EditorState): boolean => {
-    const {selection, doc} = state;
-    const {from, to} = selection;
+    const { selection, doc } = state;
+    const { from, to } = selection;
     let keepLooking = true;
     let active = false;
     doc.nodesBetween(from, to, (node, _pos) => {
@@ -122,20 +122,34 @@ export class TextAlignCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    const {schema, selection} = state;
-    const tr = setTextAlign(
+    const { schema, selection } = state;
+    let tr = setTextAlign(
       state.tr.setSelection(selection),
       schema,
       this._alignment
     );
     if (tr.docChanged) {
+      // set the value of overriddenAlign to true if the user override the align style.
+      if (
+        selection.$head.parent.attrs.align !== this._alignment
+      ) {
+        const nodePos = Math.max(0, selection.head - selection.$head.parentOffset - 1);
+        const node = tr.doc.nodeAt(nodePos);
+        if(node){
+          const newAttrs = { 
+            ...node.attrs, 
+            overriddenAlign: true, 
+            overriddenAlignValue: this._alignment 
+          };
+         tr = tr.setNodeMarkup(nodePos, null, newAttrs);
+      }
       dispatch?.(tr);
+    }
       return true;
     } else {
       return false;
     }
   };
-  // [FS] IRAD-1087 2020-10-01
   // New method to execute new styling implementation  text align
   executeCustom = (
     state: EditorState,
@@ -143,7 +157,7 @@ export class TextAlignCommand extends UICommand {
     from: number,
     to: number
   ): Transform => {
-    const {schema} = state;
+    const { schema } = state;
     tr = setTextAlign(
       (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),
       schema,
