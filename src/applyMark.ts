@@ -85,21 +85,19 @@ function addCustomMark(
   markType: MarkType,
   attrs?: Record<string, unknown>
 ): Transform {
-  const node = tr.doc.nodeAt(pos);
-  let from = pos;
 
-  if (node) {
-    node.descendants((child) => {
-      const to = from + child.nodeSize;
-      const mark = child.marks.find((mark) => mark.type.name === markType.name);
-      tr = tr.addMark(
-        from,
-        to + (child.childCount > 0 ? 1 : 0),
-        mark ? markType.create(mark.attrs) : markType.create(attrs)
-      );
-      from = to + (child.childCount > 0 ? 1 : 0);
-    });
-  }
+  const node = tr.doc.nodeAt(pos);
+  if (!node || !node.childCount) return tr; // Ensure the node exists and has children
+
+  let from = pos + 1; // Start at first child
+  node.forEach((child, offset) => {
+    let to = from + child.nodeSize;
+    const existingMark = child.marks.find((mark) => mark.type === markType);
+    const newMark = existingMark ? markType.create({ ...existingMark.attrs }) : markType.create(attrs);
+    tr = tr.addMark(from, to, newMark);
+    from = to;
+  });
+
 
   return tr;
 }
@@ -179,7 +177,7 @@ function addMarksToNode(
 ): Transform {
   // Issue fix: Custom style not get applied after override the style in the paragraph.
   if (isCustomStyleApplied || isCustomStyleApplied === undefined) {
-    tr = tr.addMark(from, to + 1, markType.create(attrs));
+    tr = tr.addMark(from, to, markType.create(attrs));
   }
   else if (node) {
     if (0 === node.content.size) {
