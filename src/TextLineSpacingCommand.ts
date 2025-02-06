@@ -166,10 +166,10 @@ export class TextLineSpacingCommand extends UICommand {
         const nodePos = Math.max(0, selection.head - selection.$head.parentOffset - 1);
         const node = tr.doc.nodeAt(nodePos);
         if(node){
-          const newAttrs = { 
-            ...node.attrs, 
-            overriddenLineSpacing: true, 
-            overriddenLineSpacingValue: this._lineSpacing 
+          const newAttrs = {
+            ...node.attrs,
+            overriddenLineSpacing: true,
+            overriddenLineSpacingValue: this._lineSpacing
           };
          tr = tr.setNodeMarkup(nodePos, null, newAttrs);
       }

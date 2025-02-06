@@ -29,17 +29,17 @@ export class IndentCommand extends UICommand {
     if (trx.docChanged) {
       // set the value of overriddenIndent to true if the user override the indent style.
       const nodePos = (trx.tr as Transaction).selection.$from.before(1);
-      let paraNode = trx.tr.doc.nodeAt(nodePos);
+      const paraNode = trx.tr.doc.nodeAt(nodePos);
       if (paraNode) {
         if (
           Number(selection.$head.parent.attrs.indent) !== Number(paraNode.attrs.indent)
-        ) {          
+        ) {
             const newAttrs = {
               ...paraNode.attrs,
               overriddenIndent: true,
               overriddenIndentValue: paraNode.attrs.indent
             };
-            tr = tr.setNodeMarkup(nodePos, null, newAttrs);           
+            tr = tr.setNodeMarkup(nodePos, null, newAttrs);
         }
       }
 

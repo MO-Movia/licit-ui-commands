@@ -90,8 +90,8 @@ function addCustomMark(
   if (!node || !node.childCount) return tr; // Ensure the node exists and has children
 
   let from = pos + 1; // Start at first child
-  node.forEach((child, offset) => {
-    let to = from + child.nodeSize;
+  node.forEach((child) => {
+    const to = from + child.nodeSize;
     const existingMark = child.marks.find((mark) => mark.type === markType);
     const newMark = existingMark ? markType.create({ ...existingMark.attrs }) : markType.create(attrs);
     tr = tr.addMark(from, to, newMark);
