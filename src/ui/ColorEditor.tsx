@@ -82,9 +82,9 @@ export class ColorEditor extends React.PureComponent {
     const active = selectedColor && selectedColor.toLowerCase() === hex;
     return (
       <CustomButton
-        id={`$c-btn-${index}`}
         active={active}
         className="czi-color-editor-cell"
+        id={`$c-btn-${index}`}
         key={`${hex}-${index}`}
         label=""
         onClick={this._onSelectColor}

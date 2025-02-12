@@ -177,8 +177,8 @@ describe('atAnchorTopCenter', () => {
         hoveredAnchors.add(anchor);
       }
     }
-    expect(hoveredAnchors.has(anchor)).toBe(true); 
-    expect(body.contains).toHaveBeenCalledWith(ha); 
+    expect(hoveredAnchors.has(anchor)).toBe(true);
+    expect(body.contains).toHaveBeenCalledWith(ha);
     jest.restoreAllMocks();
   });
 });

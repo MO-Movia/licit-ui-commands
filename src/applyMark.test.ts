@@ -3,7 +3,7 @@ import {EditorState} from 'prosemirror-state';
 import {Mark, MarkType, Schema, Node, ResolvedPos} from 'prosemirror-model';
 import {Transform} from 'prosemirror-transform';
 import {doc, p} from 'prosemirror-test-builder';
-import {addMarkWithAttributes} from './applyMark'
+import {addMarkWithAttributes} from './applyMark';
 
 describe('applyMark', () => {
   let schema;
@@ -453,7 +453,7 @@ describe('applyMark', () => {
 
 
   it('should handle addMarkWithAttributes',()=>{
-expect(addMarkWithAttributes({addMark:()=>{return {}},removeMark:()=>{return {addMark:()=>{return {}}}},doc:{nodeAt:()=>{return {marks:[{type:{name:'mark-text-color'}}]}}}} as unknown as Transform,{marks:{'mark-text-color':{}}} as unknown as Schema,{pos:0} as unknown as ResolvedPos,
+expect(addMarkWithAttributes({addMark:()=>{return {};},removeMark:()=>{return {addMark:()=>{return {};}};},doc:{nodeAt:()=>{return {marks:[{type:{name:'mark-text-color'}}]};}}} as unknown as Transform,{marks:{'mark-text-color':{}}} as unknown as Schema,{pos:0} as unknown as ResolvedPos,
   {pos:1} as unknown as ResolvedPos,{create:()=>{},name:'link'} as unknown as MarkType,{},true)).toStrictEqual({});
-  })
+  });
 });
