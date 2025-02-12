@@ -183,8 +183,8 @@ describe('TextLineSpacingCommand', () => {
     expect(test).toBeFalsy();
   });
 
-  it('should be check the condition docChanged:true', () => {     
-    const state = EditorState.create({schema: schema1});     
+  it('should be check the condition docChanged:true', () => {
+    const state = EditorState.create({schema: schema1});
     const test = plugin.isEnabled(state);
 
     expect(test).toBeTruthy();

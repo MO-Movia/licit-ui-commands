@@ -136,10 +136,10 @@ export class TextAlignCommand extends UICommand {
         const nodePos = Math.max(0, selection.head - selection.$head.parentOffset - 1);
         const node = tr.doc.nodeAt(nodePos);
         if(node){
-          const newAttrs = { 
-            ...node.attrs, 
-            overriddenAlign: true, 
-            overriddenAlignValue: this._alignment 
+          const newAttrs = {
+            ...node.attrs,
+            overriddenAlign: true,
+            overriddenAlignValue: this._alignment
           };
          tr = tr.setNodeMarkup(nodePos, null, newAttrs);
       }

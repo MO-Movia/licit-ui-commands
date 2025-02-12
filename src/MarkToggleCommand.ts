@@ -135,7 +135,7 @@ export function toggleCustomStyle(
     tr.doc.nodesBetween(posfrom, posto, (node, pos) => {
       from = pos;
       to = from + node.nodeSize;
-      if (node && 0 < node.marks.length) {
+      if (node && 0 < node.marks?.length) {
         const result = node.marks.find(mark => mark.type.name === markType.name);
         if (!result) {
           attrs = { overridden: false };

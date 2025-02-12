@@ -87,7 +87,7 @@ describe('createPopUp', () => {
   it('handles undefined popUpParams gracefully', () => {
     const View = () => <div>Mocked View</div>;
     const popUpParams = {};
-    const handle = createPopUp(View, undefined, popUpParams); 
+    const handle = createPopUp(View, undefined, popUpParams);
     expect(handle).toBeDefined();
     expect(handle.close).toBeDefined();
     expect(handle.update).toBeDefined();
@@ -95,7 +95,7 @@ describe('createPopUp', () => {
 
   it('handles falsy popUpParams (empty string) gracefully', () => {
     const View = () => <div>Mocked View</div>;
-    const handle = createPopUp(View, undefined, ''); 
+    const handle = createPopUp(View, undefined, '');
     expect(handle).toBeDefined();
     expect(handle.close).toBeDefined();
     expect(handle.update).toBeDefined();
@@ -104,7 +104,7 @@ describe('createPopUp', () => {
   it('handles valid popUpParams', () => {
     const View = () => <div>Mocked View</div>;
     const popUpParams = { popUpId: 'test-id' };
-    const handle = createPopUp(View, undefined, popUpParams); 
+    const handle = createPopUp(View, undefined, popUpParams);
     expect(handle).toBeDefined();
     expect(handle.close).toBeDefined();
     expect(handle.update).toBeDefined();
