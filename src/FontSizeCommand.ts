@@ -1,20 +1,25 @@
-import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
-import {applyMark} from './applyMark';
-import {isTextStyleMarkCommandEnabled} from './isTextStyleMarkCommandEnabled';
-import {Transaction, EditorState, TextSelection} from 'prosemirror-state';
-import {MARK_FONT_SIZE} from './MarkNames';
-import {Schema} from 'prosemirror-model';
-import {Transform} from 'prosemirror-transform';
-import {EditorView} from 'prosemirror-view';
+import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import { applyMark, updateMarksAttrs } from './applyMark';
+import { isTextStyleMarkCommandEnabled } from './isTextStyleMarkCommandEnabled';
+import { Transaction, EditorState, TextSelection } from 'prosemirror-state';
+import { MARK_FONT_SIZE } from './MarkNames';
+import { Schema } from 'prosemirror-model';
+import { Transform } from 'prosemirror-transform';
+import { EditorView } from 'prosemirror-view';
 import * as React from 'react';
 
-function setFontSize(tr: Transform, schema: Schema, pt: number, isCustomStyleApplied?: boolean): Transform {
+function setFontSize(tr: Transform, state: EditorState, schema: Schema, pt: number, isCustomStyleApplied?: boolean): Transform {
   const markType = schema.marks[MARK_FONT_SIZE];
   if (!markType) {
     return tr;
   }
-  const attrs = pt ? {pt} : null;
-  tr = applyMark(tr, schema, markType, attrs,isCustomStyleApplied);
+
+  const attrs = pt ? { pt: pt, overridden: isCustomStyleApplied ? false : true } : null;
+
+  tr = applyMark(tr, schema, markType, attrs, isCustomStyleApplied);
+  if (undefined === isCustomStyleApplied) {
+    updateMarksAttrs(markType, tr, state, pt);
+  }
   return tr;
 }
 
@@ -58,11 +63,11 @@ export class FontSizeCommand extends UICommand {
     dispatch?: (tr: Transform) => void
     // view?: EditorView
   ): boolean => {
-    const {schema} = state;
+    const { schema } = state;
     // commnted selection because selection removes the storedMarks;
     // {selection}
     // const tr = setFontSize(state.tr.setSelection(selection), schema, this._pt);
-    const tr = setFontSize(state.tr, schema, this._pt);
+    const tr = setFontSize(state.tr, state, schema, this._pt);
     if (tr.docChanged || (tr as Transaction).storedMarksSet) {
       // If selection is empty, the color is added to `storedMarks`, which
       // works like `toggleMark`
@@ -80,9 +85,10 @@ export class FontSizeCommand extends UICommand {
     from: number,
     to: number
   ): Transform => {
-    const {schema} = state;
+    const { schema } = state;
     tr = setFontSize(
       (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),
+      state,
       schema,
       this._pt,
       true

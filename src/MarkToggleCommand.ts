@@ -5,10 +5,11 @@ import { EditorView } from 'prosemirror-view';
 import { findNodesWithSameMark } from './findNodesWithSameMark';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 import * as React from 'react';
+import { updateToggleMarks } from './applyMark';
 
 export class MarkToggleCommand extends UICommand {
   _markName: string;
-
+  doUpdate: boolean = false;
   constructor(markName: string) {
     super();
     this._markName = markName;
@@ -53,6 +54,7 @@ export class MarkToggleCommand extends UICommand {
   ): boolean => {
     const { schema, selection, tr } = state;
     const markType = schema.marks[this._markName];
+
     if (!markType) {
       return false;
     }
@@ -68,7 +70,17 @@ export class MarkToggleCommand extends UICommand {
 
     //Replace `toggleMark` with transform that does not change scroll
     // position.
-    return toggleMark(markType)(state, dispatch);
+    const newattrs = { overridden: true };
+    if (this.doUpdate) {
+      updateToggleMarks(markType, tr, state);
+      this.doUpdate = false;
+      _view?.dispatch(tr);
+    }
+    if (dispatch) {
+      this.doUpdate = true;
+      return toggleMark(markType, newattrs)(state, dispatch);
+    }
+    return true;
   };
 
   // [FS] IRAD-1087 2020-09-30
@@ -77,7 +89,7 @@ export class MarkToggleCommand extends UICommand {
     state: EditorState,
     tr: Transform,
     posfrom: number,
-    posto: number
+    posto: number,
   ) => {
     const { schema } = state;
     const markType = schema.marks[this._markName];
@@ -137,14 +149,16 @@ export function toggleCustomStyle(
       to = from + node.nodeSize;
       if (node && 0 < node.marks?.length) {
         const result = node.marks.find(mark => mark.type.name === markType.name);
-        if (!result) {
+        const overridden = node.marks.find(mark => mark.type.name === 'override');
+        let skip = false;
+        if (overridden && overridden.attrs[markType.name] === true) {
+          skip = true;
+        }
+        if (!skip) {
           attrs = { overridden: false };
           tr = tr.addMark(from, to, markType.create(attrs));
         }
-        else {
-          attrs = { overridden: true };
-          tr = tr.addMark(from, to, markType.create(attrs));
-        }
+
         from = to;
       }
     });
