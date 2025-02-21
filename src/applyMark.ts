@@ -204,38 +204,33 @@ function addMarksToNode(
 
 export function updateMarksAttrs(markType: MarkType, tr: Transform, state: EditorState, value: number | string) {
 
-  // let attrs = pt ? { pt: pt, overridden: isCustomStyleApplied ? false : true } : null;
   let attrs = {};
 
-  let startPos = tr.doc.resolve(state.selection.from);
-  let endPos = tr.doc.resolve(state.selection.to);
+  const startPos = tr.doc.resolve(state.selection.from);
+  const endPos = tr.doc.resolve(state.selection.to);
   let _startPos = startPos.pos;
-  let _endPos = endPos.pos;
 
   // Traverse upwards to ensure we reach the full paragraph from selection start
-  while (startPos.parent.type.name !== "paragraph" && startPos.depth > 0) {
+  while (startPos.parent.type.name !== 'paragraph' && startPos.depth > 0) {
     _startPos = startPos.before();
   }
 
-  while (endPos.parent.type.name !== "paragraph" && endPos.depth > 0) {
-    _endPos = endPos.after();
-  }
-  let style: Style = null;
-  tr.doc.nodesBetween(startPos.pos, endPos.pos, (node, pos, parent) => {
 
-    console.log('parent type: ' + parent);
-    if (node.type.name === "paragraph" && node.attrs.styleName) {
+  let style: Style = null;
+  tr.doc.nodesBetween(startPos.pos, endPos.pos, (node, pos) => {
+
+    if (node.type.name === 'paragraph' && node.attrs.styleName) {
       style = getStyleByName(node.attrs.styleName);
 
     }
     else {
-      const fontMark = node.marks.find(mark => mark.type.name === markType.name);
+      const nodesMarkType = node.marks.find(mark => mark.type.name === markType.name);
 
-      if (pos >= _startPos) {
-        switch (fontMark.type.name) {
+      if (pos <= _startPos) {
+        switch (nodesMarkType.type.name) {
 
-          case 'mark-text-color':
-            let defTextColor = style?.styles?.color || '#000000';
+          case 'mark-text-color': {
+            const defTextColor = style?.styles?.color || '#000000';
             if (defTextColor !== value.toString()) {
               attrs = value ? { color: value, overridden: true } : null;
             }
@@ -243,6 +238,7 @@ export function updateMarksAttrs(markType: MarkType, tr: Transform, state: Edito
               attrs = value ? { color: value, overridden: false } : null;
             }
             break;
+          }
           case 'mark-font-size':
             if (style?.styles?.fontSize !== value.toString()) {
               attrs = value ? { pt: value, overridden: true } : null;
@@ -259,8 +255,8 @@ export function updateMarksAttrs(markType: MarkType, tr: Transform, state: Edito
               attrs = value ? { name: value, overridden: false } : null;
             }
             break;
-          case 'mark-text-highlight':
-            let defHiglightColor = style?.styles?.textHighlight || '#ffffff';
+          case 'mark-text-highlight': {
+            const defHiglightColor = style?.styles?.textHighlight || '#ffffff';
 
             if (defHiglightColor !== value.toString()) {
               attrs = value ? { highlightColor: value, overridden: true } : null;
@@ -269,7 +265,7 @@ export function updateMarksAttrs(markType: MarkType, tr: Transform, state: Edito
               attrs = value ? { highlightColor: value, overridden: false } : null;
             }
             break;
-
+          }
         }
         tr.addMark(pos, pos + node.nodeSize, markType.create(attrs));
       }
@@ -284,31 +280,27 @@ export function updateToggleMarks(markType: MarkType, tr: Transform, state: Edit
 
   let attrs = {};
 
-  let startPos = tr.doc.resolve(state.selection.from);
-  let endPos = tr.doc.resolve(state.selection.to);
+  const startPos = tr.doc.resolve(state.selection.from);
+  const endPos = tr.doc.resolve(state.selection.to);
   let _startPos = startPos.pos;
-  let _endPos = endPos.pos;
   const { schema } = state;
   // Traverse upwards to ensure we reach the full paragraph from selection start
-  while (startPos.parent.type.name !== "paragraph" && startPos.depth > 0) {
+  while (startPos.parent.type.name !== 'paragraph' && startPos.depth > 0) {
     _startPos = startPos.before();
   }
 
-  while (endPos.parent.type.name !== "paragraph" && endPos.depth > 0) {
-    _endPos = endPos.after();
-  }
-  let style: Style = null;
-  tr.doc.nodesBetween(startPos.pos, endPos.pos, (node, pos, parent) => {
 
-    console.log('parent type: ' + parent);
-    if (node.type.name === "paragraph" && node.attrs.styleName) {
+  let style: Style = null;
+  tr.doc.nodesBetween(startPos.pos, endPos.pos, (node, pos) => {
+
+    if (node.type.name === 'paragraph' && node.attrs.styleName) {
       style = getStyleByName(node.attrs.styleName);
 
     }
     else {
       const hasMarks = node.marks.find(mark => mark.type.name === markType.name);
 
-      if (pos >= _startPos) {
+      if (pos <= _startPos) {
         const overrideMarkType = schema.marks[MARK_OVERRIDE];
         if (hasMarks) {
           tr.removeMark(pos, pos + node.nodeSize, overrideMarkType);
@@ -317,23 +309,23 @@ export function updateToggleMarks(markType: MarkType, tr: Transform, state: Edit
 
           case 'strong':
             attrs = { strong: style?.styles?.strike ?? true };
-            // mark = markType.create(attrs);
             break;
           case 'em':
             attrs = { em: style?.styles?.strike ?? true };
-            // mark = markType.create(attrs);
             break;
           case 'underline':
             attrs = { underline: style?.styles?.strike ?? true };
-            // mark = markType.create(attrs);
             break;
           case 'strike':
             attrs = { strike: style?.styles?.strike ?? true };
-            // mark = markType.create(attrs);
             break;
 
         }
         if (!hasMarks) {
+          const overridenMark = node.marks.find(mark => mark.type.name === overrideMarkType.name);
+          if (overridenMark) {
+            attrs = { ...overridenMark.attrs, ...attrs };
+          }
           tr.addMark(pos, pos + node.nodeSize, overrideMarkType.create(attrs));
         }
       }
