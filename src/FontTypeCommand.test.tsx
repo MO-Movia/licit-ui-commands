@@ -139,7 +139,7 @@ describe('FontTypeCommand', () => {
           },
           nodesBetween:()=>{}
         },
-  
+
       },
       schema: {marks: {'mark-font-type': MARK_FONT_TYPE}},
     } as unknown as EditorState;
@@ -211,7 +211,7 @@ describe('FontTypeCommand', () => {
           },
           nodesBetween:()=>{}
         },
-    
+
       },
     } as unknown as EditorState;
 

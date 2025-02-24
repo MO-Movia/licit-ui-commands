@@ -212,15 +212,15 @@ export function updateMarksAttrs(markType: MarkType, tr: Transform, state: Edito
   let _startPos = startPos?.pos;
 
   // Traverse upwards to ensure we reach the full paragraph from selection start
-  while (startPos?.parent?.type?.name !== "paragraph" && startPos?.depth > 0) {
+  while (startPos?.parent?.type?.name !== 'paragraph' && startPos?.depth > 0) {
     _startPos = startPos.before();
   }
 
 
   let style: Style = null;
-  tr.doc?.nodesBetween(startPos?.pos, endPos?.pos, (node, pos, parent) => {
+  tr.doc?.nodesBetween(startPos?.pos, endPos?.pos, (node, pos) => {
 
-    if (node.type.name === "paragraph" && node.attrs.styleName) {
+    if (node.type.name === 'paragraph' && node.attrs.styleName) {
       style = getStyleByName(node.attrs.styleName);
 
     }

@@ -470,436 +470,436 @@ describe('updateMarksAttrs',()=>{
     const schema = new Schema({
       nodes: {
         doc: {
-          content: "block+",
+          content: 'block+',
         },
         paragraph: {
-          content: "text*",
-          group: "block",
-          parseDOM: [{ tag: "p" }],
+          content: 'text*',
+          group: 'block',
+          parseDOM: [{ tag: 'p' }],
           toDOM() {
-            return ["p", 0];
+            return ['p', 0];
           },
         },
         text: {
-          group: "inline",
+          group: 'inline',
         },
       },
       marks: {
-        "mark-text-color": {
+        'mark-text-color': {
           attrs: { color: {} },
-          parseDOM: [{ style: "color", getAttrs: (value) => ({ color: value }) }],
+          parseDOM: [{ style: 'color', getAttrs: (value) => ({ color: value }) }],
           toDOM(mark) {
-            return ["span", { style: `color: ${mark.attrs.color}` }, 0];
+            return ['span', { style: `color: ${mark.attrs.color}` }, 0];
           },
         },
       },
     });
-    
+
     // Dummy JSON representation of a ProseMirror document with multiple marks
     const docJson = {
-      type: "doc",
+      type: 'doc',
       content: [
         {
-          type: "paragraph",
+          type: 'paragraph',
           content: [
             {
-              type: "text",
-              text: "Hello, ",
+              type: 'text',
+              text: 'Hello, ',
             },
             {
-              type: "text",
-              text: "ProseMirror!",
+              type: 'text',
+              text: 'ProseMirror!',
               marks: [
               ],
             },
           ],
           marks: [
-            { type: "mark-text-color", attrs: { color: "red" } },
+            { type: 'mark-text-color', attrs: { color: 'red' } },
           ],
         },
       ],
     };
-    
+
     // Create a document node from JSON
     const docNode = schema.nodeFromJSON(docJson);
-    const test = updateMarksAttrs({name:'mark-text-color',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'test')
+    const test = updateMarksAttrs({name:'mark-text-color',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'test');
     expect(test).toBeUndefined();
-    const test1 = updateMarksAttrs({name:'mark-text-color',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'#000000')
+    const test1 = updateMarksAttrs({name:'mark-text-color',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'#000000');
     expect(test1).toBeUndefined();
-  })
+  });
   it('should handle updateMarksAttrs',()=>{
     const schema = new Schema({
       nodes: {
         doc: {
-          content: "block+",
+          content: 'block+',
         },
         paragraph: {
-          content: "text*",
-          group: "block",
-          parseDOM: [{ tag: "p" }],
+          content: 'text*',
+          group: 'block',
+          parseDOM: [{ tag: 'p' }],
           toDOM() {
-            return ["p", 0];
+            return ['p', 0];
           },
         },
         text: {
-          group: "inline",
+          group: 'inline',
         },
       },
       marks: {
-        "mark-text-color": {
+        'mark-text-color': {
           attrs: { color: {} },
-          parseDOM: [{ style: "color", getAttrs: (value) => ({ color: value }) }],
+          parseDOM: [{ style: 'color', getAttrs: (value) => ({ color: value }) }],
           toDOM(mark) {
-            return ["span", { style: `color: ${mark.attrs.color}` }, 0];
+            return ['span', { style: `color: ${mark.attrs.color}` }, 0];
           },
         },
       },
     });
-    
+
     // Dummy JSON representation of a ProseMirror document with multiple marks
     const docJson = {
-      type: "doc",
+      type: 'doc',
       content: [
         {
-          type: "paragraph",
+          type: 'paragraph',
           content: [
             {
-              type: "text",
-              text: "Hello, ",
+              type: 'text',
+              text: 'Hello, ',
             },
             {
-              type: "text",
-              text: "ProseMirror!",
+              type: 'text',
+              text: 'ProseMirror!',
               marks: [
               ],
             },
           ],
           marks: [
-            { type: "mark-text-color", attrs: { color: "red" } },
+            { type: 'mark-text-color', attrs: { color: 'red' } },
           ],
         },
       ],
     };
-    
+
     // Create a document node from JSON
     const docNode = schema.nodeFromJSON(docJson);
-    const test1 = updateMarksAttrs({name:'mark-text-color',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'#000000')
+    const test1 = updateMarksAttrs({name:'mark-text-color',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'#000000');
     expect(test1).toBeUndefined();
-  })
+  });
   it('should handle updateMarksAttrs',()=>{
     const schema = new Schema({
       nodes: {
         doc: {
-          content: "block+",
+          content: 'block+',
         },
         paragraph: {
-          content: "text*",
-          group: "block",
-          parseDOM: [{ tag: "p" }],
+          content: 'text*',
+          group: 'block',
+          parseDOM: [{ tag: 'p' }],
           toDOM() {
-            return ["p", 0];
+            return ['p', 0];
           },
         },
         text: {
-          group: "inline",
+          group: 'inline',
         },
       },
       marks: {
-        "mark-font-size": {
+        'mark-font-size': {
           attrs: { color: {} },
-          parseDOM: [{ style: "color", getAttrs: (value) => ({ color: value }) }],
+          parseDOM: [{ style: 'color', getAttrs: (value) => ({ color: value }) }],
           toDOM(mark) {
-            return ["span", { style: `color: ${mark.attrs.color}` }, 0];
+            return ['span', { style: `color: ${mark.attrs.color}` }, 0];
           },
         },
       },
     });
-    
+
     // Dummy JSON representation of a ProseMirror document with multiple marks
     const docJson = {
-      type: "doc",
+      type: 'doc',
       content: [
         {
-          type: "paragraph",
+          type: 'paragraph',
           content: [
             {
-              type: "text",
-              text: "Hello, ",
+              type: 'text',
+              text: 'Hello, ',
             },
             {
-              type: "text",
-              text: "ProseMirror!",
+              type: 'text',
+              text: 'ProseMirror!',
               marks: [
               ],
             },
           ],
           marks: [
-            { type: "mark-font-size", attrs: { color: "red" } },
+            { type: 'mark-font-size', attrs: { color: 'red' } },
           ],
         },
       ],
     };
-    
+
     // Create a document node from JSON
     const docNode = schema.nodeFromJSON(docJson);
-    const test = updateMarksAttrs({name:'mark-font-size',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'test')
+    const test = updateMarksAttrs({name:'mark-font-size',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'test');
     expect(test).toBeUndefined();
-    const test1 = updateMarksAttrs({name:'mark-font-size',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'#000000')
+    const test1 = updateMarksAttrs({name:'mark-font-size',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'#000000');
     expect(test1).toBeUndefined();
-  })
+  });
   it('should handle updateMarksAttrs',()=>{
     const schema = new Schema({
       nodes: {
         doc: {
-          content: "block+",
+          content: 'block+',
         },
         paragraph: {
-          content: "text*",
-          group: "block",
-          parseDOM: [{ tag: "p" }],
+          content: 'text*',
+          group: 'block',
+          parseDOM: [{ tag: 'p' }],
           toDOM() {
-            return ["p", 0];
+            return ['p', 0];
           },
         },
         text: {
-          group: "inline",
+          group: 'inline',
         },
       },
       marks: {
-        "mark-font-size": {
+        'mark-font-size': {
           attrs: { color: {} },
-          parseDOM: [{ style: "color", getAttrs: (value) => ({ color: value }) }],
+          parseDOM: [{ style: 'color', getAttrs: (value) => ({ color: value }) }],
           toDOM(mark) {
-            return ["span", { style: `color: ${mark.attrs.color}` }, 0];
+            return ['span', { style: `color: ${mark.attrs.color}` }, 0];
           },
         },
       },
     });
-    
+
     // Dummy JSON representation of a ProseMirror document with multiple marks
     const docJson = {
-      type: "doc",
+      type: 'doc',
       content: [
         {
-          type: "paragraph",
+          type: 'paragraph',
           content: [
             {
-              type: "text",
-              text: "Hello, ",
+              type: 'text',
+              text: 'Hello, ',
             },
             {
-              type: "text",
-              text: "ProseMirror!",
+              type: 'text',
+              text: 'ProseMirror!',
               marks: [
               ],
             },
           ],
           marks: [
-            { type: "mark-font-size", attrs: { color: "red" } },
+            { type: 'mark-font-size', attrs: { color: 'red' } },
           ],
         },
       ],
     };
-    
+
     // Create a document node from JSON
     const docNode = schema.nodeFromJSON(docJson);
-    const test1 = updateMarksAttrs({name:'mark-font-size',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,undefined as unknown as string | number)
+    const test1 = updateMarksAttrs({name:'mark-font-size',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,undefined as unknown as string | number);
     expect(test1).toBeUndefined();
-  })
+  });
   it('should handle updateMarksAttrs',()=>{
     const schema = new Schema({
       nodes: {
         doc: {
-          content: "block+",
+          content: 'block+',
         },
         paragraph: {
-          content: "text*",
-          group: "block",
-          parseDOM: [{ tag: "p" }],
+          content: 'text*',
+          group: 'block',
+          parseDOM: [{ tag: 'p' }],
           toDOM() {
-            return ["p", 0];
+            return ['p', 0];
           },
         },
         text: {
-          group: "inline",
+          group: 'inline',
         },
       },
       marks: {
-        "mark-font-type": {
+        'mark-font-type': {
           attrs: { color: {} },
-          parseDOM: [{ style: "color", getAttrs: (value) => ({ color: value }) }],
+          parseDOM: [{ style: 'color', getAttrs: (value) => ({ color: value }) }],
           toDOM(mark) {
-            return ["span", { style: `color: ${mark.attrs.color}` }, 0];
+            return ['span', { style: `color: ${mark.attrs.color}` }, 0];
           },
         },
       },
     });
-    
+
     // Dummy JSON representation of a ProseMirror document with multiple marks
     const docJson = {
-      type: "doc",
+      type: 'doc',
       content: [
         {
-          type: "paragraph",
+          type: 'paragraph',
           content: [
             {
-              type: "text",
-              text: "Hello, ",
+              type: 'text',
+              text: 'Hello, ',
             },
             {
-              type: "text",
-              text: "ProseMirror!",
+              type: 'text',
+              text: 'ProseMirror!',
               marks: [
               ],
             },
           ],
           marks: [
-            { type: "mark-font-type", attrs: { color: "red" } },
+            { type: 'mark-font-type', attrs: { color: 'red' } },
           ],
         },
       ],
     };
-    
+
     // Create a document node from JSON
     const docNode = schema.nodeFromJSON(docJson);
-    const test = updateMarksAttrs({name:'mark-font-type',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'test')
+    const test = updateMarksAttrs({name:'mark-font-type',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'test');
     expect(test).toBeUndefined();
-    const test1 = updateMarksAttrs({name:'mark-font-type',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,undefined as unknown as string | number)
+    const test1 = updateMarksAttrs({name:'mark-font-type',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,undefined as unknown as string | number);
     expect(test1).toBeUndefined();
-  })
+  });
   it('should handle updateMarksAttrs',()=>{
     const schema = new Schema({
       nodes: {
         doc: {
-          content: "block+",
+          content: 'block+',
         },
         paragraph: {
-          content: "text*",
-          group: "block",
-          parseDOM: [{ tag: "p" }],
+          content: 'text*',
+          group: 'block',
+          parseDOM: [{ tag: 'p' }],
           toDOM() {
-            return ["p", 0];
+            return ['p', 0];
           },
         },
         text: {
-          group: "inline",
+          group: 'inline',
         },
       },
       marks: {
-        "mark-text-highlight": {
+        'mark-text-highlight': {
           attrs: { color: {} },
-          parseDOM: [{ style: "color", getAttrs: (value) => ({ color: value }) }],
+          parseDOM: [{ style: 'color', getAttrs: (value) => ({ color: value }) }],
           toDOM(mark) {
-            return ["span", { style: `color: ${mark.attrs.color}` }, 0];
+            return ['span', { style: `color: ${mark.attrs.color}` }, 0];
           },
         },
       },
     });
-    
+
     // Dummy JSON representation of a ProseMirror document with multiple marks
     const docJson = {
-      type: "doc",
+      type: 'doc',
       content: [
         {
-          type: "paragraph",
+          type: 'paragraph',
           content: [
             {
-              type: "text",
-              text: "Hello, ",
+              type: 'text',
+              text: 'Hello, ',
             },
             {
-              type: "text",
-              text: "ProseMirror!",
+              type: 'text',
+              text: 'ProseMirror!',
               marks: [
               ],
             },
           ],
           marks: [
-            { type: "mark-text-highlight", attrs: { color: "red" } },
+            { type: 'mark-text-highlight', attrs: { color: 'red' } },
           ],
         },
       ],
     };
-    
+
     // Create a document node from JSON
     const docNode = schema.nodeFromJSON(docJson);
-    const test = updateMarksAttrs({name:'mark-text-highlight',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'test')
+    const test = updateMarksAttrs({name:'mark-text-highlight',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'test');
     expect(test).toBeUndefined();
-    const test1 = updateMarksAttrs({name:'mark-text-highlight',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'#ffffff')
+    const test1 = updateMarksAttrs({name:'mark-text-highlight',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'#ffffff');
     expect(test1).toBeUndefined();
-  })
+  });
   it('should handle updateMarksAttrs',()=>{
     const mySchema = new Schema({
       nodes: {
-        doc: { content: "block+" },
+        doc: { content: 'block+' },
         paragraph: {
-          content: "text*",
-          group: "block",
+          content: 'text*',
+          group: 'block',
           attrs: { styleName: { default: null } },
-          parseDOM: [{ tag: "p", getAttrs: (dom) => ({ styleName: dom.getAttribute("styleName") }) }],
-          toDOM: (node) => ["p", node.attrs.styleName ? { styleName: node.attrs.styleName } : {}, 0],
+          parseDOM: [{ tag: 'p', getAttrs: (dom) => ({ styleName: dom.getAttribute('styleName') }) }],
+          toDOM: (node) => ['p', node.attrs.styleName ? { styleName: node.attrs.styleName } : {}, 0],
         },
-        text: { group: "inline" },
+        text: { group: 'inline' },
       },
       marks: {
         strong: {
-          parseDOM: [{ tag: "strong" }],
-          toDOM: () => ["strong"],
+          parseDOM: [{ tag: 'strong' }],
+          toDOM: () => ['strong'],
         },
         em: {
-          parseDOM: [{ tag: "em" }],
-          toDOM: () => ["em"],
+          parseDOM: [{ tag: 'em' }],
+          toDOM: () => ['em'],
         },
         underline: {
-          parseDOM: [{ tag: "u" }],
-          toDOM: () => ["u"],
+          parseDOM: [{ tag: 'u' }],
+          toDOM: () => ['u'],
         },
         strike: {
-          parseDOM: [{ tag: "s" }],
-          toDOM: () => ["s"],
+          parseDOM: [{ tag: 's' }],
+          toDOM: () => ['s'],
         },
         overrideMark: {
-          parseDOM: [{ tag: "span", getAttrs: (dom) => ({ class: dom.classList.contains("override") ? "override" : null }) }],
-          toDOM: () => ["span", { class: "override" }],
+          parseDOM: [{ tag: 'span', getAttrs: (dom) => ({ class: dom.classList.contains('override') ? 'override' : null }) }],
+          toDOM: () => ['span', { class: 'override' }],
         },
       },
     });
-    
+
     // JSON structure representing a ProseMirror document
     const jsonDoc = {
-      type: "doc",
+      type: 'doc',
       content: [
         {
-          type: "paragraph",
-          attrs: { styleName: "header1" },
-          content: [{ type: "text", text: "Heading Text", marks: [{ type: "strong" }] }],
+          type: 'paragraph',
+          attrs: { styleName: 'header1' },
+          content: [{ type: 'text', text: 'Heading Text', marks: [{ type: 'strong' }] }],
         },
         {
-          type: "paragraph",
-          content: [{ type: "text", text: "Some emphasized text", marks: [{ type: "em" }] }],
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Some emphasized text', marks: [{ type: 'em' }] }],
         },
         {
-          type: "paragraph",
-          content: [{ type: "text", text: "Underlined text", marks: [{ type: "underline" }] }],
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Underlined text', marks: [{ type: 'underline' }] }],
         },
         {
-          type: "paragraph",
-          attrs: { styleName: "customStyle" },
-          content: [{ type: "text", text: "Styled paragraph with strike", marks: [{ type: "strike" }] }],
+          type: 'paragraph',
+          attrs: { styleName: 'customStyle' },
+          content: [{ type: 'text', text: 'Styled paragraph with strike', marks: [{ type: 'strike' }] }],
         },
         {
-          type: "paragraph",
-          content: [{ type: "text", text: "Text with overridden mark", marks: [{ type: "overrideMark" }] }],
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Text with overridden mark', marks: [{ type: 'overrideMark' }] }],
         },
       ],
     };
-    
+
     // Create a document node from JSON
     const docNode = mySchema.nodeFromJSON(jsonDoc);
-    const test = updateMarksAttrs({name:'mark-text-highlight',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'test')
+    const test = updateMarksAttrs({name:'mark-text-highlight',create:()=>{}} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState,'test');
     expect(test).toBeUndefined();
-  })
-})
+  });
+});
 describe('addMarksToNode',()=>{
   it('should handle addMarksToNode',()=>{
     const test = addMarksToNode({addMark:()=>{}} as unknown as Transform,0,1,{create:()=>{}} as unknown as MarkType,
@@ -908,121 +908,121 @@ describe('addMarksToNode',()=>{
       const test1 = addMarksToNode({addMark:()=>{}} as unknown as Transform,0,1,{create:()=>{}} as unknown as MarkType,
       {} as unknown as Record<string, unknown>,{} as unknown as Node | null,undefined);
       expect(test1).toBeUndefined();
-  })
+  });
   it('should handle addMarksToNode',()=>{
     const schema = new Schema({
       nodes: {
         doc: {
-          content: "block+",
+          content: 'block+',
         },
         paragraph: {
-          content: "text*",
-          group: "block",
-          parseDOM: [{ tag: "p" }],
+          content: 'text*',
+          group: 'block',
+          parseDOM: [{ tag: 'p' }],
           toDOM() {
-            return ["p", 0];
+            return ['p', 0];
           },
         },
         text: {
-          group: "inline",
+          group: 'inline',
         },
       },
       marks: {},
     });
-    
+
     // Dummy JSON representation of a ProseMirror document
     const docJson = {
-      type: "doc",
+      type: 'doc',
       content: [
         {
-          type: "paragraph",
+          type: 'paragraph',
           content: [
             {
-              type: "text",
-              text: "Hello, ProseMirror!",
+              type: 'text',
+              text: 'Hello, ProseMirror!',
             },
           ],
         },
         {
-          type: "paragraph",
+          type: 'paragraph',
           content: [
             {
-              type: "text",
-              text: "This is another paragraph.",
+              type: 'text',
+              text: 'This is another paragraph.',
             },
           ],
         },
       ],
     };
-    
+
     // Create a document node from JSON
     const docNode = schema.nodeFromJSON(docJson);
-    const test = addMarksToNode({addMark:()=>{return {addMark:()=>{return {addMark:()=>{}}}}}} as unknown as Transform,0,1,{create:()=>{}} as unknown as MarkType,
+    const test = addMarksToNode({addMark:()=>{return {addMark:()=>{return {addMark:()=>{}};}};}} as unknown as Transform,0,1,{create:()=>{}} as unknown as MarkType,
       {} as unknown as Record<string, unknown>,docNode,false);
       expect(test).toBeUndefined();
-  })
+  });
   it('should handle addMarksToNode',()=>{
     const schema = new Schema({
       nodes: {
         doc: {
-          content: "block+",
+          content: 'block+',
         },
         paragraph: {
-          content: "text*",
-          group: "block",
-          parseDOM: [{ tag: "p" }],
+          content: 'text*',
+          group: 'block',
+          parseDOM: [{ tag: 'p' }],
           toDOM() {
-            return ["p", 0];
+            return ['p', 0];
           },
         },
         text: {
-          group: "inline",
+          group: 'inline',
         },
       },
       marks: {},
     });
-    
+
     // Dummy JSON representation of a ProseMirror document
     const docJson = {
-      type: "doc",
+      type: 'doc',
       content: [
       ],
     };
-    
+
     // Create a document node from JSON
     const docNode = schema.nodeFromJSON(docJson);
-    const test = addMarksToNode({addMark:()=>{return {addMark:()=>{return {addMark:()=>{}}}}}} as unknown as Transform,0,1,{create:()=>{}} as unknown as MarkType,
+    const test = addMarksToNode({addMark:()=>{return {addMark:()=>{return {addMark:()=>{}};}};}} as unknown as Transform,0,1,{create:()=>{}} as unknown as MarkType,
       {} as unknown as Record<string, unknown>,docNode,false);
       expect(test).toBeDefined();
-  })
+  });
   it('should handle handleTextColorMark',()=>{
     const schema = new Schema({
       nodes: {
         doc: {
-          content: "block+",
+          content: 'block+',
         },
         paragraph: {
-          content: "text*",
-          group: "block",
-          parseDOM: [{ tag: "p" }],
+          content: 'text*',
+          group: 'block',
+          parseDOM: [{ tag: 'p' }],
           toDOM() {
-            return ["p", 0];
+            return ['p', 0];
           },
         },
         text: {
-          group: "inline",
+          group: 'inline',
         },
       },
       marks: {},
     });
-    
+
     // Dummy JSON representation of a ProseMirror document
     const docJson = {
-      type: "doc",
+      type: 'doc',
       content: [
       ],
     };
-    
+
     // Create a document node from JSON
     const docNode = schema.nodeFromJSON(docJson);
     const test = handleTextColorMark({addMark:()=>{}} as unknown as Transform,{pos:0} as unknown as ResolvedPos,{create:()=>{}} as unknown as MarkType,
@@ -1031,53 +1031,53 @@ describe('addMarksToNode',()=>{
       const test1 = handleTextColorMark({addMark:()=>{}} as unknown as Transform,{pos:0} as unknown as ResolvedPos,{create:()=>{}} as unknown as MarkType,
       {} as unknown as Record<string, unknown>,docNode,{pos:1} as unknown as ResolvedPos);
       expect(test1).toBeUndefined();
-  })
+  });
   it('should handle handleTextColorMark',()=>{
     const schema = new Schema({
       nodes: {
         doc: {
-          content: "block+",
+          content: 'block+',
         },
         paragraph: {
-          content: "text*",
-          group: "block",
-          parseDOM: [{ tag: "p" }],
+          content: 'text*',
+          group: 'block',
+          parseDOM: [{ tag: 'p' }],
           toDOM() {
-            return ["p", 0];
+            return ['p', 0];
           },
         },
         text: {
-          group: "inline",
+          group: 'inline',
         },
       },
       marks: {},
     });
-    
+
     // Dummy JSON representation of a ProseMirror document
     const docJson = {
-      type: "doc",
+      type: 'doc',
       content: [
         {
-          type: "paragraph",
+          type: 'paragraph',
           content: [
             {
-              type: "text",
-              text: "Hello, ProseMirror!",
+              type: 'text',
+              text: 'Hello, ProseMirror!',
             },
           ],
         },
         {
-          type: "paragraph",
+          type: 'paragraph',
           content: [
             {
-              type: "text",
-              text: "This is another paragraph.",
+              type: 'text',
+              text: 'This is another paragraph.',
             },
           ],
         },
       ],
     };
-    
+
     // Create a document node from JSON
     const docNode = schema.nodeFromJSON(docJson);
     const test = handleTextColorMark({addMark:()=>{}} as unknown as Transform,{pos:0} as unknown as ResolvedPos,{create:()=>{}} as unknown as MarkType,
@@ -1086,35 +1086,35 @@ describe('addMarksToNode',()=>{
       const test1 = handleTextColorMark({addMark:()=>{}} as unknown as Transform,{pos:0} as unknown as ResolvedPos,{create:()=>{}} as unknown as MarkType,
       {} as unknown as Record<string, unknown>,docNode,{pos:1} as unknown as ResolvedPos);
       expect(test1).toBeUndefined();
-  })
+  });
   it('should handle handleTextColorMark',()=>{
     const schema = new Schema({
       nodes: {
         doc: {
-          content: "block+",
+          content: 'block+',
         },
         paragraph: {
-          content: "text*",
-          group: "block",
-          parseDOM: [{ tag: "p" }],
+          content: 'text*',
+          group: 'block',
+          parseDOM: [{ tag: 'p' }],
           toDOM() {
-            return ["p", 0];
+            return ['p', 0];
           },
         },
         text: {
-          group: "inline",
+          group: 'inline',
         },
       },
       marks: {},
     });
-    
+
     // Dummy JSON representation of a ProseMirror document
     const docJson = {
-      type: "doc",
+      type: 'doc',
       content: [
       ],
     };
-    
+
     // Create a document node from JSON
     const docNode = schema.nodeFromJSON(docJson);
     const test = handleTextColorMark({addMark:()=>{}} as unknown as Transform,{pos:0} as unknown as ResolvedPos,{create:()=>{}} as unknown as MarkType,
@@ -1123,217 +1123,217 @@ describe('addMarksToNode',()=>{
       const test1 = handleTextColorMark({addMark:()=>{}} as unknown as Transform,{pos:0} as unknown as ResolvedPos,{create:()=>{}} as unknown as MarkType,
       {} as unknown as Record<string, unknown>,docNode,{pos:1} as unknown as ResolvedPos,true);
       expect(test1).toBeUndefined();
-  })
-})
+  });
+});
 describe('updateToggleMarks',()=>{
   it('should handle updateToggleMarks',()=>{
     const mySchema = new Schema({
       nodes: {
-        doc: { content: "block+" },
+        doc: { content: 'block+' },
         paragraph: {
-          content: "text*",
-          group: "block",
+          content: 'text*',
+          group: 'block',
           attrs: { styleName: { default: null } },
-          parseDOM: [{ tag: "p", getAttrs: (dom) => ({ styleName: dom.getAttribute("styleName") }) }],
-          toDOM: (node) => ["p", node.attrs.styleName ? { styleName: node.attrs.styleName } : {}, 0],
+          parseDOM: [{ tag: 'p', getAttrs: (dom) => ({ styleName: dom.getAttribute('styleName') }) }],
+          toDOM: (node) => ['p', node.attrs.styleName ? { styleName: node.attrs.styleName } : {}, 0],
         },
-        text: { group: "inline" },
+        text: { group: 'inline' },
       },
       marks: {
         strong: {
-          parseDOM: [{ tag: "strong" }],
-          toDOM: () => ["strong"],
+          parseDOM: [{ tag: 'strong' }],
+          toDOM: () => ['strong'],
         },
         em: {
-          parseDOM: [{ tag: "em" }],
-          toDOM: () => ["em"],
+          parseDOM: [{ tag: 'em' }],
+          toDOM: () => ['em'],
         },
         underline: {
-          parseDOM: [{ tag: "u" }],
-          toDOM: () => ["u"],
+          parseDOM: [{ tag: 'u' }],
+          toDOM: () => ['u'],
         },
         strike: {
-          parseDOM: [{ tag: "s" }],
-          toDOM: () => ["s"],
+          parseDOM: [{ tag: 's' }],
+          toDOM: () => ['s'],
         },
         overrideMark: {
-          parseDOM: [{ tag: "span", getAttrs: (dom) => ({ class: dom.classList.contains("override") ? "override" : null }) }],
-          toDOM: () => ["span", { class: "override" }],
+          parseDOM: [{ tag: 'span', getAttrs: (dom) => ({ class: dom.classList.contains('override') ? 'override' : null }) }],
+          toDOM: () => ['span', { class: 'override' }],
         },
       },
     });
-    
+
     // JSON structure representing a ProseMirror document
     const jsonDoc = {
-      type: "doc",
+      type: 'doc',
       content: [
         {
-          type: "paragraph",
-          attrs: { styleName: "header1" },
-          content: [{ type: "text", text: "Heading Text", marks: [{ type: "strong" }] }],
+          type: 'paragraph',
+          attrs: { styleName: 'header1' },
+          content: [{ type: 'text', text: 'Heading Text', marks: [{ type: 'strong' }] }],
         },
         {
-          type: "paragraph",
-          content: [{ type: "text", text: "Some emphasized text", marks: [{ type: "em" }] }],
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Some emphasized text', marks: [{ type: 'em' }] }],
         },
         {
-          type: "paragraph",
-          content: [{ type: "text", text: "Underlined text", marks: [{ type: "underline" }] }],
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Underlined text', marks: [{ type: 'underline' }] }],
         },
         {
-          type: "paragraph",
-          attrs: { styleName: "customStyle" },
-          content: [{ type: "text", text: "Styled paragraph with strike", marks: [{ type: "strike" }] }],
+          type: 'paragraph',
+          attrs: { styleName: 'customStyle' },
+          content: [{ type: 'text', text: 'Styled paragraph with strike', marks: [{ type: 'strike' }] }],
         },
         {
-          type: "paragraph",
-          content: [{ type: "text", text: "Text with overridden mark", marks: [{ type: "overrideMark" }] }],
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Text with overridden mark', marks: [{ type: 'overrideMark' }] }],
         },
       ],
     };
-    
+
     // Convert JSON into a ProseMirror document using the schema
     const docNode = mySchema.nodeFromJSON(jsonDoc);
     const test = updateToggleMarks({} as unknown as MarkType,{doc:docNode} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState);
     expect(test).toBeUndefined();
-  })
+  });
   it('should handle updateToggleMarks',()=>{
     const mySchema = new Schema({
       nodes: {
-        doc: { content: "block+" },
+        doc: { content: 'block+' },
         paragraph: {
-          content: "text*",
-          group: "block",
+          content: 'text*',
+          group: 'block',
           attrs: { styleName: { default: null } },
-          parseDOM: [{ tag: "p", getAttrs: (dom) => ({ styleName: dom.getAttribute("styleName") }) }],
-          toDOM: (node) => ["p", node.attrs.styleName ? { styleName: node.attrs.styleName } : {}, 0],
+          parseDOM: [{ tag: 'p', getAttrs: (dom) => ({ styleName: dom.getAttribute('styleName') }) }],
+          toDOM: (node) => ['p', node.attrs.styleName ? { styleName: node.attrs.styleName } : {}, 0],
         },
-        text: { group: "inline" },
+        text: { group: 'inline' },
       },
       marks: {
         strong: {
-          parseDOM: [{ tag: "strong" }],
-          toDOM: () => ["strong"],
+          parseDOM: [{ tag: 'strong' }],
+          toDOM: () => ['strong'],
         },
         em: {
-          parseDOM: [{ tag: "em" }],
-          toDOM: () => ["em"],
+          parseDOM: [{ tag: 'em' }],
+          toDOM: () => ['em'],
         },
         underline: {
-          parseDOM: [{ tag: "u" }],
-          toDOM: () => ["u"],
+          parseDOM: [{ tag: 'u' }],
+          toDOM: () => ['u'],
         },
         strike: {
-          parseDOM: [{ tag: "s" }],
-          toDOM: () => ["s"],
+          parseDOM: [{ tag: 's' }],
+          toDOM: () => ['s'],
         },
         overrideMark: {
-          parseDOM: [{ tag: "span", getAttrs: (dom) => ({ class: dom.classList.contains("override") ? "override" : null }) }],
-          toDOM: () => ["span", { class: "override" }],
+          parseDOM: [{ tag: 'span', getAttrs: (dom) => ({ class: dom.classList.contains('override') ? 'override' : null }) }],
+          toDOM: () => ['span', { class: 'override' }],
         },
       },
     });
-    
+
     // JSON structure representing a ProseMirror document
     const jsonDoc = {
-      type: "doc",
+      type: 'doc',
       content: [
         {
-          type: "paragraph",
-          attrs: { styleName: "header1" },
-          content: [{ type: "text", text: "Heading Text", marks: [{ type: "strong" }] }],
+          type: 'paragraph',
+          attrs: { styleName: 'header1' },
+          content: [{ type: 'text', text: 'Heading Text', marks: [{ type: 'strong' }] }],
         },
         {
-          type: "paragraph",
-          content: [{ type: "text", text: "Some emphasized text", marks: [{ type: "em" }] }],
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Some emphasized text', marks: [{ type: 'em' }] }],
         },
         {
-          type: "paragraph",
-          content: [{ type: "text", text: "Underlined text", marks: [{ type: "underline" }] }],
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Underlined text', marks: [{ type: 'underline' }] }],
         },
         {
-          type: "paragraph",
-          attrs: { styleName: "customStyle" },
-          content: [{ type: "text", text: "Styled paragraph with strike", marks: [{ type: "strike" }] }],
+          type: 'paragraph',
+          attrs: { styleName: 'customStyle' },
+          content: [{ type: 'text', text: 'Styled paragraph with strike', marks: [{ type: 'strike' }] }],
         },
         {
-          type: "paragraph",
-          content: [{ type: "text", text: "Text with overridden mark", marks: [{ type: "overrideMark" }] }],
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Text with overridden mark', marks: [{ type: 'overrideMark' }] }],
         },
       ],
     };
-    
+
     // Convert JSON into a ProseMirror document using the schema
     const docNode = mySchema.nodeFromJSON(jsonDoc);
     const test = updateToggleMarks({} as unknown as MarkType,{doc:docNode} as unknown as Transform,{selection:{from:0,to:1}} as unknown as EditorState);
     expect(test).toBeUndefined();
-  })
+  });
   it('should handle updateToggleMarks when node is not paragraph',()=>{
     const mySchema = new Schema({
       nodes: {
-        doc: { content: "block+" },
+        doc: { content: 'block+' },
         blockText: {
-          content: "text*",
-          group: "block",
+          content: 'text*',
+          group: 'block',
           attrs: { styleName: { default: null } },
-          parseDOM: [{ tag: "div", getAttrs: (dom) => ({ styleName: dom.getAttribute("styleName") }) }],
-          toDOM: (node) => ["div", node.attrs.styleName ? { styleName: node.attrs.styleName } : {}, 0],
+          parseDOM: [{ tag: 'div', getAttrs: (dom) => ({ styleName: dom.getAttribute('styleName') }) }],
+          toDOM: (node) => ['div', node.attrs.styleName ? { styleName: node.attrs.styleName } : {}, 0],
         },
-        text: { group: "inline" },
+        text: { group: 'inline' },
       },
       marks: {
         strong: {
-          parseDOM: [{ tag: "strong" }],
-          toDOM: () => ["strong"],
+          parseDOM: [{ tag: 'strong' }],
+          toDOM: () => ['strong'],
         },
         em: {
-          parseDOM: [{ tag: "em" }],
-          toDOM: () => ["em"],
+          parseDOM: [{ tag: 'em' }],
+          toDOM: () => ['em'],
         },
         underline: {
-          parseDOM: [{ tag: "u" }],
-          toDOM: () => ["u"],
+          parseDOM: [{ tag: 'u' }],
+          toDOM: () => ['u'],
         },
         strike: {
-          parseDOM: [{ tag: "s" }],
-          toDOM: () => ["s"],
+          parseDOM: [{ tag: 's' }],
+          toDOM: () => ['s'],
         },
         overrideMark: {
-          parseDOM: [{ tag: "span", getAttrs: (dom) => ({ class: dom.classList.contains("override") ? "override" : null }) }],
-          toDOM: () => ["span", { class: "override" }],
+          parseDOM: [{ tag: 'span', getAttrs: (dom) => ({ class: dom.classList.contains('override') ? 'override' : null }) }],
+          toDOM: () => ['span', { class: 'override' }],
         },
       },
     });
-    
+
     // JSON structure representing a ProseMirror document without paragraphs
     const jsonDoc = {
-      type: "doc",
+      type: 'doc',
       content: [
         {
-          type: "blockText",
-          attrs: { styleName: "header1" },
-          content: [{ type: "text", text: "Heading Text", marks: [{ type: "strong" }] }],
+          type: 'blockText',
+          attrs: { styleName: 'header1' },
+          content: [{ type: 'text', text: 'Heading Text', marks: [{ type: 'strong' }] }],
         },
         {
-          type: "blockText",
-          content: [{ type: "text", text: "Some emphasized text", marks: [{ type: "em" }] }],
+          type: 'blockText',
+          content: [{ type: 'text', text: 'Some emphasized text', marks: [{ type: 'em' }] }],
         },
         {
-          type: "blockText",
-          content: [{ type: "text", text: "Underlined text", marks: [{ type: "underline" }] }],
+          type: 'blockText',
+          content: [{ type: 'text', text: 'Underlined text', marks: [{ type: 'underline' }] }],
         },
         {
-          type: "blockText",
-          attrs: { styleName: "customStyle" },
-          content: [{ type: "text", text: "Styled block with strike", marks: [{ type: "strike" }] }],
+          type: 'blockText',
+          attrs: { styleName: 'customStyle' },
+          content: [{ type: 'text', text: 'Styled block with strike', marks: [{ type: 'strike' }] }],
         },
         {
-          type: "blockText",
-          content: [{ type: "text", text: "Text with overridden mark", marks: [{ type: "overrideMark" }] }],
+          type: 'blockText',
+          content: [{ type: 'text', text: 'Text with overridden mark', marks: [{ type: 'overrideMark' }] }],
         },
       ],
     };
-    
+
     // Convert JSON into a ProseMirror document using the schema
     const docNode = mySchema.nodeFromJSON(jsonDoc);
     const test = updateToggleMarks({name:'strong'} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{schema:mySchema,selection:{from:0,to:1}} as unknown as EditorState);
@@ -1344,5 +1344,5 @@ describe('updateToggleMarks',()=>{
     expect(test2).toBeUndefined();
     const test3 = updateToggleMarks({name:'strike'} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{schema:mySchema,selection:{from:0,to:1}} as unknown as EditorState);
     expect(test3).toBeUndefined();
-  })
-})
+  });
+});
