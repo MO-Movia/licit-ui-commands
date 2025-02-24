@@ -327,7 +327,7 @@ export function updateToggleMarks(markType: MarkType, tr: Transform, state: Edit
           if (overridenMark) {
             attrs = { ...overridenMark.attrs, ...attrs };
           }
-          tr.addMark(pos, pos + node.nodeSize, overrideMarkType.create(attrs));
+          tr.addMark(pos, pos + node.nodeSize, overrideMarkType?.create(attrs));
         }
       }
 

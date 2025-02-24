@@ -120,7 +120,7 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
   });
   return tr;
 }
-function comapreMarks(style: Style, mark: Mark, marksToAdd, pos: number, node: Node, schema: Schema): boolean {
+export function comapreMarks(style: Style, mark: Mark, marksToAdd, pos: number, node: Node, schema: Schema): boolean {
 
   let markType: MarkType = null;
   let attrs = {};
