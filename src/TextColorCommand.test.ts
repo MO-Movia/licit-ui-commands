@@ -52,7 +52,11 @@ describe('TextColorCommand', () => {
             return { isAtom: true, isLeaf: true, isText: false };
           },
         },
+        resolve:()=>{
+          return {pos:0};
+        }
       },
+      selection:{from:0,to:1}
     } as unknown as EditorState;
 
     const editorview = {} as unknown as EditorView;

@@ -4,6 +4,7 @@ import {Transform} from 'prosemirror-transform';
 import {EditorView} from 'prosemirror-view';
 import React from 'react';
 import {MarkToggleCommand, toggleCustomStyle} from './MarkToggleCommand';
+import * as proscommands from 'prosemirror-commands';
 
 describe('MarkToggleCommand', () => {
   let plugin!: MarkToggleCommand;
@@ -180,7 +181,84 @@ describe('MarkToggleCommand', () => {
     const test = plugin.execute(state);
     expect(test).toBe(true);
   });
-
+  it('should handle execute when dispatch is present', () => {
+    const mySchema = new Schema({
+      nodes: {
+        doc: {
+          attrs: {lineSpacing: {default: 'test'}},
+          content: 'block+',
+        },
+        paragraph: {
+          attrs: {lineSpacing: {default: 'test'}},
+          content: 'text*',
+          group: 'block',
+        },
+        heading: {
+          attrs: {lineSpacing: {default: 'test'}},
+          content: 'text*',
+          group: 'block',
+          defining: true,
+        },
+        bullet_list: {
+          content: 'list_item+',
+          group: 'block',
+        },
+        list_item: {
+          attrs: {lineSpacing: {default: 'test'}},
+          content: 'paragraph',
+          defining: true,
+        },
+        blockquote: {
+          attrs: {lineSpacing: {default: 'test'}},
+          content: 'block+',
+          group: 'block',
+        },
+        text: {
+          inline: true,
+        },
+      },
+    });
+    const dummyDoc = mySchema.node('doc', null, [
+      mySchema.node('heading', {marks: []}, [mySchema.text('Heading 1')]),
+      mySchema.node('paragraph', {marks: []}, [
+        mySchema.text('This is a paragraph'),
+      ]),
+      mySchema.node('bullet_list', {marks: []}, [
+        mySchema.node('list_item', {marks: []}, [
+          mySchema.node('paragraph', {marks: []}, [
+            mySchema.text('List item 1'),
+          ]),
+        ]),
+        mySchema.node('list_item', {marks: []}, [
+          mySchema.node('paragraph', {marks: []}, [
+            mySchema.text('List item 2'),
+          ]),
+        ]),
+      ]),
+      mySchema.node('blockquote', {marks: []}, [
+        mySchema.node('paragraph', {marks: []}, [
+          mySchema.text('This is a blockquote'),
+        ]),
+      ]),
+    ]);
+    const state = {
+      selection: {
+        node: null,
+        anchor: 0,
+        head: 0,
+        from: 5,
+        to: 2,
+        ranges: [{$from: {depth: 1, pos: 0}, $to: {pos: 1}}],
+      },
+      plugins: [],
+      tr: {doc:{resolve:()=>{return {parent:{type:{}}}},nodesBetween :()=>{}}},
+      schema: {marks: 'value'},
+      doc: dummyDoc,
+    } as unknown as EditorState;
+    plugin.doUpdate = true;
+    const test = plugin.execute(state,null as unknown as ((tr: Transform) => void) | undefined,{dispatch:()=>{}} as unknown as EditorView);
+    expect(test).toBe(true);
+  });
   it('executeWithUserInput function() should be return false', () => {
     const state = {
       plugins: [],
@@ -319,7 +397,7 @@ describe('MarkToggleCommand', () => {
     expect(test).toBe(tr);
   });
 
-  it('should call when execute function returns false', () => {
+  it('should call when executeCustom function returns false', () => {
     const state = {
       doc: {
         type: {allowsMarkType: (_x) => false},
@@ -373,7 +451,7 @@ describe('MarkToggleCommand', () => {
     expect(test).toBeDefined();
   });
 
-  it('should call when excute function return true', () => {
+  it('should call when executeCustom function return true', () => {
     const state = {
       doc: {
         type: {

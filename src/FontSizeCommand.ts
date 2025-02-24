@@ -14,7 +14,7 @@ function setFontSize(tr: Transform, state: EditorState, schema: Schema, pt: numb
     return tr;
   }
 
-  const attrs = pt ? { pt: pt, overridden: isCustomStyleApplied ? false : true } : null;
+  const attrs = pt ? { pt: pt, overridden: !isCustomStyleApplied} : null;
 
   tr = applyMark(tr, schema, markType, attrs, isCustomStyleApplied);
   if (undefined === isCustomStyleApplied) {

@@ -148,7 +148,6 @@ export function toggleCustomStyle(
       from = pos;
       to = from + node.nodeSize;
       if (node && 0 < node.marks?.length) {
-        const result = node.marks.find(mark => mark.type.name === markType.name);
         const overridden = node.marks.find(mark => mark.type.name === 'override');
         let skip = false;
         if (overridden && overridden.attrs[markType.name] === true) {

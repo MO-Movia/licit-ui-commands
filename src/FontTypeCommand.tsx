@@ -15,7 +15,7 @@ function setFontType(tr: Transform, state: EditorState, schema: Schema, name: st
     return tr;
   }
 
-  const attrs = name ? { name: name, overridden: isCustomStyleApplied ? false : true } : null;
+  const attrs = name ? { name: name, overridden: !isCustomStyleApplied} : null;
   tr = applyMark(tr, schema, markType, attrs, isCustomStyleApplied);
   if (undefined === isCustomStyleApplied) {
     updateMarksAttrs(markType, tr, state, name);
