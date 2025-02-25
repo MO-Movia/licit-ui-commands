@@ -75,6 +75,11 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
   const marksToAdd = [];
   const overrideMarkstoRemove = [];
   let style: Style = null;
+  const slice = selection.content().content;
+  if (slice.childCount > 1) {
+
+    return tr;
+  }
   doc.nodesBetween(from, to, (node, pos) => {
     if (node.type.name === 'paragraph' && node.attrs.styleName) {
       style = getStyleByName(node.attrs.styleName);
@@ -109,12 +114,12 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
   tr = removeTextAlignAndLineSpacing(tr, schema);
 
   overrideMarkstoRemove.forEach((overridenMarkType) => {
-    const { mark, from, to } = overridenMarkType;
+    const { mark } = overridenMarkType;
     tr = tr.removeMark(from, to, mark);
 
   });
   marksToAdd.forEach((marks) => {
-    const { markType, from, to, attrs } = marks;
+    const { markType, attrs } = marks;
     tr = tr.addMark(from, to, attrs ? markType.create(attrs) : markType.create());
 
   });
@@ -141,7 +146,7 @@ export function comapreMarks(style: Style, mark: Mark, marksToAdd, pos: number, 
         return false;
       }
       markType = schema.marks[MarkNames.MARK_TEXT_COLOR];
-      attrs = { color: style?.styles[COLOR] };
+      attrs = { color: style?.styles[COLOR] ?? '#000000' };
       marksToAdd.push({ node, from: pos, to: pos + node.nodeSize, markType, attrs });
       return true;
     case MarkNames.MARK_FONT_SIZE:
@@ -176,7 +181,7 @@ export function comapreMarks(style: Style, mark: Mark, marksToAdd, pos: number, 
         return false;
       }
       markType = schema.marks[MarkNames.MARK_TEXT_HIGHLIGHT];
-      attrs = { highlightColor: style?.styles['textHighlight'] };
+      attrs = { highlightColor: style?.styles['textHighlight'] ?? '#ffffff' };
       marksToAdd.push({ node, from: pos, to: pos + node.nodeSize, markType, attrs });
       return true;
     case MarkNames.MARK_UNDERLINE:

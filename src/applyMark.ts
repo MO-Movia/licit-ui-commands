@@ -220,6 +220,9 @@ export function updateMarksAttrs(markType: MarkType, tr: Transform, state: Edito
   let style: Style = null;
   tr.doc?.nodesBetween(startPos?.pos, endPos?.pos, (node, pos) => {
 
+    if (node.type.name === 'table') {
+      return true;
+    }
     if (node.type.name === 'paragraph' && node.attrs.styleName) {
       style = getStyleByName(node.attrs.styleName);
 
@@ -268,7 +271,9 @@ export function updateMarksAttrs(markType: MarkType, tr: Transform, state: Edito
             break;
           }
         }
-        tr.addMark(pos, pos + node.nodeSize, markType.create(attrs));
+        if (Object.keys(attrs).length !== 0) {
+          tr.addMark(pos, pos + node.nodeSize, markType.create(attrs));
+        }
       }
 
     }
