@@ -271,12 +271,13 @@ export function updateMarksAttrs(markType: MarkType, tr: Transform, state: Edito
             break;
           }
         }
-        if (Object.keys(attrs).length !== 0) {
+        if (attrs && Object.keys(attrs).length !== 0) {
           tr.addMark(pos, pos + node.nodeSize, markType.create(attrs));
         }
       }
 
     }
+    return true;
   });
 
 }

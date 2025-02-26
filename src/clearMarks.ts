@@ -2,9 +2,7 @@ import { Mark, MarkType, Node, Schema } from 'prosemirror-model';
 import { Transform } from 'prosemirror-transform';
 import { HEADING, PARAGRAPH } from './NodeNames';
 import * as MarkNames from './MarkNames';
-import { setTextAlign } from './TextAlignCommand';
-import { setTextLineSpacing } from './TextLineSpacingCommand';
-import { Transaction } from 'prosemirror-state';
+import { TextSelection, Transaction } from 'prosemirror-state';
 import { getStyleByName, Style } from './runtime.service';
 const STRONG = 'strong';
 const EM = 'em';
@@ -40,19 +38,6 @@ const FORMAT_MARK_NAMES = [
   MARK_SUPER,
 ];
 
-// [FS] IRAD-1053 2020-11-13
-// Clear format not removes the line spacing
-function removeTextAlignAndLineSpacing(
-  tr: Transform,
-  schema: Schema
-): Transform {
-  // to clear the text align format.
-  tr = setTextAlign(tr, schema, null);
-  // to clear the applied line spacing format.
-  tr = setTextLineSpacing(tr, schema, null);
-  return tr;
-}
-
 export function clearMarks(tr: Transform, schema: Schema): Transform {
   const { doc, selection } = tr as Transaction;
   if (!selection || !doc) {
@@ -75,8 +60,8 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
   const marksToAdd = [];
   const overrideMarkstoRemove = [];
   let style: Style = null;
-  const slice = selection.content().content;
-  if (slice.childCount > 1) {
+  const slice = selection instanceof TextSelection ? selection.content().content : null;
+  if (slice?.childCount > 1) {
 
     return tr;
   }
@@ -109,9 +94,6 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
     // Issue fix on when clear the format of a selected word, the entire paragraphs style removed
     tr = tr.removeMark(from, to, mark.type);
   });
-
-  // It should clear text alignment and line spacing.
-  tr = removeTextAlignAndLineSpacing(tr, schema);
 
   overrideMarkstoRemove.forEach((overridenMarkType) => {
     const { mark } = overridenMarkType;

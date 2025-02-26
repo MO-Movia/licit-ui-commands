@@ -57,6 +57,8 @@ export function setTextAlign(
       attrs = {
         ...attrs,
         align: null,
+        overriddenAlign: null,
+        overriddenAlignValue: null
       };
     }
     tr = tr.setNodeMarkup(pos, nodeType, attrs, node.marks);
@@ -135,16 +137,16 @@ export class TextAlignCommand extends UICommand {
       ) {
         const nodePos = Math.max(0, selection.head - selection.$head.parentOffset - 1);
         const node = tr.doc.nodeAt(nodePos);
-        if(node){
+        if (node) {
           const newAttrs = {
             ...node.attrs,
             overriddenAlign: true,
             overriddenAlignValue: this._alignment
           };
-         tr = tr.setNodeMarkup(nodePos, null, newAttrs);
+          tr = tr.setNodeMarkup(nodePos, null, newAttrs);
+        }
+        dispatch?.(tr);
       }
-      dispatch?.(tr);
-    }
       return true;
     } else {
       return false;

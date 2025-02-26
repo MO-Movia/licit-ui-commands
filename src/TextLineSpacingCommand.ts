@@ -70,7 +70,9 @@ export function setTextLineSpacing(
     } else {
       attrs = {
         ...attrs,
-        lineSpacing: null,
+        lineSpacing: SINGLE_LINE_SPACING,
+        overriddenLineSpacing: null,
+        overriddenLineSpacingValue: null
       };
     }
     tr = tr.setNodeMarkup(pos, nodeType, attrs, node.marks);
@@ -165,16 +167,16 @@ export class TextLineSpacingCommand extends UICommand {
       ) {
         const nodePos = Math.max(0, selection.head - selection.$head.parentOffset - 1);
         const node = tr.doc.nodeAt(nodePos);
-        if(node){
+        if (node) {
           const newAttrs = {
             ...node.attrs,
             overriddenLineSpacing: true,
             overriddenLineSpacingValue: this._lineSpacing
           };
-         tr = tr.setNodeMarkup(nodePos, null, newAttrs);
+          tr = tr.setNodeMarkup(nodePos, null, newAttrs);
+        }
+        dispatch?.(tr as Transaction);
       }
-      dispatch?.(tr as Transaction);
-    }
       return true;
     } else {
       return false;
