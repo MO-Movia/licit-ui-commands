@@ -69,7 +69,7 @@ function getRootElement(
 ): HTMLElement | null {
   const root =
     popUpParams?.container ||
-      document?.getElementsByClassName('czi-editor-frameset')?.[0] ||
+    document?.getElementsByClassName('czi-editor-frameset')?.[0] ||
     document.documentElement;
   let element = document.getElementById(id);
   if (!element && forceCreation) {
@@ -152,7 +152,7 @@ export function createPopUp(
   viewProps?: ViewProps,
   popUpParams?: PopUpParams
 ): PopUpHandle {
-  const rootId = popUpParams.popUpId ? popUpParams.popUpId : uuid();
+  const rootId = popUpParams.popUpId ?? uuid();
 
   let handle = null;
   let currentViewProps = viewProps || {};
