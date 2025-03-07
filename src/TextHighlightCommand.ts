@@ -1,5 +1,5 @@
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import { applyMark } from './applyMark';
+import { applyMark, updateMarksAttrs } from './applyMark';
 import { createPopUp } from './ui/createPopUp';
 import { findNodesWithSameMark } from './findNodesWithSameMark';
 import { isTextStyleMarkCommandEnabled } from './isTextStyleMarkCommandEnabled';
@@ -75,8 +75,9 @@ export class TextHighlightCommand extends UICommand {
       const { schema } = state;
       let { tr } = state;
       const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
-      const attrs = color ? { highlightColor: color } : null;
+      const attrs = color ? { highlightColor: color, overridden: true } : null;
       (tr as Transform) = applyMark(tr, schema, markType, attrs);
+      updateMarksAttrs(markType, tr, state, color);
       if (tr.docChanged || tr.storedMarksSet) {
         // If selection is empty, the color is added to `storedMarks`, which
         // works like `toggleMark`

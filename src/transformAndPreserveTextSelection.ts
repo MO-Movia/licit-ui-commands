@@ -138,6 +138,8 @@ export function transformAndPreserveTextSelection(
       return true;
     });
   }
-
+  tr = (tr as Transaction).setSelection(
+    TextSelection.create(tr.doc, selectionRange.from, selectionRange.to)
+  );
   return tr;
 }

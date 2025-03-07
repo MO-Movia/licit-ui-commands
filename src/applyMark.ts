@@ -1,7 +1,9 @@
 import { Transaction } from '@remirror/pm/state';
 import { MarkType, Node, ResolvedPos, Schema } from 'prosemirror-model';
-import { SelectionRange, TextSelection } from 'prosemirror-state';
+import { EditorState, SelectionRange, TextSelection } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
+import { getStyleByName, Style } from './runtime.service';
+import { MARK_OVERRIDE } from './MarkNames';
 
 interface MyNode {
   inlineContent: boolean; // Assuming inlineContent is of type boolean
@@ -87,7 +89,8 @@ function addCustomMark(
 ): Transform {
 
   const node = tr.doc.nodeAt(pos);
-  if (!node || !node.childCount) return tr; // Ensure the node exists and has children
+  if (!node?.childCount
+  ) return tr; // Ensure the node exists and has children
 
   let from = pos + 1; // Start at first child
   node.forEach((child) => {
@@ -135,7 +138,7 @@ export function addMarkWithAttributes(
   return tr;
 }
 
-function handleTextColorMark(
+export function handleTextColorMark(
   tr: Transform,
   $from: ResolvedPos,
   markType: MarkType,
@@ -146,7 +149,7 @@ function handleTextColorMark(
 ): Transform {
   // Issue fix: Custom style not get applied after override the style in the paragraph.
   if (isCustomStyleApplied) {
-    tr = tr.addMark($from.pos, $to.pos + 1, markType.create(attrs));
+    tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
   }
   else if (node) {
     let from = $from.pos;
@@ -157,7 +160,7 @@ function handleTextColorMark(
       const to = from + child.nodeSize + 1;
 
       if (!child.marks.some((mark) => mark.type.name === 'link')) {
-        tr = tr.addMark(from, to, markType.create(attrs));
+        tr = tr?.addMark(from, to, markType.create(attrs));
       }
 
       from = to + (child.childCount > 0 ? 1 : 0);
@@ -166,7 +169,7 @@ function handleTextColorMark(
   return tr;
 }
 
-function addMarksToNode(
+export function addMarksToNode(
   tr: Transform,
   from: number,
   to: number,
@@ -187,7 +190,7 @@ function addMarksToNode(
       const childTo = from + child.nodeSize + 1;
 
       if (!child.marks.some((mark) => mark.type.name === 'link')) {
-        tr = tr.addMark(
+        tr = tr?.addMark(
           from,
           childTo + (child.childCount > 0 ? 1 : 0),
           markType.create(attrs)
@@ -198,4 +201,143 @@ function addMarksToNode(
     });
   }
   return tr;
+}
+
+export function updateMarksAttrs(markType: MarkType, tr: Transform, state: EditorState, value: number | string) {
+
+  let attrs = {};
+
+  const startPos = tr.doc?.resolve(state.selection.from);
+  const endPos = tr.doc?.resolve(state.selection.to);
+  let _startPos = startPos?.pos;
+
+  // Traverse upwards to ensure we reach the full paragraph from selection start
+  while (startPos?.parent?.type?.name !== 'paragraph' && startPos?.depth > 0) {
+    _startPos = startPos.before();
+  }
+
+
+  let style: Style = null;
+  tr.doc?.nodesBetween(startPos?.pos, endPos?.pos, (node, pos) => {
+
+    if (node.type.name === 'table') {
+      return true;
+    }
+    if (node.type.name === 'paragraph' && node.attrs.styleName) {
+      style = getStyleByName(node.attrs.styleName);
+
+    }
+    else {
+      const nodesMarkType = node.marks.find(mark => mark.type.name === markType.name);
+
+      if (pos <= _startPos) {
+        switch (nodesMarkType?.type.name) {
+
+          case 'mark-text-color': {
+            const defTextColor = style?.styles?.color || '#000000';
+            if (defTextColor !== value.toString()) {
+              attrs = value ? { color: value, overridden: true } : null;
+            }
+            else {
+              attrs = value ? { color: value, overridden: false } : null;
+            }
+            break;
+          }
+          case 'mark-font-size':
+            if (style?.styles?.fontSize !== value?.toString()) {
+              attrs = value ? { pt: value, overridden: true } : null;
+            }
+            else {
+              attrs = value ? { pt: value, overridden: false } : null;
+            }
+            break;
+          case 'mark-font-type':
+            if (style?.styles?.fontName !== value?.toString()) {
+              attrs = value ? { name: value, overridden: true } : null;
+            }
+            else {
+              attrs = value ? { name: value, overridden: false } : null;
+            }
+            break;
+          case 'mark-text-highlight': {
+            const defHiglightColor = style?.styles?.textHighlight || '#ffffff';
+
+            if (defHiglightColor !== value?.toString()) {
+              attrs = value ? { highlightColor: value, overridden: true } : null;
+            }
+            else {
+              attrs = value ? { highlightColor: value, overridden: false } : null;
+            }
+            break;
+          }
+        }
+        if (attrs && Object.keys(attrs).length !== 0) {
+          tr.addMark(pos, pos + node.nodeSize, markType.create(attrs));
+        }
+      }
+
+    }
+    return true;
+  });
+
+}
+
+
+export function updateToggleMarks(markType: MarkType, tr: Transform, state: EditorState) {
+
+  let attrs = {};
+
+  const startPos = tr.doc.resolve(state.selection.from);
+  const endPos = tr.doc.resolve(state.selection.to);
+  let _startPos = startPos.pos;
+  const { schema } = state;
+  // Traverse upwards to ensure we reach the full paragraph from selection start
+  while (startPos.parent.type.name !== 'paragraph' && startPos.depth > 0) {
+    _startPos = startPos.before();
+  }
+
+
+  let style: Style = null;
+  tr.doc.nodesBetween(startPos.pos, endPos.pos, (node, pos) => {
+
+    if (node.type.name === 'paragraph' && node.attrs.styleName) {
+      style = getStyleByName(node.attrs.styleName);
+
+    }
+    else {
+      const hasMarks = node.marks.find(mark => mark.type.name === markType.name);
+
+      if (pos <= _startPos) {
+        const overrideMarkType = schema.marks[MARK_OVERRIDE];
+        if (hasMarks) {
+          tr.removeMark(pos, pos + node.nodeSize, overrideMarkType);
+        }
+        switch (markType.name) {
+
+          case 'strong':
+            attrs = { strong: style?.styles?.strike ?? true };
+            break;
+          case 'em':
+            attrs = { em: style?.styles?.strike ?? true };
+            break;
+          case 'underline':
+            attrs = { underline: style?.styles?.strike ?? true };
+            break;
+          case 'strike':
+            attrs = { strike: style?.styles?.strike ?? true };
+            break;
+
+        }
+        if (!hasMarks) {
+          const overridenMark = node.marks.find(mark => mark.type.name === overrideMarkType.name);
+          if (overridenMark) {
+            attrs = { ...overridenMark.attrs, ...attrs };
+          }
+          tr.addMark(pos, pos + node.nodeSize, overrideMarkType?.create(attrs));
+        }
+      }
+
+    }
+  });
+
 }
