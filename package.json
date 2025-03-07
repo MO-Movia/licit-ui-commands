@@ -1,6 +1,7 @@
 {
   "name": "@modusoperandi/licit-ui-commands",
   "version": "1.0.10",
+  "license": "MIT",
   "type": "module",
   "description": "Module that extend Step, overriding the apply, invert, map, getMap and fromJSON methods, and registering your class with a unique JSON-serialization identifier using Step.jsonID.",
   "main": "index.js",
@@ -19,7 +20,7 @@
     "test:unit": "jest",
     "test:coverage": "jest --coverage",
     "ci:bom": "cyclonedx-npm --ignore-npm-errors --short-PURLs --output-format XML --output-file dist/bom.xml",
-    "ci:build": "tsc --build && copyfiles --up 1 \"src/**/*.css\" dist  && copyfiles package.json dist",
+    "ci:build": "tsc --build && copyfiles --up 1 \"src/**/*.css\" dist  && copyfiles package.json LICENSE dist",
     "debug": "node --debug-brk --inspect ./node_modules/.bin/jest -i",
     "verify": "npm run lint -- --fix && npm run ci:build && npm run test:coverage && echo 'All Tests Passed!'"
   },
@@ -59,7 +60,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^28.2.0",
     "eslint-plugin-prettier": "^5.1.3",
-    "eslint-plugin-react": "7.37.2",
+    "eslint-plugin-react": "7.37.4",
     "husky": "^9.0.7",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.2.0",
