@@ -1,15 +1,15 @@
-import Color from 'color';
+import Color, {ColorInstance} from 'color';
 import * as React from 'react';
 
-import { CustomButton } from './CustomButton';
-import { clamp } from './clamp';
+import {CustomButton} from './CustomButton';
+import {clamp} from './clamp';
 
-function generateGreyColors(count: number): Array<Color> {
+function generateGreyColors(count: number): Array<ColorInstance> {
   let cc = 255;
   const interval = cc / count;
   const colors = [];
   while (cc > 0) {
-    const color = Color({ r: cc, g: cc, b: cc });
+    const color = Color({r: cc, g: cc, b: cc});
     cc -= interval;
     cc = Math.floor(cc);
     colors.unshift(color);
@@ -21,7 +21,7 @@ function generateRainbowColors(
   count: number,
   saturation: number,
   lightness: number
-): Array<Color> {
+): Array<ColorInstance> {
   const colors = [];
   const interval = 360 / count;
   const ss = clamp(0, saturation, 100);
@@ -36,12 +36,10 @@ function generateRainbowColors(
   return colors;
 }
 
-export class ColorEditor extends React.PureComponent {
-  declare props: {
-    close: (string) => void;
-    hex?: string;
-  };
-
+export class ColorEditor extends React.PureComponent<{
+  close: (hex: string) => void;
+  hex?: string;
+}> {
   render(): React.ReactElement<CustomButton> {
     const renderColor = this._renderColor;
     const selectedColor = this.props.hex;
@@ -72,14 +70,14 @@ export class ColorEditor extends React.PureComponent {
     );
   }
 
-  _renderColor = (
-    color: Color,
+  private readonly _renderColor = (
+    color: ColorInstance,
     index: number
   ): React.ReactElement<CustomButton> => {
     const selectedColor = this.props.hex;
     const hex = color.hex().toLowerCase();
-    const style = { backgroundColor: hex };
-    const active = selectedColor && selectedColor.toLowerCase() === hex;
+    const style = {backgroundColor: hex};
+    const active = selectedColor?.toLowerCase() === hex;
     return (
       <CustomButton
         active={active}
@@ -94,7 +92,7 @@ export class ColorEditor extends React.PureComponent {
     );
   };
 
-  _onSelectColor = (hex: string): void => {
+  private readonly _onSelectColor = (hex: string): void => {
     this.props.close(hex);
   };
 }

@@ -6,17 +6,20 @@ import { EditorView } from 'prosemirror-view';
 import * as React from 'react';
 
 import { MARK_FONT_TYPE } from './MarkNames';
-import { applyMark } from './applyMark';
+import { applyMark, updateMarksAttrs } from './applyMark';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 
-function setFontType(tr: Transform, schema: Schema, name: string, isCustomStyleApplied?: boolean): Transform {
+function setFontType(tr: Transform, state: EditorState, schema: Schema, name: string, isCustomStyleApplied?: boolean): Transform {
   const markType = schema.marks[MARK_FONT_TYPE];
   if (!markType) {
     return tr;
   }
 
-  const attrs = name ? { name } : null;
+  const attrs = name ? { name: name, overridden: !isCustomStyleApplied} : null;
   tr = applyMark(tr, schema, markType, attrs, isCustomStyleApplied);
+  if (undefined === isCustomStyleApplied) {
+    updateMarksAttrs(markType, tr, state, name);
+  }
   return tr;
 }
 
@@ -64,7 +67,7 @@ export class FontTypeCommand extends UICommand {
     // commnted selection because selection removes the storedMarks;
     // {selection}
 
-    const tr = setFontType(state.tr, schema, this._name);
+    const tr = setFontType(state.tr, state, schema, this._name);
     if (tr.docChanged || (tr as Transaction).storedMarksSet) {
       // If selection is empty, the color is added to `storedMarks`, which
       // works like `toggleMark`
@@ -84,7 +87,7 @@ export class FontTypeCommand extends UICommand {
   ): Transform => {
     const { schema } = state;
     tr = setFontType(
-      (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),
+      (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)), state,
       schema,
       this._name,
       true
