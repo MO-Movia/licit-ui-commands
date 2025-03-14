@@ -52,11 +52,11 @@ describe('TextColorCommand', () => {
             return { isAtom: true, isLeaf: true, isText: false };
           },
         },
-        resolve:()=>{
-          return {pos:0};
+        resolve: () => {
+          return { pos: 0 };
         }
       },
-      selection:{from:0,to:1}
+      selection: { from: 0, to: 1 }
     } as unknown as EditorState;
 
     const editorview = {} as unknown as EditorView;
@@ -148,11 +148,13 @@ describe('TextColorCommand', () => {
         },
 
       },
-      tr:{doc:{
-        nodeAt: (_x) => {
-          return {isAtom: true, isLeaf: true, isText: false, marks:[]};
-        },
-      }}
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false, marks: [] };
+          },
+        }
+      }
 
     } as unknown as EditorState;
 
@@ -172,6 +174,40 @@ describe('TextColorCommand', () => {
 
     expect(result).toBeDefined();
   });
+
+  it('waitForUserInput function() should be return undefined', () => {
+    const state = {
+      plugins: [],
+      selection: { from: 1, to: 2 },
+      schema: { marks: { 'mark-text-color': MARK_TEXT_COLOR } },
+      doc: {
+        nodeAt: (_x) => {
+          return { isAtom: true, isLeaf: true, isText: false };
+        },
+
+      },
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false, marks: [] };
+          },
+        }
+      }
+
+    } as unknown as EditorState;
+
+    const _dispatch = jest.fn();
+    const editorview = {} as unknown as EditorView;
+
+    const result = plugin.waitForUserInput(
+      state,
+      _dispatch,
+      editorview,
+      null
+    );
+
+    expect(result).toBeDefined();
+  });
   it('waitForUserInput function() should be return undefined', () => {
     const state = {
       plugins: [],
@@ -182,11 +218,13 @@ describe('TextColorCommand', () => {
           return { isAtom: true, isLeaf: true, isText: false };
         },
       },
-      tr:{doc:{
-        nodeAt: (_x) => {
-          return {isAtom: true, isLeaf: true, isText: false, marks:[]};
-        },
-      }}
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false, marks: [] };
+          },
+        }
+      }
     } as unknown as EditorState;
 
     const _dispatch = jest.fn();
@@ -259,11 +297,13 @@ describe('TextColorCommand', () => {
           return { isAtom: true, isLeaf: true, isText: false };
         },
       },
-      tr:{doc:{
-        nodeAt: (_x) => {
-          return {isAtom: true, isLeaf: true, isText: false, marks:[]};
-        },
-      }}
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false, marks: [] };
+          },
+        }
+      }
     } as unknown as EditorState;
 
     const _dispatch = jest.fn();
@@ -306,13 +346,17 @@ describe('TextColorCommand', () => {
     const test = plugin.executeWithUserInput(
       state,
       (_x) => {
-        ('');
+        return 'red';
       },
       editorview,
-      undefined
+      null
     );
 
     expect(test).toBeFalsy();
+  });
+  it('call cancel()', () => {
+    const test = plugin.cancel();
+    expect(test).toBeNull();
   });
 });
 

@@ -375,6 +375,8 @@ describe('comapreMarks', () => {
   it('should handle comapreMarks', () => {
     const test = comapreMarks({ styles: { 'em': [] } } as unknown as Style, { attrs: {}, type: { name: 'em' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
     expect(test).toBeDefined();
+    const test9 = comapreMarks({ styles: { 'em': false } } as unknown as Style, { attrs: {}, type: { name: 'em' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
+    expect(test9).toBeDefined();
     const test1 = comapreMarks({ styles: { 'mark-text-color': [] } } as unknown as Style, { attrs: {}, type: { name: 'mark-text-color' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
     expect(test1).toBeDefined();
     const test2 = comapreMarks({ styles: { 'mark-font-size': [] } } as unknown as Style, { attrs: {}, type: { name: 'mark-font-size' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
