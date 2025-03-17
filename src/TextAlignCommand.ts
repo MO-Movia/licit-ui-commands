@@ -56,9 +56,9 @@ export function setTextAlign(
     } else {
       attrs = {
         ...attrs,
-        align: null,
-        overriddenAlign: null,
-        overriddenAlignValue: null
+        align: !attrs.overriddenAlign ? null : attrs.align,
+        overriddenAlign: !attrs.overriddenAlign ? null : attrs.overriddenAlign,
+        overriddenAlignValue: !attrs.overriddenAlign ? null : attrs.overriddenAlignValue
       };
     }
     tr = tr.setNodeMarkup(pos, nodeType, attrs, node.marks);

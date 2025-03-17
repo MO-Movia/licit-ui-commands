@@ -70,9 +70,9 @@ export function setTextLineSpacing(
     } else {
       attrs = {
         ...attrs,
-        lineSpacing: SINGLE_LINE_SPACING,
-        overriddenLineSpacing: null,
-        overriddenLineSpacingValue: null
+        lineSpacing: !attrs.overriddenLineSpacing ? SINGLE_LINE_SPACING : attrs.lineSpacing,
+        overriddenLineSpacing: !attrs.overriddenLineSpacing ? null : attrs.overriddenLineSpacing,
+        overriddenLineSpacingValue: !attrs.overriddenLineSpacing ? null : attrs.overriddenLineSpacingValue
       };
     }
     tr = tr.setNodeMarkup(pos, nodeType, attrs, node.marks);
