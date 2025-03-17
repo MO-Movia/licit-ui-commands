@@ -119,7 +119,7 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
 /**
  * Recursively extracts paragraphs with styleName='Normal' from a given node.
  */
-function extractParagraphs(node, normalParagraphs, otherParagraphs) {
+export function extractParagraphs(node, normalParagraphs, otherParagraphs) {
   if (node.type.name === 'paragraph') {
     if (node.attrs.styleName === 'Normal' || node.attrs.styleName === null) {
       normalParagraphs.push(node);
