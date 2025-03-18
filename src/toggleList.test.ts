@@ -518,7 +518,7 @@ describe('wrapNodesWithListInternal with nodetype', () => {
   beforeEach(() => {
     mockTransaction = {
       doc: {
-        nodesBetween: jest.fn((callback) => {
+        nodesBetween: jest.fn((_from, _to, callback) => {
           callback(
             { type: { name: 'paragraph' }, attrs: {}, marks: [] },
             0
@@ -629,7 +629,7 @@ describe('wrapNodesWithListInternal with nodetype', () => {
   });
 
   it('should return original transaction if no valid nodes are found', () => {
-    mockTransaction.doc.nodesBetween = jest.fn((callback) => {
+    mockTransaction.doc.nodesBetween = jest.fn((_from, _to, callback) => {
       callback({ type: { name: 'image' } }, 0);
     });
     const list_node = {} as unknown as NodeType;
@@ -645,7 +645,7 @@ describe('wrapNodesWithListInternal with nodetype', () => {
   });
 
   it('should not modify the transaction if no valid lists are found', () => {
-    mockTransaction.doc.nodesBetween = jest.fn((callback) => {
+    mockTransaction.doc.nodesBetween = jest.fn((_from, _to, callback) => {
       callback({ type: { name: 'heading' } }, 0);
     });
     const list_node = {} as unknown as NodeType;
