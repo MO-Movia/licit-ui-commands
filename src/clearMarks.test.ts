@@ -149,109 +149,109 @@ describe('clearMarks', () => {
   it('should push nodes with specific marks into tasks array', () => {
     const mySchema = new Schema({
       nodes: {
-        doc: { content: "block+" },
+        doc: { content: 'block+' },
         paragraph: {
-          content: "text*",
-          group: "block",
+          content: 'text*',
+          group: 'block',
           attrs: { styleName: { default: null } },
           parseDOM: [
             {
-              tag: "p",
-              getAttrs: (dom) => ({ styleName: dom.getAttribute("styleName") }),
+              tag: 'p',
+              getAttrs: (dom) => ({ styleName: dom.getAttribute('styleName') }),
             },
           ],
           toDOM: (node) => [
-            "p",
+            'p',
             node.attrs.styleName ? { styleName: node.attrs.styleName } : {},
             0,
           ],
         },
-        text: { group: "inline" },
+        text: { group: 'inline' },
       },
       marks: {
         override: {
           parseDOM: [
             {
-              tag: "span",
+              tag: 'span',
               getAttrs: (dom) => ({
-                class: dom.classList.contains("override") ? "override" : null,
+                class: dom.classList.contains('override') ? 'override' : null,
               }),
             },
           ],
-          toDOM: () => ["span", { class: "override" }],
+          toDOM: () => ['span', { class: 'override' }],
         },
         strong: {
-          parseDOM: [{ tag: "strong" }],
-          toDOM: () => ["strong"],
+          parseDOM: [{ tag: 'strong' }],
+          toDOM: () => ['strong'],
         },
         em: {
-          parseDOM: [{ tag: "em" }],
-          toDOM: () => ["em"],
+          parseDOM: [{ tag: 'em' }],
+          toDOM: () => ['em'],
         },
         underline: {
-          parseDOM: [{ tag: "u" }],
-          toDOM: () => ["u"],
+          parseDOM: [{ tag: 'u' }],
+          toDOM: () => ['u'],
         },
         strike: {
-          parseDOM: [{ tag: "s" }],
-          toDOM: () => ["s"],
+          parseDOM: [{ tag: 's' }],
+          toDOM: () => ['s'],
         },
       },
     });
 
     // JSON structure representing a ProseMirror document
     const jsonDoc = {
-      type: "doc",
+      type: 'doc',
       content: [
         {
-          type: "paragraph",
-          attrs: { styleName: "header1" },
+          type: 'paragraph',
+          attrs: { styleName: 'header1' },
           content: [
             {
-              type: "text",
-              text: "Text with overridden mark",
-              marks: [{ type: "strong" }],
+              type: 'text',
+              text: 'Text with overridden mark',
+              marks: [{ type: 'strong' }],
             },
           ],
         },
         {
-          type: "paragraph",
+          type: 'paragraph',
           content: [
             {
-              type: "text",
-              text: "Some emphasized text",
-              marks: [{ type: "em" }],
+              type: 'text',
+              text: 'Some emphasized text',
+              marks: [{ type: 'em' }],
             },
           ],
         },
         {
-          type: "paragraph",
+          type: 'paragraph',
           content: [
             {
-              type: "text",
-              text: "Underlined text",
-              marks: [{ type: "underline" }],
+              type: 'text',
+              text: 'Underlined text',
+              marks: [{ type: 'underline' }],
             },
           ],
         },
         {
-          type: "paragraph",
-          attrs: { styleName: "customStyle" },
+          type: 'paragraph',
+          attrs: { styleName: 'customStyle' },
           content: [
             {
-              type: "text",
-              text: "Styled paragraph with strike",
-              marks: [{ type: "strike" }],
+              type: 'text',
+              text: 'Styled paragraph with strike',
+              marks: [{ type: 'strike' }],
             },
           ],
         },
         {
-          type: "paragraph",
+          type: 'paragraph',
           content: [
             {
-              type: "text",
-              text: "Text with overridden mark",
-              marks: [{ type: "override" }],
+              type: 'text',
+              text: 'Text with overridden mark',
+              marks: [{ type: 'override' }],
             },
           ],
         },
@@ -558,10 +558,10 @@ describe('comapreMarks', () => {
 
   // describe('extractParagraphs', () => {
   it('should add paragraph to normalParagraphs when styleName is null', () => {
-    const normalParagraphs: any[] = [];
-    const otherParagraphs: any[] = [];
+    const normalParagraphs= [];
+    const otherParagraphs= [];
     extractParagraphs(
-      { attrs: { styleName: null }, type: { name: 'paragraph' } } as any,
+      { attrs: { styleName: null }, type: { name: 'paragraph' } } as unknown as Node,
       normalParagraphs,
       otherParagraphs
     );
@@ -571,10 +571,10 @@ describe('comapreMarks', () => {
   });
 
   it('should add paragraph to normalParagraphs when styleName is "Normal"', () => {
-    const normalParagraphs: any[] = [];
-    const otherParagraphs: any[] = [];
+    const normalParagraphs= [];
+    const otherParagraphs= [];
     extractParagraphs(
-      { attrs: { styleName: 'Normal' }, type: { name: 'paragraph' } } as any,
+      { attrs: { styleName: 'Normal' }, type: { name: 'paragraph' } } as unknown as Node,
       normalParagraphs,
       otherParagraphs
     );
@@ -584,10 +584,10 @@ describe('comapreMarks', () => {
   });
 
   it('should add paragraph to otherParagraphs when styleName is not "Normal" or null', () => {
-    const normalParagraphs: any[] = [];
-    const otherParagraphs: any[] = [];
+    const normalParagraphs = [];
+    const otherParagraphs = [];
     extractParagraphs(
-      { attrs: { styleName: 'test' }, type: { name: 'paragraph' } } as any,
+      { attrs: { styleName: 'test' }, type: { name: 'paragraph' } } as unknown as Node,
       normalParagraphs,
       otherParagraphs
     );
@@ -597,8 +597,8 @@ describe('comapreMarks', () => {
   });
 
   it('should recursively extract paragraphs from child nodes', () => {
-    const normalParagraphs: any[] = [];
-    const otherParagraphs: any[] = [];
+    const normalParagraphs = [];
+    const otherParagraphs = [];
     extractParagraphs(
       {
         type: { name: 'doc' },
@@ -606,7 +606,7 @@ describe('comapreMarks', () => {
           { attrs: { styleName: 'Normal' }, type: { name: 'paragraph' } },
           { attrs: { styleName: 'test' }, type: { name: 'paragraph' } },
         ],
-      } as any,
+      } as unknown as Node,
       normalParagraphs,
       otherParagraphs
     );
@@ -616,10 +616,10 @@ describe('comapreMarks', () => {
   });
 
   it('should do nothing if node.type.name is not "paragraph" and has no content', () => {
-    const normalParagraphs: any[] = [];
-    const otherParagraphs: any[] = [];
+    const normalParagraphs = [];
+    const otherParagraphs = [];
     extractParagraphs(
-      { content: [], attrs: { styleName: 'test' }, type: { name: 'heading' } } as any,
+      { content: [], attrs: { styleName: 'test' }, type: { name: 'heading' } } as unknown as Node,
       normalParagraphs,
       otherParagraphs
     );

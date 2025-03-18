@@ -413,13 +413,6 @@ describe('unwrapNodesFromListInternal', () => {
         } as unknown as Transform;
       }
     } as unknown as Transform;
-    const trB = {
-      selection: { from: 1, to: 2 }, doc: dummyDoc, setNodeMarkup: () => {
-        return {
-          selection: { from: 1, to: 2 }, doc: dummyDoc, setNodeMarkup: () => { return {}; }
-        } as unknown as Transform;
-      }
-    } as unknown as Transform;
     const memo = { tr: trA, schema: mySchema };
     expect(unwrapNodesFromListInternal(memo, 0)).toBeDefined();
 
@@ -518,14 +511,14 @@ describe('wrapNodesWithList', () => {
 
 
 describe('wrapNodesWithListInternal with nodetype', () => {
-  let mockMemo: any;
-  let mockTransaction: any;
-  let mockSchema: any;
+  let mockMemo;
+  let mockTransaction;
+  let mockSchema;
 
   beforeEach(() => {
     mockTransaction = {
       doc: {
-        nodesBetween: jest.fn((from, to, callback) => {
+        nodesBetween: jest.fn((callback) => {
           callback(
             { type: { name: 'paragraph' }, attrs: {}, marks: [] },
             0
@@ -561,59 +554,59 @@ describe('wrapNodesWithListInternal with nodetype', () => {
 
     const mySchema = new Schema({
       nodes: {
-        doc: { content: "block+" },
+        doc: { content: 'block+' },
         paragraph: {
-          content: "text*",
-          group: "block",
-          parseDOM: [{ tag: "p" }],
-          toDOM: () => ["p", 0],
+          content: 'text*',
+          group: 'block',
+          parseDOM: [{ tag: 'p' }],
+          toDOM: () => ['p', 0],
         },
-        text: { group: "inline" },
+        text: { group: 'inline' },
         bullet_list: {
-          group: "block",
-          content: "list_item+",
-          parseDOM: [{ tag: "ul" }],
-          toDOM: () => ["ul", 0],
+          group: 'block',
+          content: 'list_item+',
+          parseDOM: [{ tag: 'ul' }],
+          toDOM: () => ['ul', 0],
         },
         list_item: {
-          group: "block",
-          content: "paragraph block*",
-          parseDOM: [{ tag: "li" }],
-          toDOM: () => ["li", 0],
+          group: 'block',
+          content: 'paragraph block*',
+          parseDOM: [{ tag: 'li' }],
+          toDOM: () => ['li', 0],
         },
       },
       marks: {
         strong: {
-          parseDOM: [{ tag: "strong" }],
-          toDOM: () => ["strong"],
+          parseDOM: [{ tag: 'strong' }],
+          toDOM: () => ['strong'],
         },
       },
     });
-    
+
     // JSON representation of a ProseMirror document containing a `bullet_list`
     const jsonDoc = {
-      type: "doc",
+      type: 'doc',
       content: [
         {
-          type: "bullet_list",
+          type: 'bullet_list',
           content: [
             {
-              type: "list_item",
-              content: [{ type: "paragraph", content: [{ type: "text", text: "First item" }] }],
+              type: 'list_item',
+              content: [{ type: 'paragraph', content: [{ type: 'text', text: 'First item' }] }],
             },
             {
-              type: "list_item",
-              content: [{ type: "paragraph", content: [{ type: "text", text: "Second item", marks: [{ type: "strong" }] }] }],
+              type: 'list_item',
+              content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Second item', marks: [{ type: 'strong' }] }] }],
             },
             {
-              type: "list_item",
-              content: [{ type: "paragraph", content: [{ type: "text", text: "Third item" }] }],
+              type: 'list_item',
+              content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Third item' }] }],
             },
           ],
         },
       ],
     };
-    
+
     // Convert JSON into a ProseMirror Node
     const docNode = mySchema.nodeFromJSON(jsonDoc);
 
@@ -636,7 +629,7 @@ describe('wrapNodesWithListInternal with nodetype', () => {
   });
 
   it('should return original transaction if no valid nodes are found', () => {
-    mockTransaction.doc.nodesBetween = jest.fn((from, to, callback) => {
+    mockTransaction.doc.nodesBetween = jest.fn((callback) => {
       callback({ type: { name: 'image' } }, 0);
     });
     const list_node = {} as unknown as NodeType;
@@ -646,13 +639,13 @@ describe('wrapNodesWithListInternal with nodetype', () => {
 
   it('should handle newselection and modify the range', () => {
     const list_node = {} as unknown as NodeType;
-    const result = wrapNodesWithListInternal(mockMemo, list_node, 'disc', null);
+  wrapNodesWithListInternal(mockMemo, list_node, 'disc', null);
 
     expect(mockTransaction.doc.nodesBetween).toHaveBeenCalledWith(0, 1, expect.any(Function));
   });
 
   it('should not modify the transaction if no valid lists are found', () => {
-    mockTransaction.doc.nodesBetween = jest.fn((from, to, callback) => {
+    mockTransaction.doc.nodesBetween = jest.fn((callback) => {
       callback({ type: { name: 'heading' } }, 0);
     });
     const list_node = {} as unknown as NodeType;

@@ -210,52 +210,52 @@ describe('TextLineSpacingCommand', () => {
   it('should handle isActive ',()=>{
     const mySchema = new Schema({
       nodes: {
-        doc: { content: "block+" },
+        doc: { content: 'block+' },
         paragraph: {
-          content: "text*",
-          group: "block",
-          attrs: { lineSpacing: { default: "2.0" } }, // Add lineSpacing attribute
-          parseDOM: [{ tag: "p", getAttrs: (dom) => ({ lineSpacing: dom.getAttribute("lineSpacing") || "2.0" }) }],
-          toDOM: (node) => ["p", { lineSpacing: node.attrs.lineSpacing }, 0],
+          content: 'text*',
+          group: 'block',
+          attrs: { lineSpacing: { default: '2.0' } }, // Add lineSpacing attribute
+          parseDOM: [{ tag: 'p', getAttrs: (dom) => ({ lineSpacing: dom.getAttribute('lineSpacing') || '2.0' }) }],
+          toDOM: (node) => ['p', { lineSpacing: node.attrs.lineSpacing }, 0],
         },
         heading: {
-          content: "text*",
-          group: "block",
-          attrs: { level: { default: 1 }, lineSpacing: { default: "2.0" } },
-          parseDOM: [{ tag: "h1", getAttrs: (dom) => ({ lineSpacing: dom.getAttribute("lineSpacing") || "2.0" }) }],
-          toDOM: (node) => ["h1", { lineSpacing: node.attrs.lineSpacing }, 0],
+          content: 'text*',
+          group: 'block',
+          attrs: { level: { default: 1 }, lineSpacing: { default: '2.0' } },
+          parseDOM: [{ tag: 'h1', getAttrs: (dom) => ({ lineSpacing: dom.getAttribute('lineSpacing') || '2.0' }) }],
+          toDOM: (node) => ['h1', { lineSpacing: node.attrs.lineSpacing }, 0],
         },
-        text: { group: "inline" },
+        text: { group: 'inline' },
       },
     });
-    
+
     // Define `_lineSpacing` value that should match nodes
-    command._lineSpacing = "2.0"; // Change this to test different values
-    
+    command._lineSpacing = '2.0'; // Change this to test different values
+
     // ProseMirror JSON Document (Matching All Conditions)
     const jsonDoc = {
-      type: "doc",
+      type: 'doc',
       content: [
         {
-          type: "paragraph",
-          attrs: { lineSpacing: "2.0" },
-          content: [{ type: "text", text: "First paragraph (wrong lineSpacing)" }],
+          type: 'paragraph',
+          attrs: { lineSpacing: '2.0' },
+          content: [{ type: 'text', text: 'First paragraph (wrong lineSpacing)' }],
         },
         {
-          type: "heading",
-          attrs: { level: 1, lineSpacing: "2.0" }, 
-          content: [{ type: "text", text: "Heading with correct lineSpacing" }],
+          type: 'heading',
+          attrs: { level: 1, lineSpacing: '2.0' },
+          content: [{ type: 'text', text: 'Heading with correct lineSpacing' }],
         },
         {
-          type: "paragraph",
-          attrs: { lineSpacing: "2.0" }, 
-          content: [{ type: "text", text: "Paragraph with correct lineSpacing" }],
+          type: 'paragraph',
+          attrs: { lineSpacing: '2.0' },
+          content: [{ type: 'text', text: 'Paragraph with correct lineSpacing' }],
         },
       ],
     };
-    
+
     // Convert JSON into a ProseMirror Node
     const docNode = mySchema.nodeFromJSON(jsonDoc);
-    expect(command.isActive({selection:{from:0,to:14},doc:docNode,schema:{nodes:[]}} as unknown as EditorState))
-  })
+    expect(command.isActive({selection:{from:0,to:14},doc:docNode,schema:{nodes:[]}} as unknown as EditorState));
+  });
 });
