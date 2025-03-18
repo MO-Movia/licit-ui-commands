@@ -102,6 +102,14 @@ describe('toggleList', () => {
     const test = toggleList(tr, schema, listNodeType, 'bold');
     expect(test).toBe(tr);
   });
+  it('should handle toggleList when selecton.from is 0 and to is not 0', () => {
+    const tr = {
+      selection: { from: 10, to: 1 }, doc: dummyDoc, setSelection:()=>{}
+    } as unknown as Transform;
+    const listNodeType = {} as unknown as NodeType;
+    const test = toggleList(tr, schema, listNodeType, 'bold');
+    expect(test).toBe(tr);
+  });
 
   describe('wrapItemsWithListInternal', () => {
     const items = [
@@ -329,7 +337,7 @@ describe('wrapNodesWithListInternal', () => {
       }
     } as unknown as Transform;
     const memo = { tr: tr, schema: mySchema };
-    expect(wrapNodesWithListInternal(memo, null, 'test')).toBeDefined();
+    expect(wrapNodesWithListInternal(memo, null as unknown as NodeType, 'test')).toBeDefined();
   });
 });
 describe('unwrapNodesFromListInternal', () => {
@@ -414,8 +422,19 @@ describe('unwrapNodesFromListInternal', () => {
     } as unknown as Transform;
     const memo = { tr: trA, schema: mySchema };
     expect(unwrapNodesFromListInternal(memo, 0)).toBeDefined();
-    const memoA = { tr: trB, schema: { nodes: {} } };
-    expect(unwrapNodesFromListInternal(memoA as unknown as SelectionMemo, 0)).toBeDefined();
+
+
+
+    dummyDoc.nodeAt = () => { return {} as unknown as Node; };
+    const trAb = {
+      selection: { from: 1, to: 2 }, doc: dummyDoc, setNodeMarkup: () => {
+        return {
+          selection: { from: 1, to: 2 }, doc: dummyDoc, setNodeMarkup: () => { return {}; }
+        } as unknown as Transform;
+      }
+    } as unknown as Transform;
+    const memo1 = { tr: trAb, schema: {nodes:[]} } as unknown as SelectionMemo;
+    expect(unwrapNodesFromListInternal(memo1, 0)).toBeDefined();
   });
 });
 describe('wrapNodesWithList', () => {
@@ -492,7 +511,7 @@ describe('wrapNodesWithList', () => {
         } as unknown as Transform;
       }
     } as unknown as Transform;
-    expect(wrapNodesWithList(tr, mySchema, null, 'test')).toBeDefined();
+    expect(wrapNodesWithList(tr, mySchema, null as unknown as NodeType, 'test')).toBeDefined();
   });
 });
 
@@ -534,6 +553,83 @@ describe('wrapNodesWithListInternal with nodetype', () => {
   });
 
   it('should wrap paragraph nodes with list correctly', () => {
+    const list_node = {} as unknown as NodeType;
+    const result = wrapNodesWithListInternal(mockMemo, list_node, 'disc');
+    expect(result).toBe(mockTransaction);
+  });
+  it('should wrap paragraph nodes with list correctly', () => {
+
+    const mySchema = new Schema({
+      nodes: {
+        doc: { content: "block+" },
+        paragraph: {
+          content: "text*",
+          group: "block",
+          parseDOM: [{ tag: "p" }],
+          toDOM: () => ["p", 0],
+        },
+        text: { group: "inline" },
+        bullet_list: {
+          group: "block",
+          content: "list_item+",
+          parseDOM: [{ tag: "ul" }],
+          toDOM: () => ["ul", 0],
+        },
+        list_item: {
+          group: "block",
+          content: "paragraph block*",
+          parseDOM: [{ tag: "li" }],
+          toDOM: () => ["li", 0],
+        },
+      },
+      marks: {
+        strong: {
+          parseDOM: [{ tag: "strong" }],
+          toDOM: () => ["strong"],
+        },
+      },
+    });
+    
+    // JSON representation of a ProseMirror document containing a `bullet_list`
+    const jsonDoc = {
+      type: "doc",
+      content: [
+        {
+          type: "bullet_list",
+          content: [
+            {
+              type: "list_item",
+              content: [{ type: "paragraph", content: [{ type: "text", text: "First item" }] }],
+            },
+            {
+              type: "list_item",
+              content: [{ type: "paragraph", content: [{ type: "text", text: "Second item", marks: [{ type: "strong" }] }] }],
+            },
+            {
+              type: "list_item",
+              content: [{ type: "paragraph", content: [{ type: "text", text: "Third item" }] }],
+            },
+          ],
+        },
+      ],
+    };
+    
+    // Convert JSON into a ProseMirror Node
+    const docNode = mySchema.nodeFromJSON(jsonDoc);
+
+
+    mockTransaction = {
+      doc: docNode,
+      selection: {
+        from: 0,
+        to: 14,
+      },
+      setNodeMarkup: jest.fn().mockReturnThis(),
+    };
+    mockMemo = {
+      schema: mockSchema,
+      tr: mockTransaction,
+    };
     const list_node = {} as unknown as NodeType;
     const result = wrapNodesWithListInternal(mockMemo, list_node, 'disc');
     expect(result).toBe(mockTransaction);

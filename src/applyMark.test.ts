@@ -1200,6 +1200,89 @@ describe('updateToggleMarks',()=>{
   it('should handle updateToggleMarks',()=>{
     const mySchema = new Schema({
       nodes: {
+        doc: { content: "block+" },
+        paragraph: {
+          content: "text*",
+          group: "block",
+          attrs: { lineSpacing: { default: "1.5" } },
+          parseDOM: [{ tag: "p", getAttrs: (dom) => ({ lineSpacing: dom.getAttribute("lineSpacing") || "1.5" }) }],
+          toDOM: (node) => ["p", { lineSpacing: node.attrs.lineSpacing }, 0],
+        },
+        heading: {
+          content: "text*",
+          group: "block",
+          attrs: { level: { default: 1 }, lineSpacing: { default: "2.0" } },
+          parseDOM: [{ tag: "h1", getAttrs: (dom) => ({ lineSpacing: dom.getAttribute("lineSpacing") || "2.0" }) }],
+          toDOM: (node) => ["h1", { lineSpacing: node.attrs.lineSpacing }, 0],
+        },
+        text: { group: "inline" },
+      },
+      marks: {
+        override: {
+          parseDOM: [{ tag: "span", getAttrs: (dom) => ({ class: dom.classList.contains("override") ? "override" : null }) }],
+          toDOM: () => ["span", { class: "override" }],
+        },
+        strong: {
+          parseDOM: [{ tag: "strong" }],
+          toDOM: () => ["strong"],
+        },
+        em: {
+          parseDOM: [{ tag: "em" }],
+          toDOM: () => ["em"],
+        },
+        underline: {
+          parseDOM: [{ tag: "u" }],
+          toDOM: () => ["u"],
+        },
+        strike: {
+          parseDOM: [{ tag: "s" }],
+          toDOM: () => ["s"],
+        },
+      },
+    });
+    
+    const jsonDoc = {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          attrs: { lineSpacing: "1.5" },
+          content: [{ type: "text", text: "First paragraph", marks: [{ type: "em" }] }],
+        },
+        {
+          type: "heading",
+          attrs: { level: 1, lineSpacing: "2.0" }, 
+          content: [{ type: "text", text: "Heading with correct lineSpacing", marks: [{ type: "override" }] }], 
+        },
+        {
+          type: "paragraph",
+          attrs: { lineSpacing: "2.0" },
+          content: [
+            { type: "text", text: "Strong and underlined text", marks: [{ type: "strong" }, { type: "underline" }] },
+          ],
+        },
+      ],
+    };
+    
+    // Convert JSON into a ProseMirror Node
+    const docNode = mySchema.nodeFromJSON(jsonDoc);
+    const test = updateToggleMarks({name:'strong'} as unknown as MarkType,{doc:docNode,addMark:()=>{return {}},removeMark:()=>{return {}}} as unknown as Transform,{selection:{from:15,to:20},schema:mySchema} as unknown as EditorState);
+    expect(test).toBeUndefined();
+    const test1 = updateToggleMarks({name:'em'} as unknown as MarkType,{doc:docNode,addMark:()=>{return {}},removeMark:()=>{return {}}} as unknown as Transform,{selection:{from:15,to:20},schema:mySchema} as unknown as EditorState);
+    expect(test1).toBeUndefined();
+    const test2 = updateToggleMarks({name:'underline'} as unknown as MarkType,{doc:docNode,addMark:()=>{return {}},removeMark:()=>{return {}}} as unknown as Transform,{selection:{from:15,to:20},schema:mySchema} as unknown as EditorState);
+    expect(test2).toBeUndefined();
+    const test3 = updateToggleMarks({name:'strike'} as unknown as MarkType,{doc:docNode,addMark:()=>{return {}},removeMark:()=>{return {}}} as unknown as Transform,{selection:{from:15,to:20},schema:mySchema} as unknown as EditorState);
+    expect(test3).toBeUndefined();
+  });
+
+
+
+
+
+  it('should handle updateToggleMarks',()=>{
+    const mySchema = new Schema({
+      nodes: {
         doc: { content: 'block+' },
         paragraph: {
           content: 'text*',
