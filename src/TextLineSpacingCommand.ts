@@ -68,11 +68,14 @@ export function setTextLineSpacing(
         lineSpacing: lineSpacingValue,
       };
     } else {
+      const isOverriddenLineSpacing = attrs.overriddenLineSpacing ?? null;
+
       attrs = {
         ...attrs,
-        lineSpacing: !attrs.overriddenLineSpacing ? SINGLE_LINE_SPACING : attrs.lineSpacing,
-        overriddenLineSpacing: !attrs.overriddenLineSpacing ? null : attrs.overriddenLineSpacing,
-        overriddenLineSpacingValue: !attrs.overriddenLineSpacing ? null : attrs.overriddenLineSpacingValue
+        lineSpacing: isOverriddenLineSpacing ? attrs.lineSpacing : SINGLE_LINE_SPACING,
+        overriddenLineSpacing: isOverriddenLineSpacing ? attrs.overriddenLineSpacing : null,
+        overriddenLineSpacingValue: isOverriddenLineSpacing ? attrs.overriddenLineSpacingValue : null
+
       };
     }
     tr = tr.setNodeMarkup(pos, nodeType, attrs, node.marks);

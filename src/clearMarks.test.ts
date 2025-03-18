@@ -1,5 +1,5 @@
 import { Mark, Node, Schema } from 'prosemirror-model';
-import { clearHeading, clearMarks, comapreMarks,extractParagraphs } from './clearMarks';
+import { clearHeading, clearMarks, comapreMarks, extractParagraphs } from './clearMarks';
 import { EditorState, TextSelection } from 'prosemirror-state';
 import { doc, p } from 'prosemirror-test-builder';
 import { Transform } from 'prosemirror-transform';
@@ -198,7 +198,7 @@ describe('clearMarks', () => {
         },
       },
     });
-    
+
     // JSON structure representing a ProseMirror document
     const jsonDoc = {
       type: "doc",
@@ -257,7 +257,7 @@ describe('clearMarks', () => {
         },
       ],
     };
-    
+
     // Create the document node from JSON
     const docNode = mySchema.nodeFromJSON(jsonDoc);
     const tr = {
@@ -501,15 +501,15 @@ describe('comapreMarks', () => {
     expect(test9).toBeDefined();
     const test1 = comapreMarks({ styles: { 'mark-text-color': [] } } as unknown as Style, { attrs: {}, type: { name: 'mark-text-color' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
     expect(test1).toBeDefined();
-    const test1a = comapreMarks({ styles: { 'mark-text-color': [],'color':true } } as unknown as Style, { attrs: {}, type: { name: 'mark-text-color' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
+    const test1a = comapreMarks({ styles: { 'mark-text-color': [], 'color': true } } as unknown as Style, { attrs: {}, type: { name: 'mark-text-color' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
     expect(test1a).toBeDefined();
     const test2 = comapreMarks({ styles: { 'mark-font-size': [] } } as unknown as Style, { attrs: {}, type: { name: 'mark-font-size' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
     expect(test2).toBeDefined();
-    const test2a = comapreMarks({ styles: { 'mark-font-size': [],'fontSize':true } } as unknown as Style, { attrs: {}, type: { name: 'mark-font-size' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
+    const test2a = comapreMarks({ styles: { 'mark-font-size': [], 'fontSize': true } } as unknown as Style, { attrs: {}, type: { name: 'mark-font-size' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
     expect(test2a).toBeDefined();
     const test3 = comapreMarks({ styles: { 'mark-font-type': [] } } as unknown as Style, { attrs: {}, type: { name: 'mark-font-type' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
     expect(test3).toBeDefined();
-    const test3a = comapreMarks({ styles: { 'mark-font-type': [],'fontName':true } } as unknown as Style, { attrs: {}, type: { name: 'mark-font-type' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
+    const test3a = comapreMarks({ styles: { 'mark-font-type': [], 'fontName': true } } as unknown as Style, { attrs: {}, type: { name: 'mark-font-type' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
     expect(test3a).toBeDefined();
     const test4 = comapreMarks({ styles: { 'strike': [] } } as unknown as Style, { attrs: {}, type: { name: 'strike' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
     expect(test4).toBeDefined();
@@ -517,7 +517,7 @@ describe('comapreMarks', () => {
     expect(test5).toBeDefined();
     const test6 = comapreMarks({ styles: { 'mark-text-highlight': [] } } as unknown as Style, { attrs: {}, type: { name: 'mark-text-highlight' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
     expect(test6).toBeDefined();
-    const test6a = comapreMarks({ styles: { 'mark-text-highlight': [],'textHighlight':true } } as unknown as Style, { attrs: {}, type: { name: 'mark-text-highlight' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
+    const test6a = comapreMarks({ styles: { 'mark-text-highlight': [], 'textHighlight': true } } as unknown as Style, { attrs: {}, type: { name: 'mark-text-highlight' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
     expect(test6a).toBeDefined();
     const test7 = comapreMarks({ styles: { 'underline': [] } } as unknown as Style, { attrs: {}, type: { name: 'underline' } } as unknown as Mark, {}, 0, {} as unknown as Node, {} as unknown as Schema);
     expect(test7).toBeDefined();
@@ -544,13 +544,89 @@ describe('comapreMarks', () => {
     const test8 = comapreMarks({ styles: { '': [] } } as unknown as Style, { attrs: { overridden: true }, type: { name: 'test' } } as unknown as Mark, [], 0, {} as unknown as Node, { marks: {} } as unknown as Schema);
     expect(test8).toBeDefined();
   });
-  it('should handle extractParagraphs',()=>{
-    expect(extractParagraphs({attrs:{styleName:null},type:{name:'paragraph'}},[],[])).toBeUndefined();
-  })
-  it('should handle extractParagraphs when styleName is not null or normal',()=>{
-    expect(extractParagraphs({attrs:{styleName:'test'},type:{name:'paragraph'}},[],[])).toBeUndefined();
-  })
-  it('should handle extractParagraphs when node.type.name is not paragraph',()=>{
-    expect(extractParagraphs({content:[],attrs:{styleName:'test'},type:{name:'heading'}},[],[])).toBeUndefined();
-  })
+  // it('should handle extractParagraphs',()=>{
+  //   expect(extractParagraphs({attrs:{styleName:null},type:{name:'paragraph'}},[],[])).toBeUndefined();
+  // })
+  // it('should handle extractParagraphs when styleName is not null or normal',()=>{
+  //   expect(extractParagraphs({attrs:{styleName:'test'},type:{name:'paragraph'}},[],[])).toBeUndefined();
+  // })
+  // it('should handle extractParagraphs when node.type.name is not paragraph',()=>{
+  //   expect(extractParagraphs({content:[],attrs:{styleName:'test'},type:{name:'heading'}},[],[])).toBeUndefined();
+  // })
+
+
+
+  // describe('extractParagraphs', () => {
+  it('should add paragraph to normalParagraphs when styleName is null', () => {
+    const normalParagraphs: any[] = [];
+    const otherParagraphs: any[] = [];
+    extractParagraphs(
+      { attrs: { styleName: null }, type: { name: 'paragraph' } } as any,
+      normalParagraphs,
+      otherParagraphs
+    );
+
+    expect(normalParagraphs).toHaveLength(1);
+    expect(otherParagraphs).toHaveLength(0);
+  });
+
+  it('should add paragraph to normalParagraphs when styleName is "Normal"', () => {
+    const normalParagraphs: any[] = [];
+    const otherParagraphs: any[] = [];
+    extractParagraphs(
+      { attrs: { styleName: 'Normal' }, type: { name: 'paragraph' } } as any,
+      normalParagraphs,
+      otherParagraphs
+    );
+
+    expect(normalParagraphs).toHaveLength(1);
+    expect(otherParagraphs).toHaveLength(0);
+  });
+
+  it('should add paragraph to otherParagraphs when styleName is not "Normal" or null', () => {
+    const normalParagraphs: any[] = [];
+    const otherParagraphs: any[] = [];
+    extractParagraphs(
+      { attrs: { styleName: 'test' }, type: { name: 'paragraph' } } as any,
+      normalParagraphs,
+      otherParagraphs
+    );
+
+    expect(normalParagraphs).toHaveLength(0);
+    expect(otherParagraphs).toHaveLength(1);
+  });
+
+  it('should recursively extract paragraphs from child nodes', () => {
+    const normalParagraphs: any[] = [];
+    const otherParagraphs: any[] = [];
+    extractParagraphs(
+      {
+        type: { name: 'doc' },
+        content: [
+          { attrs: { styleName: 'Normal' }, type: { name: 'paragraph' } },
+          { attrs: { styleName: 'test' }, type: { name: 'paragraph' } },
+        ],
+      } as any,
+      normalParagraphs,
+      otherParagraphs
+    );
+
+    expect(normalParagraphs).toHaveLength(1);
+    expect(otherParagraphs).toHaveLength(1);
+  });
+
+  it('should do nothing if node.type.name is not "paragraph" and has no content', () => {
+    const normalParagraphs: any[] = [];
+    const otherParagraphs: any[] = [];
+    extractParagraphs(
+      { content: [], attrs: { styleName: 'test' }, type: { name: 'heading' } } as any,
+      normalParagraphs,
+      otherParagraphs
+    );
+
+    expect(normalParagraphs).toHaveLength(0);
+    expect(otherParagraphs).toHaveLength(0);
+  });
+  // });
+
 });

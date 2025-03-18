@@ -60,8 +60,8 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
   const marksToAdd = [];
   const overrideMarkstoRemove = [];
   let style: Style = null;
-  const paragraphsWithStyle = [];
-  const otherParagraphs = [];
+  const paragraphsWithStyle: Node[] = [];
+  const otherParagraphs: Node[] = [];
   const slice = selection instanceof TextSelection ? selection.content().content : null;
   if (slice?.childCount > 1) {
 
@@ -119,7 +119,7 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
 /**
  * Recursively extracts paragraphs with styleName='Normal' from a given node.
  */
-export function extractParagraphs(node, normalParagraphs, otherParagraphs) {
+export function extractParagraphs(node: Node, normalParagraphs: Node[], otherParagraphs: Node[]) {
   if (node.type.name === 'paragraph') {
     if (node.attrs.styleName === 'Normal' || node.attrs.styleName === null) {
       normalParagraphs.push(node);

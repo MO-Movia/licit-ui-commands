@@ -54,11 +54,12 @@ export function setTextAlign(
         align: alignment,
       };
     } else {
+      const isOverridden = attrs.overriddenAlign ?? null;
       attrs = {
         ...attrs,
-        align: !attrs.overriddenAlign ? null : attrs.align,
-        overriddenAlign: !attrs.overriddenAlign ? null : attrs.overriddenAlign,
-        overriddenAlignValue: !attrs.overriddenAlign ? null : attrs.overriddenAlignValue
+        align: isOverridden ? attrs.align : null,
+        overriddenAlign: isOverridden ? attrs.overriddenAlign : null,
+        overriddenAlignValue: isOverridden ? attrs.overriddenAlignValue : null
       };
     }
     tr = tr.setNodeMarkup(pos, nodeType, attrs, node.marks);

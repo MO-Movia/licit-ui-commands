@@ -203,7 +203,7 @@ describe('TextColorCommand', () => {
       state,
       _dispatch,
       editorview,
-      null
+      undefined
     );
 
     expect(result).toBeDefined();
@@ -349,7 +349,7 @@ describe('TextColorCommand', () => {
         return 'red';
       },
       editorview,
-      null
+      undefined
     );
 
     expect(test).toBeFalsy();
