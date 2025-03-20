@@ -4,6 +4,8 @@
 name: build
 
 on:
+  push:
+    braches: [pipeline/test]
   pull_request:
     branches: [develop]
 
@@ -17,8 +19,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-        #with:
-        #  fetch-depth: 0 # extra info for sonar
+        with:
+          fetch-depth: 0 # extra info for sonar
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -27,3 +29,29 @@ jobs:
       - run: npm run lint
       - run: npm run ci:build
       - run: npm run test:coverage
+      # Sonar scan. https://github.com/marketplace/actions/sonarqube-scan
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # Sonar verify https://github.com/marketplace/actions/sonarqube-quality-gate-check
+      - name: SonarQube Quality Gate check
+        id: sonarqube-quality-gate-check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        with:
+          pollingTimeoutSec: 600
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # - run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+      # Dependency-Check
+      - run: npx owasp-dependency-check --scan . --failOnCVSS 1 --suppression ./suppression.xml --nvdApiKey ${{NVD_KEY}} --exclude node_modules/node-gyp/**/*
+      # Dependency-Track
+      - run: npx @cyclonedx/cyclonedx-npm --package-lock-only --output-file SBOM.json
+      - run: |
+          response=$(curl --location '${{ secrets.DEPTRACK_URL }}' \
+          --header 'X-Api-Key: ${{ secrets.DEPTRACK_KEY }}' \
+          --form 'project="${{ secrets.DEPTRACK_PROJECT_ID }}"' \
+          --form 'bom=@SBOM.json')
+          echo "Response from curl= $response"
