@@ -1,5 +1,5 @@
 /* <CustomButton /> */
-@import url("./czi-vars.css");
+@import "./czi-vars.css";
 
 .czi-custom-buttons {
   margin: 0 8px;
