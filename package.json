@@ -14,7 +14,7 @@
   "scripts": {
     "build:clean": "rm -rf dist/ && rm -f modusoperandi-licit-ui-commands-*.*.*.tgz",
     "lint:ts": "eslint src --ext .ts,.tsx --fix",
-    "lint:css": "stylelint \"**/*.css\"",
+    "lint:css": "stylelint \"**/*.css\" --fix",
     "lint": "npm run lint:css & npm run lint:ts",
     "test": "jest",
     "test:unit": "jest",
