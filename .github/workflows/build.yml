@@ -46,7 +46,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       # - run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
       # Dependency-Check
-      - run: npx owasp-dependency-check --scan . --failOnCVSS 1 --suppression ./suppression.xml --nvdApiKey ${{NVD_KEY}} --exclude node_modules/node-gyp/**/*
+      - run: npx owasp-dependency-check --scan . --failOnCVSS 1 --suppression ./suppression.xml --nvdApiKey ${{ secrets.NVD_KEY }} --exclude node_modules/node-gyp/**/*
       # Dependency-Track
       - run: npx @cyclonedx/cyclonedx-npm --package-lock-only --output-file SBOM.json
       - run: |
