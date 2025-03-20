@@ -1,6 +1,6 @@
 {
   "name": "@modusoperandi/licit-ui-commands",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "license": "MIT",
   "type": "module",
   "description": "Module that extend Step, overriding the apply, invert, map, getMap and fromJSON methods, and registering your class with a unique JSON-serialization identifier using Step.jsonID.",
@@ -14,7 +14,7 @@
   "scripts": {
     "build:clean": "rm -rf dist/ && rm -f modusoperandi-licit-ui-commands-*.*.*.tgz",
     "lint:ts": "eslint src --ext .ts,.tsx --fix",
-    "lint:css": "stylelint \"**/*.css\"",
+    "lint:css": "stylelint \"**/*.css\" --fix",
     "lint": "npm run lint:css & npm run lint:ts",
     "test": "jest",
     "test:unit": "jest",

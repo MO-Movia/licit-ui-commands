@@ -304,7 +304,7 @@ export function updateToggleMarks(markType: MarkType, tr: Transform, state: Edit
       style = getStyleByName(node.attrs.styleName);
 
     }
-    else {
+    else if (node.isText) {
       const hasMarks = node.marks.find(mark => mark.type.name === markType.name);
 
       if (pos <= _startPos) {
