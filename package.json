@@ -76,7 +76,7 @@
     "stylelint-prettier": "^5.0.0",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
-    "typescript": "5.5.4"
+    "typescript": "5.8.2"
   },
   "overrides": {
     "libxmljs2": "^1.0.0"
