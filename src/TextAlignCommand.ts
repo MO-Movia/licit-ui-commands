@@ -5,6 +5,7 @@ import { EditorView } from 'prosemirror-view';
 import * as React from 'react';
 import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import { CellSelection } from "prosemirror-tables";
 
 export function setTextAlign(
   tr: Transform,
@@ -15,7 +16,13 @@ export function setTextAlign(
   if (!selection || !doc) {
     return tr;
   }
-  const { from, to } = selection;
+  let { from, to } = selection;
+
+  if (selection instanceof CellSelection) {
+    // When selecting multiple cells
+    from = selection.$anchorCell.pos;
+    to = selection.$headCell.pos + selection.$headCell.nodeAfter.nodeSize;
+  }
   const { nodes } = schema;
 
   const blockquote = nodes[BLOCKQUOTE];
