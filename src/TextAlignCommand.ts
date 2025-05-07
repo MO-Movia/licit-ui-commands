@@ -5,7 +5,7 @@ import { EditorView } from 'prosemirror-view';
 import * as React from 'react';
 import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import { CellSelection } from "prosemirror-tables";
+import { CellSelection } from 'prosemirror-tables';
 
 export function setTextAlign(
   tr: Transform,
@@ -20,8 +20,14 @@ export function setTextAlign(
 
   if (selection instanceof CellSelection) {
     // When selecting multiple cells
-    from = selection.$anchorCell.pos;
-    to = selection.$headCell.pos + selection.$headCell.nodeAfter.nodeSize;
+    const $anchor = selection.$anchorCell;
+    const $head = selection.$headCell;
+
+    const firstCell = $anchor.pos < $head.pos ? $anchor : $head;
+    const lastCell = $anchor.pos < $head.pos ? $head : $anchor;
+
+    from = firstCell.start(-1);
+    to = lastCell.pos + lastCell.nodeAfter.nodeSize;
   }
   const { nodes } = schema;
 

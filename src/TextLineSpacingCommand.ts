@@ -4,7 +4,7 @@ import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { EditorView } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
 import { Transform } from 'prosemirror-transform';
-import { CellSelection } from "prosemirror-tables";
+import { CellSelection } from 'prosemirror-tables';
 import {
   DOUBLE_LINE_SPACING,
   SINGLE_LINE_SPACING,
@@ -26,12 +26,18 @@ export function setTextLineSpacing(
   let from;
   let to;
   if (selection instanceof CellSelection) {
-      // When selecting multiple cells
-      from = selection.$anchorCell.pos;
-      to = selection.$headCell.pos + selection.$headCell.nodeAfter.nodeSize;
+    // When selecting multiple cells
+    const $anchor = selection.$anchorCell;
+    const $head = selection.$headCell;
+
+    const firstCell = $anchor.pos < $head.pos ? $anchor : $head;
+    const lastCell = $anchor.pos < $head.pos ? $head : $anchor;
+
+    from = firstCell.start(-1);
+    to = lastCell.pos + lastCell.nodeAfter.nodeSize;
   } else {
-      from = selection.from;
-      to = selection.to;
+    from = selection.from;
+    to = selection.to;
   }
   const paragraph = schema.nodes[PARAGRAPH];
   const heading = schema.nodes[HEADING];

@@ -9,7 +9,7 @@ import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { Fragment, Schema } from 'prosemirror-model';
 import { Transform } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
-import { CellSelection } from "prosemirror-tables";
+import { CellSelection } from 'prosemirror-tables';
 
 const MIN_INDENT_LEVEL = 0;
 const MAX_INDENT_LEVEL = 7;
@@ -35,8 +35,14 @@ export function updateIndentLevel(
   let { from, to } = selection;
   if (selection instanceof CellSelection) {
     // When selecting multiple cells
-    from = selection.$anchorCell.pos;
-    to = selection.$headCell.pos + selection.$headCell.nodeAfter.nodeSize;
+    const $anchor = selection.$anchorCell;
+    const $head = selection.$headCell;
+
+    const firstCell = $anchor.pos < $head.pos ? $anchor : $head;
+    const lastCell = $anchor.pos < $head.pos ? $head : $anchor;
+
+    from = firstCell.start(-1);
+    to = lastCell.pos + lastCell.nodeAfter.nodeSize;
   }
 
   const listNodePoses = [];
