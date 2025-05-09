@@ -4,6 +4,7 @@ import { HEADING, PARAGRAPH } from './NodeNames';
 import * as MarkNames from './MarkNames';
 import { TextSelection, Transaction } from 'prosemirror-state';
 import { getStyleByName, Style } from './runtime.service';
+import { CellSelection } from 'prosemirror-tables';
 const STRONG = 'strong';
 const EM = 'em';
 const COLOR = 'color';
@@ -43,7 +44,20 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
   if (!selection || !doc) {
     return tr;
   }
-  const { from, to, empty } = selection;
+  const { empty } = selection;
+  let { from, to } = selection;
+  if (selection instanceof CellSelection) {
+    // When selecting multiple cells
+    const $anchor = selection.$anchorCell;
+    const $head = selection.$headCell;
+
+    const firstCell = $anchor.pos < $head.pos ? $anchor : $head;
+    const lastCell = $anchor.pos < $head.pos ? $head : $anchor;
+
+    from = firstCell.start(-1);
+    to = lastCell.pos + lastCell.nodeAfter.nodeSize;
+  }
+
   if (empty) {
     return tr;
   }

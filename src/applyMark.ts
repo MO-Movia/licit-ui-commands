@@ -148,7 +148,7 @@ export function handleTextColorMark(
   isCustomStyleApplied?: boolean
 ): Transform {
   // Issue fix: Custom style not get applied after override the style in the paragraph.
-  if (isCustomStyleApplied) {
+  if (isCustomStyleApplied || isCustomStyleApplied === undefined) {
     tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
   }
   else if (node) {
