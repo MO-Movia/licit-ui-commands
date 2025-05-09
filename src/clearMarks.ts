@@ -54,7 +54,7 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
     const firstCell = $anchor.pos < $head.pos ? $anchor : $head;
     const lastCell = $anchor.pos < $head.pos ? $head : $anchor;
 
-    from = firstCell.start(-1);
+    from = firstCell.pos;
     to = lastCell.pos + lastCell.nodeAfter.nodeSize;
   }
 
