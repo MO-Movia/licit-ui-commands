@@ -4,13 +4,13 @@ import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { EditorView } from 'prosemirror-view';
 import { Schema } from 'prosemirror-model';
 import { Transform } from 'prosemirror-transform';
-import { CellSelection } from 'prosemirror-tables';
 import {
   DOUBLE_LINE_SPACING,
   SINGLE_LINE_SPACING,
   LINE_SPACING_115,
   LINE_SPACING_150,
 } from './ui/toCSSLineSpacing';
+import {getSelectionRange} from './isNodeSelectionForNodeType';
 import * as React from 'react';
 
 export function setTextLineSpacing(
@@ -22,23 +22,7 @@ export function setTextLineSpacing(
   if (!selection || !doc) {
     return tr;
   }
-
-  let from;
-  let to;
-  if (selection instanceof CellSelection) {
-    // When selecting multiple cells
-    const $anchor = selection.$anchorCell;
-    const $head = selection.$headCell;
-
-    const firstCell = $anchor.pos < $head.pos ? $anchor : $head;
-    const lastCell = $anchor.pos < $head.pos ? $head : $anchor;
-
-    from = firstCell.pos;
-    to = lastCell.pos + lastCell.nodeAfter.nodeSize;
-  } else {
-    from = selection.from;
-    to = selection.to;
-  }
+  const { from, to } = getSelectionRange(selection);
   const paragraph = schema.nodes[PARAGRAPH];
   const heading = schema.nodes[HEADING];
   const listItem = schema.nodes[LIST_ITEM];
