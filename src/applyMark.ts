@@ -148,7 +148,7 @@ export function handleTextColorMark(
   isCustomStyleApplied?: boolean
 ): Transform {
   // Issue fix: Custom style not get applied after override the style in the paragraph.
-  if (isCustomStyleApplied) {
+  if (isCustomStyleApplied || isCustomStyleApplied === undefined) {
     tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
   }
   else if (node) {
@@ -212,7 +212,7 @@ export function updateMarksAttrs(markType: MarkType, tr: Transform, state: Edito
   let _startPos = startPos?.pos;
 
   // Traverse upwards to ensure we reach the full paragraph from selection start
-  while (startPos?.parent?.type?.name !== 'paragraph' && startPos?.depth > 0) {
+  while (startPos?.parent?.type?.name !== 'paragraph' && startPos?.parent?.type?.name !== 'table_cell' && startPos?.depth > 0) {
     _startPos = startPos.before();
   }
 
@@ -292,7 +292,7 @@ export function updateToggleMarks(markType: MarkType, tr: Transform, state: Edit
   let _startPos = startPos.pos;
   const { schema } = state;
   // Traverse upwards to ensure we reach the full paragraph from selection start
-  while (startPos.parent.type.name !== 'paragraph' && startPos.depth > 0) {
+  while (startPos.parent.type.name !== 'paragraph' && startPos?.parent?.type?.name !== 'table_cell' && startPos.depth > 0) {
     _startPos = startPos.before();
   }
 

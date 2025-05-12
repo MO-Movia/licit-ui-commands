@@ -4,6 +4,7 @@ import { HEADING, PARAGRAPH } from './NodeNames';
 import * as MarkNames from './MarkNames';
 import { TextSelection, Transaction } from 'prosemirror-state';
 import { getStyleByName, Style } from './runtime.service';
+import { getSelectionRange } from './isNodeSelectionForNodeType';
 const STRONG = 'strong';
 const EM = 'em';
 const COLOR = 'color';
@@ -43,7 +44,8 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
   if (!selection || !doc) {
     return tr;
   }
-  const { from, to, empty } = selection;
+  const { empty } = selection;
+  const { from, to } = getSelectionRange(selection);
   if (empty) {
     return tr;
   }
