@@ -10,6 +10,7 @@ import {
   LINE_SPACING_115,
   LINE_SPACING_150,
 } from './ui/toCSSLineSpacing';
+import {getSelectionRange} from './isNodeSelectionForNodeType';
 import * as React from 'react';
 
 export function setTextLineSpacing(
@@ -21,8 +22,7 @@ export function setTextLineSpacing(
   if (!selection || !doc) {
     return tr;
   }
-
-  const { from, to } = selection;
+  const { from, to } = getSelectionRange(selection);
   const paragraph = schema.nodes[PARAGRAPH];
   const heading = schema.nodes[HEADING];
   const listItem = schema.nodes[LIST_ITEM];

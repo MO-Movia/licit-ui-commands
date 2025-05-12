@@ -1,5 +1,5 @@
 import {BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
-import {TextLineSpacingCommand} from './TextLineSpacingCommand';
+import {TextLineSpacingCommand,setTextLineSpacing} from './TextLineSpacingCommand';
 import {EditorState} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
 import {schema} from 'prosemirror-schema-basic';
@@ -120,6 +120,28 @@ describe('TextLineSpacingCommand', () => {
 
     expect(test).toBeFalsy();
   });
+  it('should be check condition !selection', () => {
+    const state = {
+      selection: {to: 2, from: 1},
+      schema: {nodes: {heading: HEADING, paragraph: PARAGRAPH}},
+      doc: {
+        nodesBetween: (_x, _y, _z: (a, b) => {return}) => {
+          return;
+        },
+      },
+      tr: {
+        setSelection: (_selection) => {
+          return true;
+        },
+      },
+    } as unknown as EditorState;
+    plugin._lineSpacing = null;
+    plugin.isActive = ()=>{return null;};
+
+    const test = plugin.isEnabled(state);
+
+    expect(test).toBeFalsy();
+  });
 
   it('should be check condition !doc', () => {
     const state = {
@@ -208,6 +230,7 @@ describe('TextLineSpacingCommand', () => {
     expect(TextLineSpacingCommand.createGroup().length).toBe(1);
   });
   it('should handle isActive ',()=>{
+    command._lineSpacing = '2.0'; // Change this to test different values
     const mySchema = new Schema({
       nodes: {
         doc: { content: 'block+' },
@@ -230,7 +253,7 @@ describe('TextLineSpacingCommand', () => {
     });
 
     // Define `_lineSpacing` value that should match nodes
-    command._lineSpacing = '2.0'; // Change this to test different values
+
 
     // ProseMirror JSON Document (Matching All Conditions)
     const jsonDoc = {
@@ -256,6 +279,64 @@ describe('TextLineSpacingCommand', () => {
 
     // Convert JSON into a ProseMirror Node
     const docNode = mySchema.nodeFromJSON(jsonDoc);
-    expect(command.isActive({selection:{from:0,to:14},doc:docNode,schema:{nodes:[]}} as unknown as EditorState));
+    expect(command.isActive({selection:{from:0,to:25},doc:docNode,schema:mySchema} as unknown as EditorState));
+  });
+  it('should handle isActive ',()=>{
+    command._lineSpacing = '2.0'; // Change this to test different values
+    const mySchema = new Schema({
+      nodes: {
+        doc: { content: 'block+' },
+        heading: {
+          content: 'text*',
+          group: 'block',
+          attrs: { level: { default: 1 }, lineSpacing: { default: '2.0' } },
+          parseDOM: [{ tag: 'h1', getAttrs: (dom) => ({ lineSpacing: dom.getAttribute('lineSpacing') || '2.0' }) }],
+          toDOM: (node) => ['h1', { lineSpacing: node.attrs.lineSpacing }, 0],
+        },
+        text: { group: 'inline' },
+      },
+    });
+
+    // Define `_lineSpacing` value that should match nodes
+
+
+    // ProseMirror JSON Document (Matching All Conditions)
+    const jsonDoc = {
+      type: 'doc',
+      content: [
+
+        {
+          type: 'heading',
+          attrs: { level: 1, lineSpacing: '2.0' },
+          content: [{ type: 'text', text: 'Heading with correct lineSpacing' }],
+        },
+
+      ],
+    };
+
+    // Convert JSON into a ProseMirror Node
+    const docNode = mySchema.nodeFromJSON(jsonDoc);
+    expect(command.isActive({selection:{from:0,to:25},doc:docNode,schema:mySchema} as unknown as EditorState));
+  });
+  it('should handle setTextLineSpacing',()=>{
+    const mySchema = new Schema({
+      nodes: {
+        doc: { content: 'block+' },
+        heading: {
+          content: 'text*',
+          group: 'block',
+          attrs: { level: { default: 1 }, lineSpacing: { default: '2.0' } },
+          parseDOM: [{ tag: 'h1', getAttrs: (dom) => ({ lineSpacing: dom.getAttribute('lineSpacing') || '2.0' }) }],
+          toDOM: (node) => ['h1', { lineSpacing: node.attrs.lineSpacing }, 0],
+        },
+        text: { group: 'inline' },
+      },
+    });
+    const tr=  {
+      setSelection: (_selection) => {
+        return {doc: dummyDoc, selection: {from: 1, to: 2}};
+      },
+    } as unknown as Transform;
+    expect(setTextLineSpacing(tr,mySchema,null));
   });
 });

@@ -9,6 +9,7 @@ import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { Fragment, Schema } from 'prosemirror-model';
 import { Transform } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
+import {getSelectionRange} from './isNodeSelectionForNodeType';
 
 const MIN_INDENT_LEVEL = 0;
 const MAX_INDENT_LEVEL = 7;
@@ -31,7 +32,7 @@ export function updateIndentLevel(
   }
 
   const { nodes } = schema;
-  const { from, to } = selection;
+  const { from, to } = getSelectionRange(selection);
   const listNodePoses = [];
   const blockquote = nodes[BLOCKQUOTE];
   const heading = nodes[HEADING];

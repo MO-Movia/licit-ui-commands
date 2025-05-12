@@ -94,6 +94,77 @@ describe('toggleList', () => {
     const test = toggleList(tr, schema, listNodeType, 'bold');
     expect(test).toBe(tr);
   });
+  it('should be selection is not there or doc is not there', () => {
+    const mySchema = new Schema({
+      nodes: {
+        doc: {
+          attrs: {lineSpacing: {default: 'test'}},
+          content: 'block+',
+        },
+        paragraph: {
+          attrs: {lineSpacing: {default: 'test'}},
+          content: 'text*',
+          group: 'block',
+        },
+        heading: {
+          attrs: {lineSpacing: {default: 'test'}},
+          content: 'text*',
+          group: 'block',
+          defining: true,
+        },
+        bullet_list: {
+          content: 'list_item+',
+          group: 'block',
+        },
+        list_item: {
+          attrs: {lineSpacing: {default: 'test'}},
+          content: 'paragraph',
+          defining: true,
+        },
+        blockquote: {
+          attrs: {lineSpacing: {default: 'test'}},
+          content: 'block+',
+          group: 'block',
+        },
+        text: {
+          inline: true,
+        },
+      },
+    });
+
+    // Create a dummy document using the defined schema
+    const dummyDoc = mySchema.node('doc', null, [
+      mySchema.node('heading', {lineSpacing: 'test'}, [
+        mySchema.text('Heading 1'),
+      ]),
+      mySchema.node('paragraph', {lineSpacing: 'test'}, [
+        mySchema.text('This is a paragraph'),
+      ]),
+      mySchema.node('bullet_list', {lineSpacing: 'test'}, [
+        mySchema.node('list_item', {lineSpacing: 'test'}, [
+          mySchema.node('paragraph', {lineSpacing: 'test'}, [
+            mySchema.text('List item 1'),
+          ]),
+        ]),
+        mySchema.node('list_item', {lineSpacing: 'test'}, [
+          mySchema.node('paragraph', {lineSpacing: 'test'}, [
+            mySchema.text('List item 2'),
+          ]),
+        ]),
+      ]),
+      mySchema.node('blockquote', {lineSpacing: 'test'}, [
+        mySchema.node('paragraph', {lineSpacing: 'test'}, [
+          mySchema.text('This is a blockquote'),
+        ]),
+      ]),
+    ]);
+    const tr = {
+      selection: { from: 0, to: 1 },doc:dummyDoc,setSelection:()=>{return tr;}
+    } as unknown as Transform;
+    const listNodeType = {} as unknown as NodeType;
+    const test = toggleList(tr, schema, listNodeType, 'bold');
+    expect(test).toBe(tr);
+  });
   it('should handle toggleList', () => {
     const tr = {
       selection: { from: 1, to: 2 }, doc: dummyDoc

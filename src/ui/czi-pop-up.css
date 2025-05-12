@@ -2,7 +2,7 @@
 
 .czi-pop-up-modal-mask,
 .czi-pop-up-element {
-  background-color: rgba(0 0 0 / 50%);
+  background-color: rgb(0 0 0 / 50%);
   height: 100vh;
   left: 0;
   position: fixed;
