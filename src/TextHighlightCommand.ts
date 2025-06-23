@@ -69,15 +69,15 @@ export class TextHighlightCommand extends UICommand {
     state: EditorState,
     dispatch?: (tr: Transform) => void,
     _view?: EditorView,
-    color?: string
+    color?: { color, selectedOption }
   ): boolean => {
-    if (dispatch && color !== undefined) {
+    if (dispatch && color.color !== undefined) {
       const { schema } = state;
       let { tr } = state;
       const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
-      const attrs = color ? { highlightColor: color, overridden: true } : null;
+      const attrs = color ? { highlightColor: color.color, overridden: true } : null;
       (tr as Transform) = applyMark(tr, schema, markType, attrs);
-      updateMarksAttrs(markType, tr, state, color);
+      updateMarksAttrs(markType, tr, state, color.color);
       if (tr.docChanged || tr.storedMarksSet) {
         // If selection is empty, the color is added to `storedMarks`, which
         // works like `toggleMark`
