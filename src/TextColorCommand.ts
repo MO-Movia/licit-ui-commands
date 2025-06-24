@@ -70,7 +70,7 @@ export class TextColorCommand extends UICommand {
     _view?: EditorView,
     color?: { color, selectedOption }
   ): boolean => {
-    if (dispatch && color.color !== undefined) {
+    if (dispatch && color?.color !== undefined) {
       const { schema } = state;
       const markType = schema?.marks[MARK_TEXT_COLOR];
       const attrs = color ? { color: color.color, overridden: true } : null;

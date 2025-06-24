@@ -71,7 +71,7 @@ export class TextHighlightCommand extends UICommand {
     _view?: EditorView,
     color?: { color, selectedOption }
   ): boolean => {
-    if (dispatch && color.color !== undefined) {
+    if (dispatch && color?.color !== undefined) {
       const { schema } = state;
       let { tr } = state;
       const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
