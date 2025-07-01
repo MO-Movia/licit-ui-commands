@@ -4,6 +4,7 @@ import { HEADING, PARAGRAPH } from './NodeNames';
 import * as MarkNames from './MarkNames';
 import { TextSelection, Transaction } from 'prosemirror-state';
 import { getStyleByName, Style } from './runtime.service';
+import { getSelectionRange } from './isNodeSelectionForNodeType';
 const STRONG = 'strong';
 const EM = 'em';
 const COLOR = 'color';
@@ -43,7 +44,8 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
   if (!selection || !doc) {
     return tr;
   }
-  const { from, to, empty } = selection;
+  const { empty } = selection;
+  const { from, to } = getSelectionRange(selection);
   if (empty) {
     return tr;
   }
@@ -60,10 +62,18 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
   const marksToAdd = [];
   const overrideMarkstoRemove = [];
   let style: Style = null;
+  const paragraphsWithStyle: Node[] = [];
+  const otherParagraphs: Node[] = [];
   const slice = selection instanceof TextSelection ? selection.content().content : null;
   if (slice?.childCount > 1) {
 
-    return tr;
+    slice.content.forEach(node => {
+      extractParagraphs(node, paragraphsWithStyle, otherParagraphs);
+    });
+
+    if (otherParagraphs.length > 0) {
+      return tr;
+    }
   }
   doc.nodesBetween(from, to, (node, pos) => {
     if (node.type.name === 'paragraph' && node.attrs.styleName) {
@@ -106,6 +116,21 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
 
   });
   return tr;
+}
+
+/**
+ * Recursively extracts paragraphs with styleName='Normal' from a given node.
+ */
+export function extractParagraphs(node: Node, normalParagraphs: Node[], otherParagraphs: Node[]) {
+  if (node.type.name === 'paragraph') {
+    if (node.attrs.styleName === 'Normal' || node.attrs.styleName === null) {
+      normalParagraphs.push(node);
+    } else {
+      otherParagraphs.push(node);
+    }
+  } else if (node.content) {
+    node.content.forEach(child => extractParagraphs(child, normalParagraphs, otherParagraphs));
+  }
 }
 export function comapreMarks(style: Style, mark: Mark, marksToAdd, pos: number, node: Node, schema: Schema): boolean {
 

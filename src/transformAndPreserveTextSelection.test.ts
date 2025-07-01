@@ -561,4 +561,250 @@ describe('transformAndPreserveTextSelection', () => {
     );
     expect(test).toBeDefined();
   });
+  it('should handle transformAndPreserveTextSelection when getMeta return false and when from and to =1 and when prevNode && currentNode && currentNode.type === prevNode.type', () => {
+    const mySchema1 = new Schema({
+      nodes: {
+        doc: {content: 'text*'},
+        text: {inline: true},
+      },
+      marks: {
+        myMark: {
+          attrs: {id: {default: {}}},
+          parseDOM: [
+            {
+              tag: 'span[data-id]',
+              getAttrs: () => ({}),
+            },
+          ],
+          toDOM: (mark) => ['span', {'data-id': mark.attrs.id}, 0],
+        },
+      },
+    });
+
+    // Create a text node with the mark that has an 'id' attribute
+    const textNodeWithMark = mySchema1.text('This is a text node with a mark', [
+      mySchema1.mark('myMark', {id: {}}),
+    ]);
+
+    // Create a doc node and add the text node to it
+    const docNode = mySchema1.node('doc', null, [textNodeWithMark]);
+    jest.spyOn(amark, 'applyMark').mockReturnValue({
+      getMeta: () => {
+        return false;
+      },
+      selection: {from: 1, to: 1},
+      doc: initialDoc,
+      setSelection: () => {
+        return {doc: initialDoc};
+      },
+    } as unknown as Transform);
+    const tr1 = {
+      insert: () => {
+        return {
+          insert: () => {
+            return {};
+          },
+          getMeta: () => {
+            return false;
+          },
+          selection: {from: 1, to: 1},
+          doc: initialDoc,
+          setSelection: () => {
+            return {
+              getMeta: () => {
+                return false;
+              },
+              selection: {from: 1, to: 1},
+              doc: docNode,
+            } as unknown as Transform;
+          },
+        } as unknown as Transform;
+      },
+      getMeta: () => {
+        return false;
+      },
+      selection: {from: 1, to: 1},
+      doc: initialDoc,
+      setSelection: () => {
+        return {
+          getMeta: () => {
+            return false;
+          },
+          selection: {from: 1, to: 1},
+          doc: initialDoc,
+        } as unknown as Transform;
+      },
+    } as unknown as Transform;
+    jest
+      .spyOn(tr1.doc, 'nodeAt')
+      .mockReturnValue({type: {name: 'TES'}} as unknown as Node);
+
+    const mySchema = new Schema({
+      nodes: {
+        doc: {content: 'text*'},
+        text: {inline: true},
+      },
+    });
+    const textNode = mySchema.text('This is a placeholder text node.');
+    const test = transformAndPreserveTextSelection(
+      tr1,
+      {
+        marks: {'mark-text-selection': {}},
+        text: () => {
+          return textNode;
+        },
+      } as unknown as Schema,
+      () => {
+        return {
+          getMeta: () => {
+            return false;
+          },
+          selection: {from: 1, to: 1},
+          doc: initialDoc,
+          setSelection: () => {
+            return {doc: initialDoc};
+          },
+          removeMark: () => {
+            return {
+              getMeta: () => {
+                return false;
+              },
+              selection: {from: 1, to: 1},
+              doc: initialDoc,
+              setSelection: () => {
+                return {doc: initialDoc};
+              },
+              removeMark: () => {
+                return {};
+              },
+            } as unknown as Transform;
+          },
+        } as unknown as Transform;
+      }
+    );
+    expect(test).toBeDefined();
+  });
+  it('should handle transformAndPreserveTextSelection when getMeta return false and when from and to =1 and when prevNode && currentNode && currentNode.type === prevNode.type', () => {
+    const mySchema1 = new Schema({
+      nodes: {
+        doc: {content: 'text*'},
+        text: {inline: true},
+      },
+      marks: {
+        myMark: {
+          attrs: {id: {default: {}}},
+          parseDOM: [
+            {
+              tag: 'span[data-id]',
+              getAttrs: () => ({}),
+            },
+          ],
+          toDOM: (mark) => ['span', {'data-id': mark.attrs.id}, 0],
+        },
+      },
+    });
+
+    // Create a text node with the mark that has an 'id' attribute
+    const textNodeWithMark = mySchema1.text('This is a text node with a mark', [
+      mySchema1.mark('myMark', {id: {}}),
+    ]);
+
+    // Create a doc node and add the text node to it
+    const docNode = mySchema1.node('doc', null, [textNodeWithMark]);
+    jest.spyOn(amark, 'applyMark').mockReturnValue({
+      getMeta: () => {
+        return false;
+      },
+      selection: {from: 1, to: 1},
+      doc: initialDoc,
+      setSelection: () => {
+        return {doc: initialDoc};
+      },
+    } as unknown as Transform);
+    const tr1 = {
+      insert: () => {
+        return {
+          insert: () => {
+            return {};
+          },
+          getMeta: () => {
+            return false;
+          },
+          selection: {from: 1, to: 1},
+          doc: initialDoc,
+          setSelection: () => {
+            return {
+              getMeta: () => {
+                return false;
+              },
+              selection: {from: 1, to: 1},
+              doc: docNode,
+            } as unknown as Transform;
+          },
+        } as unknown as Transform;
+      },
+      getMeta: () => {
+        return false;
+      },
+      selection: {from: 1, to: 1},
+      doc: initialDoc,
+      setSelection: () => {
+        return {
+          getMeta: () => {
+            return false;
+          },
+          selection: {from: 1, to: 1},
+          doc: initialDoc,
+        } as unknown as Transform;
+      },
+    } as unknown as Transform;
+    jest
+      .spyOn(tr1.doc, 'nodeAt')
+      .mockReturnValue(null as unknown as Node);
+
+    const mySchema = new Schema({
+      nodes: {
+        doc: {content: 'text*'},
+        text: {inline: true},
+      },
+    });
+    const textNode = mySchema.text('This is a placeholder text node.');
+    const test = transformAndPreserveTextSelection(
+      tr1,
+      {
+        marks: {'mark-text-selection': {}},
+        text: () => {
+          return textNode;
+        },
+      } as unknown as Schema,
+      () => {
+        return {
+          getMeta: () => {
+            return false;
+          },
+          selection: {from: 1, to: 1},
+          doc: initialDoc,
+          setSelection: () => {
+            return {doc: initialDoc};
+          },
+          removeMark: () => {
+            return {
+              getMeta: () => {
+                return false;
+              },
+              selection: {from: 1, to: 1},
+              doc: initialDoc,
+              setSelection: () => {
+                return {doc: initialDoc};
+              },
+              removeMark: () => {
+                return {};
+              },
+            } as unknown as Transform;
+          },
+        } as unknown as Transform;
+      }
+    );
+    expect(test).toBeDefined();
+  });
 });

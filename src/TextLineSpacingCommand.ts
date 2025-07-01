@@ -10,6 +10,7 @@ import {
   LINE_SPACING_115,
   LINE_SPACING_150,
 } from './ui/toCSSLineSpacing';
+import {getSelectionRange} from './isNodeSelectionForNodeType';
 import * as React from 'react';
 
 export function setTextLineSpacing(
@@ -21,8 +22,7 @@ export function setTextLineSpacing(
   if (!selection || !doc) {
     return tr;
   }
-
-  const { from, to } = selection;
+  const { from, to } = getSelectionRange(selection);
   const paragraph = schema.nodes[PARAGRAPH];
   const heading = schema.nodes[HEADING];
   const listItem = schema.nodes[LIST_ITEM];
@@ -68,11 +68,14 @@ export function setTextLineSpacing(
         lineSpacing: lineSpacingValue,
       };
     } else {
+      const isOverriddenLineSpacing = attrs.overriddenLineSpacing ?? null;
+
       attrs = {
         ...attrs,
-        lineSpacing: SINGLE_LINE_SPACING,
-        overriddenLineSpacing: null,
-        overriddenLineSpacingValue: null
+        lineSpacing: isOverriddenLineSpacing ? attrs.lineSpacing : SINGLE_LINE_SPACING,
+        overriddenLineSpacing: isOverriddenLineSpacing ? attrs.overriddenLineSpacing : null,
+        overriddenLineSpacingValue: isOverriddenLineSpacing ? attrs.overriddenLineSpacingValue : null
+
       };
     }
     tr = tr.setNodeMarkup(pos, nodeType, attrs, node.marks);

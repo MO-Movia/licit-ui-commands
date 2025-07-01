@@ -5,6 +5,7 @@ import { EditorView } from 'prosemirror-view';
 import * as React from 'react';
 import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import {getSelectionRange} from './isNodeSelectionForNodeType';
 
 export function setTextAlign(
   tr: Transform,
@@ -15,7 +16,7 @@ export function setTextAlign(
   if (!selection || !doc) {
     return tr;
   }
-  const { from, to } = selection;
+  const { from, to } = getSelectionRange(selection);
   const { nodes } = schema;
 
   const blockquote = nodes[BLOCKQUOTE];
@@ -54,11 +55,12 @@ export function setTextAlign(
         align: alignment,
       };
     } else {
+      const isOverridden = attrs.overriddenAlign ?? null;
       attrs = {
         ...attrs,
-        align: null,
-        overriddenAlign: null,
-        overriddenAlignValue: null
+        align: isOverridden ? attrs.align : null,
+        overriddenAlign: isOverridden ? attrs.overriddenAlign : null,
+        overriddenAlignValue: isOverridden ? attrs.overriddenAlignValue : null
       };
     }
     tr = tr.setNodeMarkup(pos, nodeType, attrs, node.marks);
