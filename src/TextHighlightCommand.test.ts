@@ -102,10 +102,10 @@ describe('TextHighlightCommand', () => {
         return 'red';
       },
       editorview,
-      null
+      { color: {}, selectedOption: {} }
     );
 
-    expect(test).toBeFalsy();
+    expect(test).toBeTruthy();
   });
   it('executeWithUserInput function() should be return true, If storedMarksSet = true', () => {
     const state = {
