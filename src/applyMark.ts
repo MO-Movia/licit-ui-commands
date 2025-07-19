@@ -1,5 +1,5 @@
 import { Transaction } from '@remirror/pm/state';
-import { Mark, MarkType, Node, Schema } from 'prosemirror-model';
+import { MarkType, Node, ResolvedPos, Schema } from 'prosemirror-model';
 import { SelectionRange, TextSelection } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 
@@ -15,7 +15,7 @@ function markApplies(
   ranges: readonly SelectionRange[],
   type: MarkType
 ) {
-  for (const {$from, $to} of ranges) {
+  for (const { $from, $to } of ranges) {
     let can = $from.depth === 0 ? doc.type.allowsMarkType(type) : false;
     doc.nodesBetween($from.pos, $to.pos, (node: MyNode) => {
       if (can) {
@@ -31,11 +31,6 @@ function markApplies(
   return false;
 }
 
-function hasMark(marks: readonly Mark[], markType: string) {
-  return marks.some((mark) => mark.type.name === markType);
-}
-
-// https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.js
 export function applyMark(
   tr: Transform,
   _schema: Schema,
@@ -46,118 +41,165 @@ export function applyMark(
   if (!(tr as Transaction).selection || !tr.doc || !markType) {
     return tr;
   }
-  const {empty, $cursor, ranges} = (tr as Transaction)
+
+  const { empty, $cursor, ranges } = (tr as Transaction)
     .selection as TextSelection;
+
   if ((empty && !$cursor) || !markApplies(tr.doc, ranges, markType)) {
     return tr;
   }
+
   if ($cursor) {
     tr = (tr as Transaction).removeStoredMark(markType);
     return (tr as Transaction).addStoredMark(markType.create(attrs));
   }
-  let has = false;
-  for (let i = 0; !has && i < ranges.length; i++) {
-    const {$from, $to} = ranges[i];
-    has = tr.doc.rangeHasMark($from.pos, $to.pos, markType);
-  }
-  for (const {$from, $to} of ranges) {
-    if (has && isCustomStyleApplied) {
-      const nodeTr = tr.doc.nodeAt($from.pos);
-      let from = $from.pos;
-      let to = 1;
-      if (nodeTr) {
-        nodeTr.descendants(function (child) {
-          const nodeTr_1 = tr.doc.nodeAt(from);
-          let to_add = 0;
-          if (nodeTr_1.childCount > 0) {
-            to_add = 1;
-          }
-          to = from + child.nodeSize;
-          if (child && 0 < child.marks.length) {
-            const result = child.marks.find(
-              (mark) => mark.type.name === markType.name
-            );
-            if (!result) {
-              tr = tr.addMark(from, to + to_add, markType.create(attrs));
-            } else {
-              tr = tr.addMark(
-                from,
-                to + to_add,
-                markType.create(result?.attrs)
-              );
-            }
-          } else {
-            tr = tr.addMark(from, to + to_add, markType.create(attrs));
-          }
-          from = to + to_add;
-        });
-      }
-    } else if (attrs) {
-      const nodeTr = tr.doc.nodeAt($from.pos);
-      if ('link' === markType.name) {
-        if (
-          0 < nodeTr?.marks.length &&
-          hasMark(nodeTr.marks, 'mark-text-color')
-        ) {
-          tr = tr.removeMark(
-            $from.pos,
-            $to.pos,
-            _schema.marks['mark-text-color']
-          );
-        }
-        tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
-      } else if ('mark-text-color' === markType.name) {
-        if (0 < nodeTr?.marks.length) {
-          if (!hasMark(nodeTr?.marks, 'link')) {
-            tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
-          }
-        } else if (nodeTr instanceof Node) {
-          let from = $from.pos;
-          let to = 0;
-          nodeTr.descendants(function (child) {
-            if (child) {
-              const nodeTr_1 = tr.doc.nodeAt(from);
-              to = from + child.nodeSize;
 
-              if (nodeTr_1.childCount > 0) {
-                if (!hasMark(child.marks, 'link')) {
-                  tr = tr.addMark(from, to + 1, markType.create(attrs));
-                }
-                from = to + 1;
-              } else {
-                if (!hasMark(child.marks, 'link')) {
-                  tr = tr.addMark(from, to, markType.create(attrs));
-                }
-                from = to;
-              }
-            }
-          });
-        }
-      } else {
-        const nodeTr = tr.doc.nodeAt($from.pos);
-        let from = $from.pos;
-        let to = 0;
-        if (undefined === isCustomStyleApplied) {
-          tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
-        } else {
-          nodeTr.descendants(function (child) {
-            if (child) {
-              const nodeTr = tr.doc.nodeAt(from);
-              to = from + child.nodeSize;
-              if (nodeTr.childCount > 0) {
-                tr = tr.addMark(from, to + 1, markType.create(attrs));
-                from = to + 1;
-              } else {
-                tr = tr.addMark(from, to, markType.create(attrs));
-                from = to;
-              }
-            }
-          });
-        }
-      }
-    } else if (has && !isCustomStyleApplied && !attrs) {
+  const hasMarkInRanges = ranges.some(({ $from, $to }) =>
+    tr.doc.rangeHasMark($from.pos, $to.pos, markType)
+  );
+
+  for (const { $from, $to } of ranges) {
+    if (hasMarkInRanges && isCustomStyleApplied) {
+      tr = addCustomMark(tr, $from.pos, markType, attrs);
+    } else if (attrs) {
+      tr = addMarkWithAttributes(
+        tr,
+        _schema,
+        $from,
+        $to,
+        markType,
+        attrs,
+        isCustomStyleApplied
+      );
+    } else if (hasMarkInRanges && !isCustomStyleApplied && !attrs) {
       tr = tr.removeMark($from.pos, $to.pos, markType);
     }
+  }
+
+  return tr;
+}
+
+function addCustomMark(
+  tr: Transform,
+  pos: number,
+  markType: MarkType,
+  attrs?: Record<string, unknown>
+): Transform {
+  const node = tr.doc.nodeAt(pos);
+  let from = pos;
+
+  if (node) {
+    node.descendants((child) => {
+      const to = from + child.nodeSize;
+      const mark = child.marks.find((mark) => mark.type.name === markType.name);
+      tr = tr.addMark(
+        from,
+        to + (child.childCount > 0 ? 1 : 0),
+        mark ? markType.create(mark.attrs) : markType.create(attrs)
+      );
+      from = to + (child.childCount > 0 ? 1 : 0);
+    });
+  }
+
+  return tr;
+}
+
+export function addMarkWithAttributes(
+  tr: Transform,
+  _schema: Schema,
+  $from: ResolvedPos,
+  $to: ResolvedPos,
+  markType: MarkType,
+  attrs: Record<string, unknown>,
+  isCustomStyleApplied: boolean
+): Transform {
+  const node = tr.doc.nodeAt($from.pos);
+
+  if (markType.name === 'link') {
+    if (node?.marks.some((mark) => mark.type.name === 'mark-text-color')) {
+      tr = tr.removeMark($from.pos, $to.pos, _schema?.marks['mark-text-color']);
+    }
+    tr = tr.addMark($from.pos, $to.pos, markType.create(attrs));
+  } else if (markType.name === 'mark-text-color') {
+    tr = handleTextColorMark(tr, $from, markType, attrs, node, $to, isCustomStyleApplied);
+  } else {
+    tr = addMarksToNode(
+      tr,
+      $from.pos,
+      $to.pos,
+      markType,
+      attrs,
+      node,
+      isCustomStyleApplied
+    );
+  }
+
+  return tr;
+}
+
+function handleTextColorMark(
+  tr: Transform,
+  $from: ResolvedPos,
+  markType: MarkType,
+  attrs: Record<string, unknown>,
+  node: Node | null,
+  $to: ResolvedPos,
+  isCustomStyleApplied?: boolean
+): Transform {
+  // KNITE-1469 2024-12-23
+  // Issue fix: Custom style not get applied after override the style in the paragraph.
+  if (isCustomStyleApplied) {
+    tr = tr.addMark($from.pos, $to.pos + 1, markType.create(attrs));
+  }
+  else if (node) {
+    let from = $from.pos;
+    if (0 === node.content.size) {
+      tr = tr.addMark(from, $to.pos, markType.create(attrs));
+    }
+    node.descendants((child) => {
+      const to = from + child.nodeSize + 1;
+
+      if (!child.marks.some((mark) => mark.type.name === 'link')) {
+        tr = tr.addMark(from, to, markType.create(attrs));
+      }
+
+      from = to + (child.childCount > 0 ? 1 : 0);
+    });
+  }
+  return tr;
+}
+
+function addMarksToNode(
+  tr: Transform,
+  from: number,
+  to: number,
+  markType: MarkType,
+  attrs: Record<string, unknown>,
+  node: Node | null,
+  isCustomStyleApplied?: boolean
+): Transform {
+  // KNITE-1469 2024-12-23
+  // Issue fix: Custom style not get applied after override the style in the paragraph.
+  if (isCustomStyleApplied || isCustomStyleApplied === undefined) {
+    tr = tr.addMark(from, to + 1, markType.create(attrs));
+  }
+  else if (node) {
+    if (0 === node.content.size) {
+      tr = tr.addMark(from, to, markType.create(attrs));
+    }
+    node.descendants((child) => {
+      const childTo = from + child.nodeSize + 1;
+
+      if (!child.marks.some((mark) => mark.type.name === 'link')) {
+        tr = tr.addMark(
+          from,
+          childTo + (child.childCount > 0 ? 1 : 0),
+          markType.create(attrs)
+        );
+      }
+
+      from = childTo + (child.childCount > 0 ? 1 : 0);
+    });
   }
   return tr;
 }

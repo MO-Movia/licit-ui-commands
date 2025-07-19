@@ -1,6 +1,5 @@
 import {consolidateListNodes} from './consolidateListNodes';
 import {compareNumber} from './compareNumber';
-import nullthrows from 'nullthrows';
 import {Fragment, Node, NodeType, Schema} from 'prosemirror-model';
 import {TextSelection, Transaction} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
@@ -139,13 +138,17 @@ export function wrapNodesWithListInternal(
         };
         tr = tr.setNodeMarkup(pos, listNodeType, listNodeAttrs, node.marks);
       }
-      items && lists.push(items);
+      if (items) {
+        lists.push(items);
+      }
       items = null;
       return false;
     }
 
     if (/table/.test(nodeName)) {
-      items && lists.push(items);
+      if (items) {
+        lists.push(items);
+      }
       items = null;
       return true;
     }
@@ -154,12 +157,16 @@ export function wrapNodesWithListInternal(
       items = items || [];
       items.push({node, pos});
     } else {
-      items?.length && lists.push(items);
+      if (items?.length) {
+        lists.push(items);
+      }
       items = null;
     }
     return true;
   });
-  items?.length && lists.push(items);
+  if (items?.length) {
+    lists.push(items);
+  }
 
   lists = lists.filter((items) => items.length > 0);
   if (!lists.length) {
@@ -167,8 +174,8 @@ export function wrapNodesWithListInternal(
   }
 
   lists.sort((a, b) => {
-    const pa = nullthrows(a[0]).pos;
-    const pb = nullthrows(b[0]).pos;
+    const pa = a[0]?.pos;
+    const pb = b[0]?.pos;
     return pa >= pb ? 1 : -1;
   });
 

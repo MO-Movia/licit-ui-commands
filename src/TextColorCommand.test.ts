@@ -6,7 +6,6 @@ import { Transform } from 'prosemirror-transform';
 import { MARK_TEXT_COLOR } from './MarkNames';
 import { EditorView } from 'prosemirror-view';
 import * as applymark from './applyMark';
-// import * as React from 'react';
 import * as findNodesWithSameMark from './findNodesWithSameMark';
 
 describe('TextColorCommand', () => {

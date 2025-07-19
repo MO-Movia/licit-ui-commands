@@ -1,13 +1,13 @@
 import './czi-vars.css';
 import './czi-pop-up.css';
 
-import type {PopUpParams, ViewProps} from './PopUp';
+import type { PopUpParams, ViewProps } from './PopUp';
 
 import {PopUp} from './PopUp';
 // eslint-disable-next-line no-unused-vars
 import * as React from 'react';
-// import ReactDOM from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom/client';
 import {uuid} from './uuid';
 
 export type PopUpHandle = {
@@ -130,9 +130,9 @@ function renderPopUp(
         viewProps={viewProps}
       />
     );
-    // ReactDOM.render(component, rootNode);
-    const root = ReactDOM.createRoot(rootNode);
-    root.render(component);
+    ReactDOM.render(component, rootNode);
+    // const root = ReactDOM.createRoot(rootNode);
+    // root.render(component);
   
   }
 
@@ -146,9 +146,9 @@ function renderPopUp(
 export function unrenderPopUp(rootId: string): void {
   const rootNode = getRootElement(rootId, false);
   if (rootNode) {
-    // ReactDOM.unmountComponentAtNode(rootNode);
-    // rootNode.parentElement?.removeChild(rootNode);
-    rootNode.remove();
+    ReactDOM.unmountComponentAtNode(rootNode);
+    rootNode.parentElement?.removeChild(rootNode);
+    // rootNode.remove();
   }
 
   if (modalsCount === 0) {
@@ -198,7 +198,7 @@ export function createPopUp(
     close: closePopUp,
     update: (nextViewProps) => {
       currentViewProps = nextViewProps || {};
-      // render(currentViewProps, popUpParams);
+      render(currentViewProps, popUpParams);
     },
   };
 

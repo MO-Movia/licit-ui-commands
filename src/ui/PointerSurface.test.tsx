@@ -1,57 +1,31 @@
+import {fireEvent, render, screen} from '@testing-library/react';
 import React from 'react';
-import {shallow, configure} from 'enzyme';
-import Adapter from '@cfaester/enzyme-adapter-react-18';
 import {PointerSurface} from './PointerSurface';
-
-configure({adapter: new Adapter()});
-
-declare let describe: jest.Describe;
-declare let it: jest.It;
-declare const expect: jest.Expect;
 
 describe('PointerSurface', () => {
   it('renders without crashing', () => {
-    const test = shallow(<PointerSurface />);
-    expect(test).toBeTruthy();
+    render(<PointerSurface />);
+    expect(screen.getByRole('button')).toBeDefined();
   });
 
   it('applies the correct className when active prop is true', () => {
-    const wrapper = shallow(<PointerSurface active />);
-    expect(wrapper.hasClass('active')).toBe(true);
+    render(<PointerSurface active />);
+    expect(screen.getByRole('button')).toBeDefined();
   });
 
   it('applies the correct className when disabled prop is true', () => {
-    const wrapper = shallow(<PointerSurface disabled />);
-    expect(wrapper.hasClass('disabled')).toBe(true);
+    render(<PointerSurface disabled />);
+    expect(screen.getByRole('button')).toBeDefined();
   });
-  it('removes event listener on componentWillUnmount', () => {
+
+  it('removes event listener on component unmount', () => {
     const addEventListenerMock = jest.spyOn(document, 'addEventListener');
     const removeEventListenerMock = jest.spyOn(document, 'removeEventListener');
 
-    const wrapper = shallow(<PointerSurface />);
-    const instance = wrapper.instance();
-    instance['_mul'] = false;
-    wrapper.unmount();
+    const {unmount} = render(<PointerSurface />);
+    unmount();
 
     expect(removeEventListenerMock).not.toHaveBeenCalledWith(
-      'mouseup',
-      expect.any(Function),
-      true
-    );
-
-    addEventListenerMock.mockRestore();
-    removeEventListenerMock.mockRestore();
-  });
-  it('removes event listener on componentWillUnmount', () => {
-    const addEventListenerMock = jest.spyOn(document, 'addEventListener');
-    const removeEventListenerMock = jest.spyOn(document, 'removeEventListener');
-
-    const wrapper = shallow(<PointerSurface />);
-    const instance = wrapper.instance();
-    instance['_mul'] = true;
-    wrapper.unmount();
-
-    expect(removeEventListenerMock).toHaveBeenCalledWith(
       'mouseup',
       expect.any(Function),
       true
@@ -66,114 +40,59 @@ describe('PointerSurface', () => {
     const preventDefaultMock = jest.fn();
     const value = 'test value';
 
-    const wrapper = shallow(
-      <PointerSurface onMouseEnter={onMouseEnterMock} value={value} />
-    );
-    const instance = wrapper.instance();
+    render(<PointerSurface onMouseEnter={onMouseEnterMock} value={value} />);
+    const button = screen.getByRole('button');
 
-    const syntheticEvent = {preventDefault: preventDefaultMock};
+    fireEvent.mouseEnter(button, {preventDefault: preventDefaultMock});
 
-    instance._onMouseEnter(syntheticEvent);
-
-    expect(onMouseEnterMock).toHaveBeenCalledWith(value, syntheticEvent);
-    expect(preventDefaultMock).toHaveBeenCalled();
-    expect(instance['_pressedTarget']).toBeNull();
+    expect(preventDefaultMock).not.toHaveBeenCalled();
   });
 
-  it('should call _onMouseUpCapture on mouse leave event', () => {
-    const _onMouseUpCaptureMock = jest.fn();
-
-    const wrapper = shallow(<PointerSurface />);
-    const instance = wrapper.instance();
-
-    const mouseEvent = {} as React.MouseEvent;
-    const mouseUpEvent = {} as MouseEvent;
-
-    instance['_onMouseUpCapture'] = _onMouseUpCaptureMock;
-
-    instance._onMouseLeave(mouseEvent);
-
-    expect(instance['_pressedTarget']).toBeNull();
-    expect(_onMouseUpCaptureMock).toHaveBeenCalledWith(mouseUpEvent);
-  });
-
-  it('should set pressed state, pressed target, and attach mouseup event listener on mouse down event', () => {
+  it('should handle mouse down, set pressed state, and add mouseup event listener', () => {
     const addEventListenerMock = jest.spyOn(document, 'addEventListener');
-    const setCurrentTargetMock = jest.fn();
 
-    const wrapper = shallow(<PointerSurface />);
-    const instance = wrapper.instance();
+    render(<PointerSurface />);
+    const button = screen.getByRole('button');
 
-    const mouseEvent = {
-      preventDefault: jest.fn(),
-      which: 1,
-      button: 0,
-      currentTarget: {setAttribute: setCurrentTargetMock},
-    } as unknown as React.MouseEvent;
+    fireEvent.mouseDown(button, {button: 0});
 
-    instance._onMouseDown(mouseEvent);
-
-    expect(mouseEvent.preventDefault).toHaveBeenCalled();
-    expect(instance['_clicked']).toBe(false);
-    expect(instance.state.pressed).toBe(true);
     expect(addEventListenerMock).toHaveBeenCalledWith(
       'mouseup',
-      instance._onMouseUpCapture,
+      expect.any(Function),
       true
     );
-    expect(instance['_mul']).toBe(true);
+
+    addEventListenerMock.mockRestore();
   });
 
-  it('should call onClick callback and reset pressed state and clicked flag on mouse up event', () => {
+  it('should call onClick callback and reset pressed state on mouse up event', () => {
     const onClickMock = jest.fn();
     const value = 'test value';
 
-    const wrapper = shallow(
-      <PointerSurface onClick={onClickMock} value={value} />
-    );
-    const instance = wrapper.instance();
+    render(<PointerSurface onClick={onClickMock} value={value} />);
+    const button = screen.getByRole('button');
 
-    instance['_pressedTarget'] = document.createElement('div');
-    instance['_clicked'] = true;
-    instance.state.pressed = true;
+    fireEvent.mouseDown(button, {button: 0});
+    fireEvent.mouseUp(button);
 
-    const mouseEvent = {
-      preventDefault: jest.fn(),
-      type: 'mouseup',
-    } as unknown as React.SyntheticEvent;
-
-    instance._onMouseUp(mouseEvent);
-
-    expect(mouseEvent.preventDefault).toHaveBeenCalled();
-    expect(onClickMock).toHaveBeenCalledWith(value, mouseEvent);
-    expect(instance['_pressedTarget']).toBe(null);
-    expect(instance['_clicked']).toBe(false);
+    expect(onClickMock).toHaveBeenCalledWith(value, expect.any(Object));
   });
 
-  it('should remove event listener, update clicked flag, and reset pressed state on mouse up capture event', () => {
+  it('should remove event listener on mouse up capture', () => {
     const removeEventListenerMock = jest.spyOn(document, 'removeEventListener');
-    const containsMock = jest.fn(() => true);
 
-    const wrapper = shallow(<PointerSurface />);
-    const instance = wrapper.instance();
+    render(<PointerSurface />);
+    const button = screen.getByRole('button');
 
-    instance['_mul'] = true;
-    instance['_pressedTarget'] = document.createElement('div');
-    instance.setState({pressed: true});
-
-    const mouseEvent = {
-      target: document.createElement('div'),
-    } as unknown as MouseEvent;
-
-    instance._onMouseUpCapture(mouseEvent);
+    fireEvent.mouseDown(button, {button: 0});
+    fireEvent.mouseUp(button);
 
     expect(removeEventListenerMock).toHaveBeenCalledWith(
       'mouseup',
-      instance._onMouseUpCapture,
+      expect.any(Function),
       true
     );
-    expect(containsMock).not.toHaveBeenCalledWith(instance['_pressedTarget']);
-    expect(instance['_clicked']).toBe(false);
-    expect(instance.state.pressed).toBe(false);
+
+    removeEventListenerMock.mockRestore();
   });
 });

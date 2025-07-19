@@ -15,7 +15,7 @@ export type PointerSurfaceProps = {
   style?: Record<string, unknown>;
   target?: string;
   title?: string;
-  value?: string | number | Record<string, unknown> | EditorView|any;
+  value?: any;
   hasChild?: boolean;
 };
 
@@ -27,15 +27,14 @@ export class PointerSurface extends React.PureComponent {
   _pressedTarget = null;
   _unmounted = false;
 
-  state = { pressed: false };
+  state = {pressed: false};
 
   render(): React.ReactElement {
-    const { className, disabled, active, id, style, title, children } =
+    const {className, disabled, active, id, style, title, children} =
       this.props;
-    const { pressed } = this.state;
+    const {pressed} = this.state;
 
     const buttonClassName = cx(className, {
-      //  classs added fro active style. temp commeneted
       // active: active,
       disabled: disabled,
       pressed: pressed,
@@ -94,7 +93,7 @@ export class PointerSurface extends React.PureComponent {
       return;
     }
 
-    this.setState({ pressed: true });
+    this.setState({pressed: true});
     this._pressedTarget = e.currentTarget;
     this._clicked = false;
 
@@ -109,7 +108,9 @@ export class PointerSurface extends React.PureComponent {
 
     if (this._clicked || e.type === 'keypress') {
       const { onClick, value, disabled } = this.props;
-      !disabled && onClick && onClick(value, e);
+      if (!disabled && onClick) {
+        onClick(value, e);
+      }
     }
 
     this._pressedTarget = null;
@@ -128,6 +129,6 @@ export class PointerSurface extends React.PureComponent {
       (target === this._pressedTarget ||
         target.contains(this._pressedTarget) ||
         this._pressedTarget.contains(target));
-    this.setState({ pressed: false });
+    this.setState({pressed: false});
   };
 }

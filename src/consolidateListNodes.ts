@@ -98,10 +98,12 @@ function linkOrderedListCounters(tr: Transform): Transform {
 
   let listsBefore = null;
   tr.doc.nodesBetween(from, to, (node, pos, parentNode) => {
-    let willTraverseNodeChildren = true;
-    if (isListNode(node)) {
+    if (!isListNode(node)) {
+      // Not traversing within any list node. No lists need to be updated.
+      listsBefore = null;
+      return true;
+    }
       // List Node can't be nested, no need to traverse its children.
-      willTraverseNodeChildren = false;
       const indent = node.attrs.indent || 0;
       const start = node.attrs.start || 1;
       const {name, following} = node.attrs;
@@ -109,53 +111,49 @@ function linkOrderedListCounters(tr: Transform): Transform {
         namedLists.add(name);
       }
 
-      if (listsBefore) {
-        if (start === 1 && isOrderedListNode(node)) {
-          // Look backward until we could find another ordered list node to
-          // link with.
-          let counterIsLinked;
-          listsBefore.some(({ node: { type }, indent: listIndent }) => {
-            if (listIndent < indent || (listIndent === indent && type !== node.type)) {
-              // Restart counter if:
-              // 1. We encounter a list with a lesser indent (moving to a higher level).
-              // 2. We encounter a different type of list at the same indent level.
-              counterIsLinked = false;
-              return true;
-            }
-
-            if (listIndent === indent) {
-              // Continue counter if:
-              // We encounter the same type of list at the same indent level.
-              counterIsLinked = true;
-              return true;
-            }
-
-            return false;
-          });
-
-          if (counterIsLinked !== undefined) {
-            tr = setCounterLinked(tr, pos, counterIsLinked);
+    if (listsBefore) {
+      if (start === 1 && isOrderedListNode(node)) {
+        // Look backward until we could find another ordered list node to
+        // link with.
+        let counterIsLinked;
+        listsBefore.some(({ node: { type }, indent: listIndent }) => {
+          if (listIndent < indent || (listIndent === indent && type !== node.type)) {
+            // Restart counter if:
+            // 1. We encounter a list with a lesser indent (moving to a higher level).
+            // 2. We encounter a different type of list at the same indent level.
+            counterIsLinked = false;
+            return true;
           }
-        }
-      } else {
-        // Found the first list among a new Lists Island.
-        // ------
-        // 1. AAA <- Counter restarts here.
-        // 2. BBB
-        listsBefore = [];
-        if (isOrderedListNode(node)) {
-          // The list may follow a previous list that is among another Lists
-          // Island. If so, do not reset the list counter.
-          const counterIsLinked = namedLists.has(following);
+
+          if (listIndent === indent) {
+            // Continue counter if:
+            // We encounter the same type of list at the same indent level.
+            counterIsLinked = true;
+            return true;
+          }
+
+          return false;
+        });
+
+        if (counterIsLinked !== undefined) {
           tr = setCounterLinked(tr, pos, counterIsLinked);
         }
       }
-      listsBefore.unshift({parentNode, indent, node});
     } else {
-      // Not traversing within any list node. No lists need to be updated.
-      listsBefore = null;
+      // Found the first list among a new Lists Island.
+      // ------
+      // 1. AAA <- Counter restarts here.
+      // 2. BBB
+      listsBefore = [];
+      if (isOrderedListNode(node)) {
+        // The list may follow a previous list that is among another Lists
+        // Island. If so, do not reset the list counter.
+        const counterIsLinked = namedLists.has(following);
+        tr = setCounterLinked(tr, pos, counterIsLinked);
+      }
     }
-    return willTraverseNodeChildren;
+    listsBefore.unshift({parentNode, indent, node});
+    return false;
   });
   return tr;
 }

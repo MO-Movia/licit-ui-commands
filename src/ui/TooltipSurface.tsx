@@ -70,11 +70,11 @@ export class TooltipSurface extends React.PureComponent<TooltipSurfaceProps> {
   };
 
   _onMouseLeave = (e): void => {
-    if(e && e.target && e.target.nodeName!=='IMG'){
+ //   if(e && e.target && e.target.nodeName!=='IMG'){
     this._popUp?.close();
     this._popUp = null;
     }
-  };
+//  };
 
   _onClose = (): void => {
     this._popUp = null;

@@ -33,7 +33,7 @@ export function toggleHeading(
     return tr;
   }
 
-  const { from, to } = (tr as Transaction).selection;
+  const {from, to} = (tr as Transaction).selection;
   let startWithHeadingBlock = null;
   const poses = [];
   doc.nodesBetween(from, to, (node, pos, parentNode) => {
@@ -71,7 +71,7 @@ export function setHeadingNode(
   pos: number,
   level?: number
 ): Transform {
-  const { nodes } = schema;
+  const {nodes} = schema;
   const heading = nodes[HEADING];
   const paragraph = nodes[PARAGRAPH];
   const blockquote = nodes[BLOCKQUOTE];
@@ -90,8 +90,8 @@ export function setHeadingNode(
     // Toggle list
     if (level !== null) {
       tr = unwrapNodesFromList(tr, schema, pos, (paragraphNode) => {
-        const { content, marks, attrs } = paragraphNode;
-        const headingAttrs = { ...attrs, level };
+        const {content, marks, attrs} = paragraphNode;
+        const headingAttrs = {...attrs, level};
         return heading.create(headingAttrs, content, marks);
       });
     }
@@ -100,13 +100,13 @@ export function setHeadingNode(
     if (level === null) {
       tr = tr.setNodeMarkup(pos, paragraph, node.attrs, node.marks);
     } else {
-      tr = tr.setNodeMarkup(pos, heading, { ...node.attrs, level }, node.marks);
+      tr = tr.setNodeMarkup(pos, heading, {...node.attrs, level}, node.marks);
     }
   } else if ((level && nodeType === paragraph) || nodeType === blockquote) {
     // [FS] IRAD-948 2020-05-22
     // Clear Header formatting
     tr = clearMarks(tr, schema);
-    tr = tr.setNodeMarkup(pos, heading, { ...node.attrs, level }, node.marks);
+    tr = tr.setNodeMarkup(pos, heading, {...node.attrs, level}, node.marks);
   }
   return tr;
 }

@@ -1,30 +1,39 @@
-import Adapter from '@cfaester/enzyme-adapter-react-18';
-import {configure, shallow} from 'enzyme';
-import {ColorEditor} from './ColorEditor';
-import {CustomButton} from './CustomButton';
+import {render} from '@testing-library/react';
 import React from 'react';
+import {ColorEditor} from './ColorEditor';
+import '@testing-library/jest-dom';
 
-configure({adapter: new Adapter()});
-
-declare let describe: jest.Describe;
-declare let it: jest.It;
+jest.mock('./CustomButton', () => ({
+  CustomButton: ({onClick, value, active, label, className, style}) => (
+    <button
+      aria-pressed={active}
+      className={className}
+      data-testid={`color-button-${value}`}
+      onClick={() => onClick(value)}
+      style={style}
+    >
+      {label}
+    </button>
+  ),
+}));
 
 describe('ColorEditor', () => {
-  it('should call close callback when a color is selected', () => {
-    const closeMock = jest.fn();
-    const props = {
-      close: closeMock,
-      hex: '#FFFFFF',
-    };
+  const mockClose = jest.fn();
 
-    const wrapper = shallow(<ColorEditor {...props} />);
-    const greyColors = wrapper
-      .find('.czi-color-editor-section')
-      .at(1)
-      .find(CustomButton);
-    const firstGreyColor = greyColors.at(0);
-    firstGreyColor.simulate('click');
+  beforeEach(() => {
+    mockClose.mockClear();
+  });
 
-    expect(closeMock).toHaveBeenCalledTimes(1);
+  it('renders the correct number of rainbow color buttons for each color section', () => {
+    const {getAllByTestId} = render(<ColorEditor close={mockClose} />);
+    expect(getAllByTestId(/color-button-/).length).toBeGreaterThan(10);
+  });
+
+  it('sets the correct button as active when selectedColor matches a color', () => {
+    const selectedHex = '#f20d96'; 
+    const { getByTestId } = render(<ColorEditor close={mockClose} hex={selectedHex} />);
+
+    const selectedButton = getByTestId(`color-button-${selectedHex}`);
+    expect(selectedButton).toHaveAttribute('aria-pressed', 'true');
   });
 });

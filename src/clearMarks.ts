@@ -1,10 +1,10 @@
-import { Schema } from 'prosemirror-model';
-import { Transform } from 'prosemirror-transform';
-import { HEADING, PARAGRAPH } from './NodeNames';
+import {Schema} from 'prosemirror-model';
+import {Transform} from 'prosemirror-transform';
+import {HEADING, PARAGRAPH} from './NodeNames';
 import * as MarkNames from './MarkNames';
-import { setTextAlign } from './TextAlignCommand';
-import { setTextLineSpacing } from './TextLineSpacingCommand';
-import { Transaction } from 'prosemirror-state';
+import {setTextAlign} from './TextAlignCommand';
+import {setTextLineSpacing} from './TextLineSpacingCommand';
+import {Transaction} from 'prosemirror-state';
 
 const {
   MARK_EM,
@@ -42,11 +42,11 @@ function removeTextAlignAndLineSpacing(
 }
 
 export function clearMarks(tr: Transform, schema: Schema): Transform {
-  const { doc, selection } = tr as Transaction;
+  const {doc, selection} = tr as Transaction;
   if (!selection || !doc) {
     return tr;
   }
-  const { from, to, empty } = selection;
+  const {from, to, empty} = selection;
   if (empty) {
     return tr;
   }
@@ -78,7 +78,7 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
   }
 
   tasks.forEach((job) => {
-    const { mark } = job;
+    const {mark} = job;
     // [FS] IRAD-1043 2020-10-27
     // Issue fix on when clear the format of a selected word, the entire paragraphs style removed
     tr = tr.removeMark(from, to, mark.type);
@@ -92,16 +92,16 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
 // [FS] IRAD-948 2020-05-22
 // Clear Header formatting
 export function clearHeading(tr: Transform, schema: Schema): Transform {
-  const { doc, selection } = tr as Transaction;
+  const {doc, selection} = tr as Transaction;
 
   if (!selection || !doc) {
     return tr;
   }
-  const { from, to, empty } = selection;
+  const {from, to, empty} = selection;
   if (empty) {
     return tr;
   }
-  const { nodes } = schema;
+  const {nodes} = schema;
 
   const heading = nodes[HEADING];
   const paragraph = nodes[PARAGRAPH];
@@ -110,7 +110,7 @@ export function clearHeading(tr: Transform, schema: Schema): Transform {
 
   doc.nodesBetween(from, to, (node, pos) => {
     if (heading === node.type) {
-      tasks.push({ node, pos });
+      tasks.push({node, pos});
     }
     return true;
   });
@@ -120,7 +120,7 @@ export function clearHeading(tr: Transform, schema: Schema): Transform {
   }
 
   tasks.forEach((job) => {
-    const { node, pos } = job;
+    const {node, pos} = job;
     tr = tr.setNodeMarkup(pos, paragraph, node.attrs, node.marks);
   });
   return tr;
