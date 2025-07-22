@@ -73,7 +73,7 @@ describe('TextHighlightCommand', () => {
         return 'red';
       },
       editorview,
-      'red'
+      {color:'red',selectedOption:'top'} 
     );
 
     expect(test).toBeTruthy();
@@ -102,7 +102,7 @@ describe('TextHighlightCommand', () => {
         return 'red';
       },
       editorview,
-      null
+      { color: {}, selectedOption: {} }
     );
 
     expect(test).toBeTruthy();
@@ -130,7 +130,7 @@ describe('TextHighlightCommand', () => {
         return 'red';
       },
       editorview,
-      'red'
+      {color:'red',selectedOption:'top'} 
     );
     expect(test).toBeTruthy();
   });
