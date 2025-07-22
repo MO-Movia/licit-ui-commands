@@ -292,7 +292,7 @@ export function updateToggleMarks(markType: MarkType, tr: Transform, state: Edit
   let _startPos = startPos.pos;
   const { schema } = state;
   // Traverse upwards to ensure we reach the full paragraph from selection start
-  while (startPos.parent.type.name !== 'paragraph' && startPos?.parent?.type?.name !== 'table_cell' && startPos.depth > 0) {
+  while (startPos.parent.type.name !== 'paragraph' && startPos?.parent?.type?.name !== 'table_cell' && startPos?.parent?.type?.name !== 'enhanced_table_figure_notes' && startPos.depth > 0) {
     _startPos = startPos.before();
   }
 
@@ -300,7 +300,7 @@ export function updateToggleMarks(markType: MarkType, tr: Transform, state: Edit
   let style: Style = null;
   tr.doc.nodesBetween(startPos.pos, endPos.pos, (node, pos) => {
 
-    if (node.type.name === 'paragraph' && node.attrs.styleName) {
+    if ((node.type.name === 'paragraph' || node.type.name === 'enhanced_table_figure_notes') && node.attrs.styleName) {
       style = getStyleByName(node.attrs.styleName);
 
     }
