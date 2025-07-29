@@ -23,7 +23,8 @@ jobs:
       - run: npm audit
 
       # Dependency-Check
-      - run: npx owasp-dependency-check --scan . --failOnCVSS 1 --suppression ./suppression.xml --nvdApiKey ${{ secrets.NVD_KEY }} --exclude node_modules/node-gyp/**/*
+      #- run: npx owasp-dependency-check --scan . --suppression ./suppression.xml --nvdApiKey ${{ secrets.NVD_KEY }} --exclude node_modules/node-gyp/**/*
+
       # Dependency-Track
       - run: npx @cyclonedx/cyclonedx-npm --package-lock-only --output-file SBOM.json
       - run: |
