@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-<!--cve or vulnerabilityName--> <!--package@version vulnerabilityType affectedRange linkForDetails -->
-<!--
    <suppress>
       <notes><![CDATA[
       Exlude CVE deemed not to be a vulnerability (Universal False Positives)
       ]]></notes>
-      <cve>CVE-2025-1234</cve>
+        <!--cve or vulnerabilityName--> <!--package@version affectedRange vulnerabilityType linkForDetails -->
+        <cve>CVE-2024-26467</cve> <!--railroad-diagrams:* This was deemed not a vulnerability. https://www.cve.org/CVERecord?id=CVE-2024-26467 https://security.snyk.io/vuln/SNYK-JS-RAILROADDIAGRAMS-6282875 -->
    </suppress>
--->
 </suppressions>

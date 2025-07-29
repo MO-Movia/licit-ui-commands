@@ -37,7 +37,7 @@ jobs:
       - run: npm run test:coverage
 
       # Dependency-Check
-      - run: npx owasp-dependency-check --scan . --suppression ./suppression.xml --nvdApiKey ${{ secrets.NVD_KEY }} --disableYarnAudit --exclude node_modules/node-gyp/**/*
+      - run: npx owasp-dependency-check --scan . --suppression ./suppression.xml --nvdApiKey ${{ secrets.NVD_KEY }} --disableYarnAudit --exclude dependency-check-bin --exclude node_modules/node-gyp/**/*
       # Sonar scan. https://github.com/marketplace/actions/sonarqube-scan
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
