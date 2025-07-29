@@ -22,7 +22,6 @@ export function showModalMask(IsChildDialog?: boolean): void {
   if (!element) {
     element = document.createElement('div');
     element.id = MODAL_MASK_ID;
-    // [FS] IRAD-1048 2020-10-07
     // To handle child dialog window
     if (IsChildDialog) {
       element.className = 'czi-pop-up-modal-mask child-modal';
@@ -83,7 +82,6 @@ function getRootElement(
   if (popUpParams?.modal) {
     element.setAttribute('data-pop-up-modal', 'y');
   }
-  // [FS] IRAD-1048 2020-10-07
   // To handle child dialog window
   if (popUpParams?.IsChildDialog) {
     element.className = 'czi-pop-up-element child-modal czi-vars';
@@ -188,7 +186,7 @@ export function createPopUp(
   handle = {
     close: closePopUp,
     update: (nextViewProps) => {
-      currentViewProps = nextViewProps || {};
+      currentViewProps = nextViewProps ?? {};
       render(currentViewProps, popUpParams);
     },
   };

@@ -1,9 +1,9 @@
-import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
-import { Transform } from 'prosemirror-transform';
-import { EditorView } from 'prosemirror-view';
+import {EditorState, TextSelection, Transaction} from 'prosemirror-state';
+import {Transform} from 'prosemirror-transform';
+import {EditorView} from 'prosemirror-view';
 import * as React from 'react';
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import { updateIndentLevel } from './updateIndentLevel';
+import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import {updateIndentLevel} from './updateIndentLevel';
 
 export class IndentCommand extends UICommand {
   _delta: number;
@@ -22,32 +22,33 @@ export class IndentCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    const { selection, schema } = state;
-    let { tr } = state;
+    const {selection, schema} = state;
+    let {tr} = state;
     tr = tr.setSelection(selection);
     const trx = updateIndentLevel(state, tr, schema, this._delta, _view);
+    tr = trx.tr as Transaction;
     if (trx.docChanged) {
       // set the value of overriddenIndent to true if the user override the indent style.
-      const nodePos = (trx.tr as Transaction).selection.$from.before(1);
-      const paraNode = trx.tr.doc.nodeAt(nodePos);
+      const nodePos = tr.selection.$from.before(1);
+      const paraNode = tr.doc.nodeAt(nodePos);
       if (paraNode) {
         if (
-          Number(selection.$head.parent.attrs.indent) !== Number(paraNode.attrs.indent)
+          Number(selection.$head.parent.attrs.indent) !==
+          Number(paraNode.attrs.indent)
         ) {
-            const newAttrs = {
-              ...paraNode.attrs,
-              overriddenIndent: true,
-              overriddenIndentValue: paraNode.attrs.indent
-            };
-            tr = tr.setNodeMarkup(nodePos, null, newAttrs);
+          const newAttrs = {
+            ...paraNode.attrs,
+            overriddenIndent: true,
+            overriddenIndentValue: paraNode.attrs.indent,
+          };
+          tr = tr.setNodeMarkup(nodePos, null, newAttrs);
         }
       }
 
-      dispatch?.(trx.tr);
+      dispatch?.(tr);
     }
     return true;
   };
-  // [FS] IRAD-1087 2020-11-11
   // New method to execute new styling implementation for indent
   executeCustom = (
     state: EditorState,
@@ -55,7 +56,7 @@ export class IndentCommand extends UICommand {
     from: number,
     to: number
   ): Transform => {
-    const { schema } = state;
+    const {schema} = state;
     tr = (tr as Transaction).setSelection(
       TextSelection.create(tr.doc, from, to)
     );

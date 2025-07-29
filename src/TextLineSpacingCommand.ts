@@ -32,7 +32,7 @@ export function setTextLineSpacing(
   }
 
   const tasks = [];
-  const lineSpacingValue = lineSpacing || null;
+  const lineSpacingValue = lineSpacing ?? null;
 
   doc.nodesBetween(from, to, (node, pos, _parentNode) => {
     const nodeType = node.type;
@@ -42,7 +42,7 @@ export function setTextLineSpacing(
       nodeType === listItem ||
       nodeType === blockquote
     ) {
-      const lineSpacing = node.attrs.lineSpacing || null;
+      const lineSpacing = node.attrs.lineSpacing ?? null;
       if (lineSpacing !== lineSpacingValue) {
         tasks.push({
           node,

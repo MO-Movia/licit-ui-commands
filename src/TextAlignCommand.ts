@@ -25,13 +25,13 @@ export function setTextAlign(
   const paragraph = nodes[PARAGRAPH];
 
   const tasks = [];
-  alignment = alignment || null;
+  alignment = alignment ?? null;
 
   const allowedNodeTypes = new Set([blockquote, heading, listItem, paragraph]);
 
   doc.nodesBetween(from, to, (node, pos, _parentNode) => {
     const nodeType = node.type;
-    const align = node.attrs.align || null;
+    const align = node.attrs.align ?? null;
     if (align !== alignment && allowedNodeTypes.has(nodeType)) {
       tasks.push({
         node,

@@ -219,55 +219,47 @@ export function updateMarksAttrs(markType: MarkType, tr: Transform, state: Edito
 
   let style: Style = null;
   tr.doc?.nodesBetween(startPos?.pos, endPos?.pos, (node, pos) => {
-
-    if (node.type.name === 'table') {
-      return true;
-    }
     if (node.type.name === 'paragraph' && node.attrs.styleName) {
       style = getStyleByName(node.attrs.styleName);
-
     }
-    else {
-      const nodesMarkType = node.marks.find(mark => mark.type.name === markType.name);
+    else if (node.type.name !== 'table') {
+      const nodesMarkType = node.marks.find(
+        (mark) => mark.type.name === markType.name
+      );
 
       if (pos <= _startPos) {
         switch (nodesMarkType?.type.name) {
-
           case 'mark-text-color': {
-            const defTextColor = style?.styles?.color || '#000000';
-            if (defTextColor !== value.toString()) {
-              attrs = value ? { color: value, overridden: true } : null;
-            }
-            else {
-              attrs = value ? { color: value, overridden: false } : null;
-            }
+            const defTextColor = style?.styles?.color ?? '#000000';
+              attrs = value
+                ? {color: value, overridden: defTextColor !== value.toString()}
+                : null;
             break;
           }
           case 'mark-font-size':
-            if (style?.styles?.fontSize !== value?.toString()) {
-              attrs = value ? { pt: value, overridden: true } : null;
-            }
-            else {
-              attrs = value ? { pt: value, overridden: false } : null;
-            }
+              attrs = value
+                ? {
+                    pt: value,
+                    overridden: style?.styles?.fontSize !== value?.toString(),
+                  }
+                : null;
             break;
           case 'mark-font-type':
-            if (style?.styles?.fontName !== value?.toString()) {
-              attrs = value ? { name: value, overridden: true } : null;
-            }
-            else {
-              attrs = value ? { name: value, overridden: false } : null;
-            }
+              attrs = value
+                ? {
+                    name: value,
+                    overridden: style?.styles?.fontName !== value?.toString(),
+                  }
+                : null;
             break;
           case 'mark-text-highlight': {
             const defHiglightColor = style?.styles?.textHighlight || '#ffffff';
-
-            if (defHiglightColor !== value?.toString()) {
-              attrs = value ? { highlightColor: value, overridden: true } : null;
-            }
-            else {
-              attrs = value ? { highlightColor: value, overridden: false } : null;
-            }
+              attrs = value
+                ? {
+                    highlightColor: value,
+                    overridden: defHiglightColor !== value?.toString(),
+                  }
+                : null;
             break;
           }
         }
@@ -275,7 +267,6 @@ export function updateMarksAttrs(markType: MarkType, tr: Transform, state: Edito
           tr.addMark(pos, pos + node.nodeSize, markType.create(attrs));
         }
       }
-
     }
     return true;
   });
@@ -296,47 +287,42 @@ export function updateToggleMarks(markType: MarkType, tr: Transform, state: Edit
     _startPos = startPos.before();
   }
 
-
   let style: Style = null;
   tr.doc.nodesBetween(startPos.pos, endPos.pos, (node, pos) => {
-
     if (node.type.name === 'paragraph' && node.attrs.styleName) {
       style = getStyleByName(node.attrs.styleName);
+      return;
+    }
+    else if (!node.isText || pos > _startPos) {
+      return;
+    }
+    const hasMarks = node.marks.find(mark => mark.type.name === markType.name);
+    const overrideMarkType = schema.marks[MARK_OVERRIDE];
+    if (hasMarks) {
+      tr.removeMark(pos, pos + node.nodeSize, overrideMarkType);
+    }
+    switch (markType.name) {
+
+      case 'strong':
+        attrs = { strong: style?.styles?.strike ?? true };
+        break;
+      case 'em':
+        attrs = { em: style?.styles?.strike ?? true };
+        break;
+      case 'underline':
+        attrs = { underline: style?.styles?.strike ?? true };
+        break;
+      case 'strike':
+        attrs = { strike: style?.styles?.strike ?? true };
+        break;
 
     }
-    else if (node.isText) {
-      const hasMarks = node.marks.find(mark => mark.type.name === markType.name);
-
-      if (pos <= _startPos) {
-        const overrideMarkType = schema.marks[MARK_OVERRIDE];
-        if (hasMarks) {
-          tr.removeMark(pos, pos + node.nodeSize, overrideMarkType);
-        }
-        switch (markType.name) {
-
-          case 'strong':
-            attrs = { strong: style?.styles?.strike ?? true };
-            break;
-          case 'em':
-            attrs = { em: style?.styles?.strike ?? true };
-            break;
-          case 'underline':
-            attrs = { underline: style?.styles?.strike ?? true };
-            break;
-          case 'strike':
-            attrs = { strike: style?.styles?.strike ?? true };
-            break;
-
-        }
-        if (!hasMarks) {
-          const overridenMark = node.marks.find(mark => mark.type.name === overrideMarkType.name);
-          if (overridenMark) {
-            attrs = { ...overridenMark.attrs, ...attrs };
-          }
-          tr.addMark(pos, pos + node.nodeSize, overrideMarkType?.create(attrs));
-        }
+    if (!hasMarks) {
+      const overridenMark = node.marks.find(mark => mark.type.name === overrideMarkType.name);
+      if (overridenMark) {
+        attrs = { ...overridenMark.attrs, ...attrs };
       }
-
+      tr.addMark(pos, pos + node.nodeSize, overrideMarkType?.create(attrs));
     }
   });
 

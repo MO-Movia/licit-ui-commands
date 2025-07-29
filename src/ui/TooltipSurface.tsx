@@ -37,7 +37,6 @@ export class TooltipSurface extends React.PureComponent<TooltipSurfaceProps> {
         className="czi-tooltip-surface"
         data-tooltip={tooltip}
         id={this._id}
-        onMouseDown={tooltip && this._onMouseLeave}
         onMouseEnter={tooltip && this._onMouseEnter}
         onMouseLeave={tooltip && this._onMouseLeave}
         role="tooltip"

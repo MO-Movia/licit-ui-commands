@@ -103,7 +103,6 @@ export function setHeadingNode(
       tr = tr.setNodeMarkup(pos, heading, {...node.attrs, level}, node.marks);
     }
   } else if ((level && nodeType === paragraph) || nodeType === blockquote) {
-    // [FS] IRAD-948 2020-05-22
     // Clear Header formatting
     tr = clearMarks(tr, schema);
     tr = tr.setNodeMarkup(pos, heading, {...node.attrs, level}, node.marks);

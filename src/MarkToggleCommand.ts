@@ -1,11 +1,12 @@
-import { toggleMark } from 'prosemirror-commands';
-import { EditorState } from 'prosemirror-state';
-import { Transform } from 'prosemirror-transform';
-import { EditorView } from 'prosemirror-view';
-import { findNodesWithSameMark } from './findNodesWithSameMark';
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import {toggleMark} from 'prosemirror-commands';
+import {EditorState, TextSelection} from 'prosemirror-state';
+import {Transform} from 'prosemirror-transform';
+import {EditorView} from 'prosemirror-view';
+import {findNodesWithSameMark} from './findNodesWithSameMark';
+import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
 import * as React from 'react';
-import { updateToggleMarks } from './applyMark';
+import {updateToggleMarks} from './applyMark';
+import {Attrs, MarkType} from 'prosemirror-model';
 
 export class MarkToggleCommand extends UICommand {
   _markName: string;
@@ -16,8 +17,8 @@ export class MarkToggleCommand extends UICommand {
   }
 
   isActive = (state: EditorState): boolean => {
-    const { schema, doc, selection } = state;
-    const { from, to } = selection;
+    const {schema, doc, selection} = state;
+    const {from, to} = selection;
     const markType = schema.marks[this._markName];
     if (markType && from < to) {
       return !!findNodesWithSameMark(doc, from, to - 1, markType);
@@ -52,14 +53,14 @@ export class MarkToggleCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    const { schema, selection, tr } = state;
+    const {schema, selection, tr} = state;
     const markType = schema.marks[this._markName];
 
     if (!markType) {
       return false;
     }
 
-    const { from, to } = selection;
+    const {from, to} = selection;
     if (tr && to === from + 1) {
       const node = tr.doc.nodeAt(from);
       if (node.isAtom && !node.isText && node.isLeaf) {
@@ -70,7 +71,7 @@ export class MarkToggleCommand extends UICommand {
 
     //Replace `toggleMark` with transform that does not change scroll
     // position.
-    const newattrs = { overridden: true };
+    const newattrs = {overridden: true};
     if (this.doUpdate) {
       updateToggleMarks(markType, tr, state);
       this.doUpdate = false;
@@ -83,25 +84,24 @@ export class MarkToggleCommand extends UICommand {
     return true;
   };
 
-  // [FS] IRAD-1087 2020-09-30
   // Method to execute strike, em, strong, underline,superscrpt for custom styling implementation.
   executeCustom = (
     state: EditorState,
     tr: Transform,
     posfrom: number,
-    posto: number,
+    posto: number
   ) => {
-    const { schema } = state;
+    const {schema} = state;
     const markType = schema.marks[this._markName];
     if (!markType) {
-      return false;
+      return null;
     }
 
     if (tr && posto === posfrom + 1) {
       const node = tr.doc.nodeAt(posfrom);
       if (node.isAtom && !node.isText && node.isLeaf) {
         // An atomic node (e.g. Image) is selected.
-        return false;
+        return null;
       }
     }
 
@@ -113,18 +113,17 @@ export class MarkToggleCommand extends UICommand {
   }
 }
 
-// [FS] IRAD-1042 2020-09-30
 // Fix: overrided the toggleMarks for custom style implementation
 // Return Transform object
 export function toggleCustomStyle(
-  markType,
-  attrs,
-  state,
-  tr,
+  markType: MarkType,
+  attrs: Attrs | null,
+  state: EditorState,
+  tr: Transform,
   posfrom: number,
   posto: number
 ) {
-  const ref = state.selection;
+  const ref = state.selection as TextSelection;
   const empty = ref.empty;
   const $cursor = ref.$cursor;
   const ranges = ref.ranges;
@@ -132,15 +131,12 @@ export function toggleCustomStyle(
     return tr;
   }
   if ($cursor && $cursor.parentOffset === 0 && posfrom === posto) {
-    if (markType.isInSet(state.storedMarks || $cursor.marks())) {
+    if (markType.isInSet(state.storedMarks ?? $cursor.marks())) {
       tr = state.tr.removeStoredMark(markType);
-    }
-    else {
+    } else {
       tr = state.tr.addStoredMark(markType.create(attrs));
     }
-  }
-  else {
-    // [FS] IRAD-1043 2020-10-27
+  } else {
     // No need to remove the applied custom style, if user select the same style multiple times.
     let from = posfrom;
     let to = 0;
@@ -148,10 +144,12 @@ export function toggleCustomStyle(
       from = pos;
       to = from + node.nodeSize;
       if (node && 0 < node.marks?.length) {
-        const overridden = node.marks.find(mark => mark.type.name === 'override');
+        const overridden = node.marks.find(
+          (mark) => mark.type.name === 'override'
+        );
         const skip = overridden?.attrs[markType.name] === true;
         if (!skip) {
-          attrs = { overridden: false };
+          attrs = {overridden: false};
           tr = tr.addMark(from, to, markType.create(attrs));
         }
         from = to;

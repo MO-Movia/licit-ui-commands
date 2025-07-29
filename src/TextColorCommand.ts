@@ -86,7 +86,6 @@ export class TextColorCommand extends UICommand {
     }
     return false;
   };
-  // [FS] IRAD-1087 2020-09-30
   // Method to execute custom styling implementation of Text color
   executeCustom = (
     state: EditorState,
@@ -98,7 +97,6 @@ export class TextColorCommand extends UICommand {
     const markType = schema.marks[MARK_TEXT_COLOR];
     const attrs = { color: this._color };
     const storedmarks = (tr as Transaction).storedMarks;
-    // [FS] IRAD-1043 2020-10-27
     // Issue fix on removing the  custom style if user click on the same style menu multiple times
     tr = applyMark(
       (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),

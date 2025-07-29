@@ -77,7 +77,6 @@ export class FontSizeCommand extends UICommand {
     }
     return false;
   };
-  // [FS] IRAD-1087 2020-10-01
   // Method to execute custom styling implementation of font size
   executeCustom = (
     state: EditorState,

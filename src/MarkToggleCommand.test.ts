@@ -43,7 +43,7 @@ describe('MarkToggleCommand', () => {
     } as unknown as Transform;
 
     const test = plugin.executeCustom(state, tr, 2, 2);
-    expect(test).toBe(false);
+    expect(test).toBeFalsy();
   });
 
   it('should call when executeCustom function return second false', () => {
@@ -75,7 +75,7 @@ describe('MarkToggleCommand', () => {
     } as unknown as Transform;
 
     const test = plugin.executeCustom(state, tr, 1, 2);
-    expect(test).toBe(false);
+    expect(test).toBeFalsy();
   });
 
   it('should call when isActive function return false', () => {

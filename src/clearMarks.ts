@@ -100,7 +100,6 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
 
   tasks.forEach((job) => {
     const { mark } = job;
-    // [FS] IRAD-1043 2020-10-27
     // Issue fix on when clear the format of a selected word, the entire paragraphs style removed
     tr = tr.removeMark(from, to, mark.type);
   });
@@ -139,15 +138,9 @@ export function comapreMarks(style: Style, mark: Mark, marksToAdd, pos: number, 
 
   switch (mark.type.name) {
     case MarkNames.MARK_STRONG:
-      if (style?.styles[STRONG] || !mark.attrs.overridden) {
-        return false;
-      }
-      return true;
+      return !(style?.styles[STRONG] || !mark.attrs.overridden);
     case MarkNames.MARK_EM:
-      if (style?.styles[EM] || !mark.attrs.overridden) {
-        return false;
-      }
-      return true;
+      return !(style?.styles[EM] || !mark.attrs.overridden);
     case MarkNames.MARK_TEXT_COLOR:
       if ((style?.styles[COLOR] && mark.attrs[COLOR] === style?.styles[COLOR]) || !mark.attrs.overridden) {
         return false;
@@ -179,10 +172,7 @@ export function comapreMarks(style: Style, mark: Mark, marksToAdd, pos: number, 
       return true;
     case MarkNames.MARK_SUPER:
     case MarkNames.MARK_SUB:
-      if (!mark.attrs.overridden) {
-        return false;
-      }
-      return true;
+      return !!mark.attrs.overridden;
     case MarkNames.MARK_TEXT_HIGHLIGHT:
       if ((style?.styles['textHighlight'] && mark.attrs['highlightColor'] === style?.styles['textHighlight']) || !mark.attrs.overridden) {
         return false;
@@ -192,10 +182,7 @@ export function comapreMarks(style: Style, mark: Mark, marksToAdd, pos: number, 
       marksToAdd.push({ node, from: pos, to: pos + node.nodeSize, markType, attrs });
       return true;
     case MarkNames.MARK_UNDERLINE:
-      if (style?.styles[UNDERLINE] || !mark.attrs.overridden) {
-        return false;
-      }
-      return true;
+      return !(style?.styles[UNDERLINE] || !mark.attrs.overridden);
     default:
       return false;
   }
@@ -211,7 +198,6 @@ function addOverrideMarksToNode(mark: Mark, marksToAdd, pos: number, node: Node,
 
 }
 
-// [FS] IRAD-948 2020-05-22
 // Clear Header formatting
 export function clearHeading(tr: Transform, schema: Schema): Transform {
   const { doc, selection } = tr as Transaction;

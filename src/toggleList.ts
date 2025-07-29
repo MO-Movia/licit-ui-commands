@@ -154,7 +154,7 @@ export function wrapNodesWithListInternal(
     }
 
     if (nodeType === heading || nodeType === paragraph) {
-      items = items || [];
+      items ??= [];
       items.push({node, pos});
     } else {
       if (items?.length) {

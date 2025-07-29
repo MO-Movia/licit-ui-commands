@@ -88,7 +88,6 @@ export class TextHighlightCommand extends UICommand {
     }
     return false;
   };
-  // [FS] IRAD-1087 2020-09-30
   // Method to execute custom styling implementation of Text Highlight
   executeCustom = (
     state: EditorState,

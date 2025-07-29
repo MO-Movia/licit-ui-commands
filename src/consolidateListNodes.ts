@@ -104,8 +104,8 @@ function linkOrderedListCounters(tr: Transform): Transform {
       return true;
     }
       // List Node can't be nested, no need to traverse its children.
-      const indent = node.attrs.indent || 0;
-      const start = node.attrs.start || 1;
+      const indent = node.attrs.indent ?? 0;
+      const start = node.attrs.start ?? 1;
       const {name, following} = node.attrs;
       if (name) {
         namedLists.add(name);
@@ -164,7 +164,7 @@ function setCounterLinked(
   linked: boolean
 ): Transform {
   const node = tr.doc.nodeAt(pos);
-  const currentValue = node.attrs.counterReset || null;
+  const currentValue = node.attrs.counterReset ?? null;
   const nextValue = linked ? 'none' : null;
   if (nextValue !== currentValue) {
     const nodeAttrs = {...node.attrs, counterReset: nextValue};

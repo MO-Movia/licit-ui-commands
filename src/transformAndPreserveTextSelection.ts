@@ -1,4 +1,4 @@
-import { Fragment, Schema } from 'prosemirror-model';
+import { Fragment, Mark, Node, Schema } from 'prosemirror-model';
 import { TextSelection, Transaction } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 
@@ -42,7 +42,7 @@ export function transformAndPreserveTextSelection(
   // after changing the whole list.
   let fromOffset = 0;
   let toOffset = 0;
-  let placeholderTextNode;
+  let placeholderTextNode: Node;
 
   if (from === to) {
     if (from === 0) {
@@ -56,8 +56,7 @@ export function transformAndPreserveTextSelection(
 
     if (
       !currentNode &&
-      prevNode &&
-      prevNode.type.name === PARAGRAPH &&
+      prevNode?.type.name === PARAGRAPH &&
       !prevNode.firstChild
     ) {
       // The selection is at a paragraph node which has no content.
@@ -65,7 +64,7 @@ export function transformAndPreserveTextSelection(
       placeholderTextNode = schema.text(PLACEHOLDER_TEXT);
       tr = tr.insert(from, Fragment.from(placeholderTextNode));
       toOffset = 1;
-    } else if (!currentNode && prevNode && prevNode.type.name === TEXT) {
+    } else if (!currentNode && prevNode?.type.name === TEXT) {
       // The selection is at the end of the text node. Select the last
       // character instead.
       fromOffset = -1;
@@ -85,17 +84,14 @@ export function transformAndPreserveTextSelection(
       return tr;
     }
     tr = (tr as Transaction).setSelection(
-      // [FS] IRAD-1005 2020-07-29
-      // Upgrade outdated packages.
       // reset selection using the latest doc.
-      // This fixes IRAD-1023
       TextSelection.create(tr.doc, from + fromOffset, to + toOffset)
     );
   }
 
   // This is an unique ID (by reference).
   const id = {};
-  const findMark = (mark) => mark.attrs.id === id;
+  const findMark = (mark: Mark) => mark.attrs.id === id;
 
   const findMarkRange = () => {
     let markFrom = 0;
