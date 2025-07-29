@@ -4,7 +4,7 @@ name: dependencycheck
 
 on:
   push:
-    branches: [develop, main, master, pipeline/test]
+    branches: [develop, main, master]
 
 jobs:
   dependencycheck:
