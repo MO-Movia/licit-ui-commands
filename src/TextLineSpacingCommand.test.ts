@@ -343,6 +343,6 @@ describe('TextLineSpacingCommand', () => {
         return {doc: dummyDoc, selection: {from: 1, to: 2}};
       },
     } as unknown as Transform;
-    expect(setTextLineSpacing(tr,mySchema,null));
+    expect(setTextLineSpacing(tr,mySchema,null)).toBeDefined();
   });
 });
