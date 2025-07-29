@@ -70,7 +70,7 @@ describe('TextColorCommand', () => {
         return 'red';
       },
       editorview,
-      'red'
+      {color:'red',selectedOption:'top'} 
     );
 
     expect(test).toBeTruthy();
@@ -99,7 +99,7 @@ describe('TextColorCommand', () => {
         return 'red';
       },
       editorview,
-      'red'
+    {color:'red',selectedOption:'top'} 
     );
 
     expect(test).toBeTruthy();
