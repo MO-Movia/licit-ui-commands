@@ -6,5 +6,6 @@
       ]]></notes>
         <!--cve or vulnerabilityName--> <!--package@version affectedRange vulnerabilityType linkForDetails -->
         <cve>CVE-2024-26467</cve> <!--railroad-diagrams:* This was deemed not a vulnerability. https://www.cve.org/CVERecord?id=CVE-2024-26467 https://security.snyk.io/vuln/SNYK-JS-RAILROADDIAGRAMS-6282875 -->
+        <cve>CVE-2025-8263</cve> <!-- prettier:3.6.2 not a vulnerability. To exploit the attacker would already have some level of access to Arbitrary Code Execution (ACE). -->
    </suppress>
 </suppressions>
