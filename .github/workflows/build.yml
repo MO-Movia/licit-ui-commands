@@ -25,11 +25,11 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm whoami # Verify token. Remove this line
       - run: npm ci
       - run: npm run lint
       - run: npm run ci:build
       - run: npm run test:coverage
+      
       # Sonar scan. https://github.com/marketplace/actions/sonarqube-scan
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
@@ -46,6 +46,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       # - run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+
       # Dependency-Check
       - run: npx owasp-dependency-check --scan . --failOnCVSS 1 --suppression ./suppression.xml --nvdApiKey ${{ secrets.NVD_KEY }} --exclude node_modules/node-gyp/**/*
       # Dependency-Track
@@ -56,3 +57,5 @@ jobs:
           --form 'project="${{ secrets.DEPTRACK_PROJECT_ID }}"' \
           --form 'bom=@SBOM.json')
           echo "Response from curl= $response"
+
+      - run: npm whoami # Verify token. Remove this line
