@@ -25,6 +25,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+
+      - run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+      - run: npm whoami # Verify token. Remove this line
+      
       - run: npm ci
       - run: npm run lint
       - run: npm run ci:build
@@ -45,5 +49,3 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
-      - run: npm whoami # Verify token. Remove this line
