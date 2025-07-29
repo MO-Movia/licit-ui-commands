@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+<!--cve or vulnerabilityName--> <!--package@version vulnerabilityType affectedRange linkForDetails -->
 <!--
    <suppress>
       <notes><![CDATA[
       Exlude CVE deemed not to be a vulnerability (Universal False Positives)
       ]]></notes>
-      <!--cve or vulnerabilityName--> <!--package@version vulnerabilityType affectedRange linkForDetails -->
       <cve>CVE-2025-1234</cve>
    </suppress>
 -->
