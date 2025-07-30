@@ -28,8 +28,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      #- run: npm set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
-      #- run: npm whoami # Verify token. Remove this line
+      - run: npm set //registry.npmjs.org/:_authToken=gibber #${{ secrets.NPM_TOKEN }}
+      - run: npm whoami # Verify token works
 
       - run: npm ci
       - run: npm run lint
