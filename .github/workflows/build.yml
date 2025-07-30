@@ -30,6 +30,12 @@ jobs:
 
       - run: npm set //registry.npmjs.org/:_authToken=gibber #${{ secrets.NPM_TOKEN }}
       - run: npm whoami # Verify token works
+        name: Verify token
+      - uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: npm-logs
+          path: /home/moot/.npm/_logs
 
       - run: npm ci
       - run: npm run lint
