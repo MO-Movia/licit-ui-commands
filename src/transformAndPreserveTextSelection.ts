@@ -123,7 +123,7 @@ export function transformAndPreserveTextSelection(
 }
 function setTextSelection(
   tr: Transform,
-  id: {},
+  id: unknown,
   fromOffset: number,
   toOffset: number,
   markType: MarkType,
