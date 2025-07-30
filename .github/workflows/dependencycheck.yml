@@ -3,8 +3,6 @@
 name: dependencycheck
 
 on:
-  push:
-    branches: [pipeline/test]
   pull_request:
     branches: [main, master]
 
