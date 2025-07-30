@@ -1,4 +1,4 @@
-import {Fragment, Node, Schema} from 'prosemirror-model';
+import {Fragment, MarkType, Node, Schema} from 'prosemirror-model';
 import {TextSelection, Transaction} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
 
@@ -111,6 +111,24 @@ export function transformAndPreserveTextSelection(
   tr = applyMark(tr, schema, markType, {id});
   tr = fn({tr, schema});
 
+  tr = setTextSelection(
+    tr,
+    id,
+    fromOffset,
+    toOffset,
+    markType,
+    placeholderTextNode
+  );
+  return tr;
+}
+function setTextSelection(
+  tr: Transform,
+  id: {},
+  fromOffset: number,
+  toOffset: number,
+  markType: MarkType,
+  placeholderTextNode: Node
+) {
   const markRange = findMarkRange(tr, id);
   const selectionRange = {
     from: Math.max(0, markRange.from - fromOffset),
