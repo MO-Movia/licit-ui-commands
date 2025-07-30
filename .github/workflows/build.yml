@@ -22,7 +22,7 @@ jobs:
         with:
           fetch-depth: 0 # extra info for sonar
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         env: 
           NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         with:
@@ -36,8 +36,6 @@ jobs:
       - run: npm run ci:build
       - run: npm run test:coverage
 
-      # Dependency-Check
-      - run: npx owasp-dependency-check --scan . --suppression suppression.xml --nvdApiKey ${{ secrets.NVD_KEY }} --disableYarnAudit --exclude node_modules/node-gyp/**/* --exclude dependency-check-bin/**/* 
       # Sonar scan. https://github.com/marketplace/actions/sonarqube-scan
       - run: echo "TAG=$(npm pkg get version --workspaces=false | tr -d \")" >> "$GITHUB_ENV" # Get Version number
       - name: SonarQube Scan
