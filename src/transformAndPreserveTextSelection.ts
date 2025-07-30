@@ -68,24 +68,20 @@ export function transformAndPreserveTextSelection(
     const prevNode = tr.doc.nodeAt(from - 1);
     const nextNode = tr.doc.nodeAt(from + 1);
 
-    if (
-      !currentNode &&
-      prevNode?.type.name === PARAGRAPH &&
-      !prevNode.firstChild
-    ) {
+    if (selectionIsEmptyParagraph(currentNode, prevNode)) {
       // The selection is at a paragraph node which has no content.
       // Create a temporary text and move selection into that text.
       placeholderTextNode = schema.text(PLACEHOLDER_TEXT);
       tr = tr.insert(from, Fragment.from(placeholderTextNode));
       toOffset = 1;
-    } else if (!currentNode && prevNode?.type.name === TEXT) {
+    } else if (selectionIsAtEnd(currentNode, prevNode)) {
       // The selection is at the end of the text node. Select the last
       // character instead.
       fromOffset = -1;
-    } else if (prevNode && currentNode && currentNode.type === prevNode.type) {
+    } else if (isPrevNode(prevNode, currentNode)) {
       // Ensure that the mark is applied to the same type of node.
       fromOffset = -1;
-    } else if (nextNode && currentNode && currentNode.type === nextNode.type) {
+    } else if (isNextNode(nextNode, currentNode)) {
       toOffset = 1;
     } else if (nextNode) {
       // Could not find the same type of node, assume the next node is safe to use.
@@ -120,7 +116,25 @@ export function transformAndPreserveTextSelection(
     placeholderTextNode
   );
   return tr;
+
+  function selectionIsAtEnd(currentNode: Node, prevNode: Node) {
+    return !currentNode && prevNode?.type.name === TEXT;
+  }
 }
+function isNextNode(nextNode: Node, currentNode: Node) {
+  return nextNode && currentNode && currentNode.type === nextNode.type;
+}
+
+function isPrevNode(prevNode: Node, currentNode: Node) {
+  return prevNode && currentNode && currentNode.type === prevNode.type;
+}
+
+function selectionIsEmptyParagraph(currentNode: Node, prevNode: Node) {
+  return (
+    !currentNode && prevNode?.type.name === PARAGRAPH && !prevNode.firstChild
+  );
+}
+
 function setTextSelection(
   tr: Transform,
   id: unknown,
