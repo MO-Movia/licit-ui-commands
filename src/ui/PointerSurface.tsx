@@ -38,7 +38,7 @@ export class PointerSurface extends React.PureComponent {
     });
 
     return (
-      <span
+      <button
         aria-disabled={disabled}
         aria-pressed={pressed}
         className={buttonClassName}
@@ -48,13 +48,12 @@ export class PointerSurface extends React.PureComponent {
         onMouseEnter={disabled ? preventEventDefault : this._onMouseEnter}
         onMouseLeave={disabled ? null : this._onMouseLeave}
         onMouseUp={disabled ? preventEventDefault : this._onMouseUp}
-        role="button"
         style={style}
         tabIndex={disabled ? null : 0}
         title={title}
       >
         {children}
-      </span>
+      </button>
     );
   }
 
@@ -103,7 +102,7 @@ export class PointerSurface extends React.PureComponent {
     e.preventDefault();
 
     if (this._clicked || e.type === 'keypress') {
-      const { onClick, value, disabled } = this.props;
+      const {onClick, value, disabled} = this.props;
       if (!disabled && onClick) {
         onClick(value, e);
       }

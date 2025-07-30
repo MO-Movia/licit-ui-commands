@@ -23,8 +23,8 @@ const CLICK_INTERVAL = 350;
 const DUMMY_RECT = {x: -10000, y: -10000, w: 0, h: 0};
 
 export class PopUpManager {
-  _bridges = new Map();
-  _positions = new Map();
+  _bridges = new Map<PopUpBridge, number>();
+  _positions = new Map<PopUpBridge, unknown>();
   isColorPicker = false;
 
   _mx = 0;
@@ -131,23 +131,38 @@ export class PopUpManager {
   _syncPosition = (): void => {
     this._rafID = 0;
 
-    const bridgeToDetails = new Map();
-    for (const [bridge] of this._bridges) {
-      const details = bridge.getDetails();
-      bridgeToDetails.set(bridge, details);
-      const {anchor, body} = details;
-      if (body instanceof HTMLElement) {
-        details.bodyRect = fromHTMlElement(body);
-      }
-      if (anchor instanceof HTMLElement) {
-        details.anchorRect = fromHTMlElement(anchor);
-      }
-    }
+    const bridgeToDetails = this.createBridgeDetails();
 
     const pointer = fromXY(this._mx, this._my, 2);
-    const hoveredAnchors = new Set();
-    for (const [bridge, details] of bridgeToDetails) {
-      const {anchor, bodyRect, anchorRect, position, body} = details;
+    const hoveredAnchors = this.createHoveredAnchors(bridgeToDetails, pointer);
+
+    const now = Date.now();
+    for (const [bridge, registeredAt] of this._bridges) {
+      const details = bridgeToDetails.get(bridge);
+      if (details) {
+        const {autoDismiss, anchor, close, modal} = details;
+        if (
+          autoDismiss &&
+          // Modal is handled separately at `onClick`
+          !modal &&
+          now - registeredAt > CLICK_INTERVAL &&
+          !hoveredAnchors.has(anchor) &&
+          !this.isColorPicker
+        ) {
+          close();
+        }
+      }
+    }
+  };
+
+  private createHoveredAnchors(
+    bridgeToDetails: Map<PopUpBridge, number>,
+    pointer: Rect
+  ) {
+    const hoveredAnchors = new Set<Node>();
+    for (const [bridge] of bridgeToDetails) {
+      const {anchor, bodyRect, anchorRect, position, body} =
+        bridge.getDetails();
       if (!bodyRect && !anchorRect) {
         continue;
       }
@@ -181,14 +196,13 @@ export class PopUpManager {
         hoveredAnchors.add(anchor);
       }
     }
-
     let size: number;
 
     do {
       size = hoveredAnchors.size;
 
-      for (const [, details] of bridgeToDetails) {
-        const {anchor, body} = details;
+      for (const [bridge] of bridgeToDetails) {
+        const {anchor, body} = bridge.getDetails();
 
         for (const ha of hoveredAnchors) {
           if (
@@ -202,25 +216,24 @@ export class PopUpManager {
         }
       }
     } while (hoveredAnchors.size !== size);
+    return hoveredAnchors;
+  }
 
-    const now = Date.now();
-    for (const [bridge, registeredAt] of this._bridges) {
-      const details = bridgeToDetails.get(bridge);
-      if (details) {
-        const {autoDismiss, anchor, close, modal} = details;
-        if (
-          autoDismiss &&
-          // Modal is handled separately at `onClick`
-          !modal &&
-          now - registeredAt > CLICK_INTERVAL &&
-          !hoveredAnchors.has(anchor) &&
-          !this.isColorPicker
-        ) {
-          close();
-        }
+  private createBridgeDetails() {
+    const bridgeToDetails = new Map();
+    for (const [bridge] of this._bridges) {
+      const details = bridge.getDetails();
+      bridgeToDetails.set(bridge, details);
+      const {anchor, body} = details;
+      if (body instanceof HTMLElement) {
+        details.bodyRect = fromHTMlElement(body);
+      }
+      if (anchor instanceof HTMLElement) {
+        details.anchorRect = fromHTMlElement(anchor);
       }
     }
-  };
+    return bridgeToDetails;
+  }
 }
 
 const instance = new PopUpManager();

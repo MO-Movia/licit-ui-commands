@@ -214,8 +214,6 @@ export function updateMarksAttrs(
   state: EditorState,
   value: number | string
 ) {
-  let attrs = {};
-
   const startPos = tr.doc?.resolve(state.selection.from);
   const endPos = tr.doc?.resolve(state.selection.to);
   let _startPos = startPos?.pos;
@@ -239,48 +237,61 @@ export function updateMarksAttrs(
       );
 
       if (pos <= _startPos) {
-        switch (nodesMarkType?.type.name) {
-          case 'mark-text-color': {
-            const defTextColor = style?.styles?.color ?? '#000000';
-            attrs = value
-              ? {color: value, overridden: defTextColor !== value.toString()}
-              : null;
-            break;
-          }
-          case 'mark-font-size':
-            attrs = value
-              ? {
-                  pt: value,
-                  overridden: style?.styles?.fontSize !== value?.toString(),
-                }
-              : null;
-            break;
-          case 'mark-font-type':
-            attrs = value
-              ? {
-                  name: value,
-                  overridden: style?.styles?.fontName !== value?.toString(),
-                }
-              : null;
-            break;
-          case 'mark-text-highlight': {
-            const defHiglightColor = style?.styles?.textHighlight || '#ffffff';
-            attrs = value
-              ? {
-                  highlightColor: value,
-                  overridden: defHiglightColor !== value?.toString(),
-                }
-              : null;
-            break;
-          }
-        }
-        if (attrs && Object.keys(attrs).length !== 0) {
-          tr.addMark(pos, pos + node.nodeSize, markType.create(attrs));
-        }
+        applyMarks(nodesMarkType, style, value, tr, pos, node, markType);
       }
     }
     return true;
   });
+}
+
+function applyMarks(
+  nodesMarkType,
+  style: Style,
+  value: string | number,
+  tr: Transform,
+  pos: number,
+  node: Node,
+  markType: MarkType
+) {
+  let attrs = {};
+  switch (nodesMarkType?.type.name) {
+    case 'mark-text-color': {
+      const defTextColor = style?.styles?.color ?? '#000000';
+      attrs = value
+        ? {color: value, overridden: defTextColor !== value.toString()}
+        : null;
+      break;
+    }
+    case 'mark-font-size':
+      attrs = value
+        ? {
+            pt: value,
+            overridden: style?.styles?.fontSize !== value?.toString(),
+          }
+        : null;
+      break;
+    case 'mark-font-type':
+      attrs = value
+        ? {
+            name: value,
+            overridden: style?.styles?.fontName !== value?.toString(),
+          }
+        : null;
+      break;
+    case 'mark-text-highlight': {
+      const defHiglightColor = style?.styles?.textHighlight || '#ffffff';
+      attrs = value
+        ? {
+            highlightColor: value,
+            overridden: defHiglightColor !== value?.toString(),
+          }
+        : null;
+      break;
+    }
+  }
+  if (attrs && Object.keys(attrs).length !== 0) {
+    tr.addMark(pos, pos + node.nodeSize, markType.create(attrs));
+  }
 }
 
 export function updateToggleMarks(

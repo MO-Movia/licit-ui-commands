@@ -1,11 +1,11 @@
-import { Fragment, Mark, Node, Schema } from 'prosemirror-model';
-import { TextSelection, Transaction } from 'prosemirror-state';
-import { Transform } from 'prosemirror-transform';
+import {Fragment, Node, Schema} from 'prosemirror-model';
+import {TextSelection, Transaction} from 'prosemirror-state';
+import {Transform} from 'prosemirror-transform';
 
-import { MARK_TEXT_SELECTION } from './MarkNames';
-import { PARAGRAPH, TEXT } from './NodeNames';
-import { applyMark } from './applyMark';
-import { uuid } from './ui/uuid';
+import {MARK_TEXT_SELECTION} from './MarkNames';
+import {PARAGRAPH, TEXT} from './NodeNames';
+import {applyMark} from './applyMark';
+import {uuid} from './ui/uuid';
 
 export type SelectionMemo = {
   schema: Schema;
@@ -15,7 +15,21 @@ export type SelectionMemo = {
 // Text used to create temporary selection.
 // This assumes that no user could enter such string manually.
 const PLACEHOLDER_TEXT = `[\u200b\u2800PLACEHOLDER_TEXT_${uuid()}\u2800\u200b]`;
-
+function findMarkRange(tr: Transform, id: unknown) {
+  let markFrom = 0;
+  let markTo = 0;
+  tr.doc.descendants((node, pos) => {
+    if (node?.marks.find((mark) => mark.attrs.id === id)) {
+      markFrom = markFrom === 0 ? pos : markFrom;
+      markTo = pos + node.nodeSize;
+    }
+    return true;
+  });
+  return {
+    from: markFrom,
+    to: markTo,
+  };
+}
 // Perform the transform without losing the perceived text selection.
 // The way it works is that this will annotate teh current selection with
 // temporary marks and restores the selection with those marks after performing
@@ -27,16 +41,16 @@ export function transformAndPreserveTextSelection(
 ): Transform {
   if ((tr as Transaction).getMeta('dryrun')) {
     // There's no need to preserve the selection in dryrun mode.
-    return fn({ tr, schema });
+    return fn({tr, schema});
   }
 
-  const { selection, doc } = tr as Transaction;
+  const {selection, doc} = tr as Transaction;
   const markType = schema.marks[MARK_TEXT_SELECTION];
   if (!markType || !selection || !doc) {
     return tr;
   }
 
-  const { from, to } = selection;
+  const {from, to} = selection;
 
   // Mark current selection so that we could resume the selection later
   // after changing the whole list.
@@ -91,30 +105,13 @@ export function transformAndPreserveTextSelection(
 
   // This is an unique ID (by reference).
   const id = {};
-  const findMark = (mark: Mark) => mark.attrs.id === id;
-
-  const findMarkRange = () => {
-    let markFrom = 0;
-    let markTo = 0;
-    tr.doc.descendants((node, pos) => {
-      if (node?.marks.find(findMark)) {
-        markFrom = markFrom === 0 ? pos : markFrom;
-        markTo = pos + node.nodeSize;
-      }
-      return true;
-    });
-    return {
-      from: markFrom,
-      to: markTo,
-    };
-  };
 
   //This has side-effect. It will cause `tr.docChanged` to be `true`.
   // No matter whether `fn({tr, schema})` did change the doc or not.
-  tr = applyMark(tr, schema, markType, { id });
-  tr = fn({ tr, schema });
+  tr = applyMark(tr, schema, markType, {id});
+  tr = fn({tr, schema});
 
-  const markRange = findMarkRange();
+  const markRange = findMarkRange(tr, id);
   const selectionRange = {
     from: Math.max(0, markRange.from - fromOffset),
     to: Math.max(0, markRange.to - toOffset),
