@@ -39,11 +39,15 @@ jobs:
       # Dependency-Check
       - run: npx owasp-dependency-check --scan . --suppression suppression.xml --nvdApiKey ${{ secrets.NVD_KEY }} --disableYarnAudit --exclude node_modules/node-gyp/**/* --exclude dependency-check-bin/**/* 
       # Sonar scan. https://github.com/marketplace/actions/sonarqube-scan
+      - run: TAG=$(npm pkg get version --workspaces=false | tr -d \") # Get Version number
+      - run: echo $TAG #DEBUG
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          projectVersion: $TAG
       # Sonar verify https://github.com/marketplace/actions/sonarqube-quality-gate-check
       - name: SonarQube Quality Gate check
         id: sonarqube-quality-gate-check
