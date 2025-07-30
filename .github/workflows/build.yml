@@ -5,7 +5,7 @@ name: build
 
 on:
   push:
-    #branches: [pipeline/test]
+    branches: [pipeline/test3]
   pull_request:
     branches: [develop]
 
