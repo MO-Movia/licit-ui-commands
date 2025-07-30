@@ -28,12 +28,6 @@ jobs:
 
       - run: npm whoami # Verify token works
         env: 
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_TEST }}
-        name: Verify token test
-
-
-      - run: npm whoami # Verify token works
-        env: 
           NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         name: Verify token
 
