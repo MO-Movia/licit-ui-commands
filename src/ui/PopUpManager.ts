@@ -155,11 +155,37 @@ export class PopUpManager {
     }
   };
 
+  private createBridgeDetails() {
+    const bridgeToDetails = new Map();
+    for (const [bridge] of this._bridges) {
+      const details = bridge.getDetails();
+      bridgeToDetails.set(bridge, details);
+      const {anchor, body} = details;
+      if (body instanceof HTMLElement) {
+        details.bodyRect = fromHTMlElement(body);
+      }
+      if (anchor instanceof HTMLElement) {
+        details.anchorRect = fromHTMlElement(anchor);
+      }
+    }
+    return bridgeToDetails;
+  }
+
   private createHoveredAnchors(
     bridgeToDetails: Map<PopUpBridge, number>,
     pointer: Rect
   ) {
     const hoveredAnchors = new Set<Node>();
+    this.collectAnchors(bridgeToDetails, pointer, hoveredAnchors);
+    this.correctAnchors(hoveredAnchors, bridgeToDetails);
+    return hoveredAnchors;
+  }
+
+  private collectAnchors(
+    bridgeToDetails: Map<PopUpBridge, number>,
+    pointer: Rect,
+    hoveredAnchors: Set<Node>
+  ) {
     for (const [bridge] of bridgeToDetails) {
       const {anchor, bodyRect, anchorRect, position, body} =
         bridge.getDetails();
@@ -196,6 +222,12 @@ export class PopUpManager {
         hoveredAnchors.add(anchor);
       }
     }
+  }
+
+  private correctAnchors(
+    hoveredAnchors: Set<Node>,
+    bridgeToDetails: Map<PopUpBridge, number>
+  ) {
     let size: number;
 
     do {
@@ -216,23 +248,6 @@ export class PopUpManager {
         }
       }
     } while (hoveredAnchors.size !== size);
-    return hoveredAnchors;
-  }
-
-  private createBridgeDetails() {
-    const bridgeToDetails = new Map();
-    for (const [bridge] of this._bridges) {
-      const details = bridge.getDetails();
-      bridgeToDetails.set(bridge, details);
-      const {anchor, body} = details;
-      if (body instanceof HTMLElement) {
-        details.bodyRect = fromHTMlElement(body);
-      }
-      if (anchor instanceof HTMLElement) {
-        details.anchorRect = fromHTMlElement(anchor);
-      }
-    }
-    return bridgeToDetails;
   }
 }
 
