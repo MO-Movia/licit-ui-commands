@@ -4,7 +4,7 @@ name: dependencycheck
 
 on:
   push:
-    branches: [develop, main, master, pipeline/test]
+    branches: [develop, main, master, pipeline/test] #pipeline/test
 
 jobs:
   dependencycheck:
@@ -23,7 +23,7 @@ jobs:
       - run: npm audit
 
       # Dependency-Check
-      - run: npx owasp-dependency-check --scan . --failBuildOnCVSS 1 --suppression suppression.xml --nvdApiKey ${{ secrets.NVD_KEY }} --disableYarnAudit --exclude node_modules/node-gyp/**/* --exclude dependency-check-bin/**/* 
+      - run: npx owasp-dependency-check --scan . --failOnCVSS 1 --suppression suppression.xml --nvdApiKey ${{ secrets.NVD_KEY }} --disableYarnAudit --exclude node_modules/node-gyp/**/* --exclude dependency-check-bin/**/* 
       - uses: actions/upload-artifact@v4
         with:
           name: dependency-check-reports
