@@ -46,7 +46,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          SONAR_PROJECT_VERSION: ${TAG}
+          SONAR_PROJECT_VERSION: 0
       # Sonar verify https://github.com/marketplace/actions/sonarqube-quality-gate-check
       - name: SonarQube Quality Gate check
         id: sonarqube-quality-gate-check
