@@ -1,11 +1,10 @@
-# This workflow will do scan of dependencies to check for issues like vulnerabilities.
-# This check needs to be seperate to not block dependabot.
+# This workflow will attest and publish build artifacts ready for release
 
 name: publish
 
 on:
   push:
-    branches: [main, master, pipeline/test]
+    branches: [main, master]
 
 jobs:
   publish:
@@ -17,20 +16,26 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
+        name: Use Node.js ${{ matrix.node-version }}
         with:
           node-version: ${{ matrix.node-version }}
           registry-url: 'https://registry.npmjs.org'
           # generates a '//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}'' >> .npmrc
       - run: npm ci
+        name: Setup
       - run: npm run ci:build
+        name: Build
 
-      # Create npmrc file for next step. Using environment variable instead of token directly to reduce leak risk.
-      #- run: echo '//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}' >> .npmrc
-      #  name: Enable npmrc
-      #- run: npm publish ./dist --provenance --access public
-      - run: npm whoami
+      - run: npm publish ./dist --provenance --access public
         env: 
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        name: Publish
+        name: NPM Publish
+      - uses: actions/setup-node@v4
+        name: Setup GH auth
+        with:
+          registry-url: 'https://npm.pkg.github.com'
+      - run: npm publish ./dist --provenance --access public
+        name: GH Publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

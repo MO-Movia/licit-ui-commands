@@ -3,6 +3,7 @@
 name: dependencycheck
 
 on:
+  workflow_dispatch:
   pull_request:
     branches: [main, master]
 
@@ -16,21 +17,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
 
       # Dependency-Check
-      - run: npx owasp-dependency-check --scan . --failOnCVSS 1 --suppression suppression.xml --nvdApiKey ${{ secrets.NVD_KEY }} --disableYarnAudit #--exclude node_modules/node-gyp/**/* --exclude dependency-check-bin/**/* 
-        name: Dependency-Check
-      - uses: actions/upload-artifact@v4
-        name: Upload Report
+      - name: Dependency-Check
+        run: npx owasp-dependency-check --scan . --failOnCVSS 1 --suppression suppression.xml --nvdApiKey ${{ secrets.NVD_KEY }} --disableYarnAudit #--exclude node_modules/node-gyp/**/* --exclude dependency-check-bin/**/* 
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
         if: ${{ failure() }}
         with:
           name: dependency-check-reports
           path: dependency-check-reports
       # Dependency-Track
-      - run: npx @cyclonedx/cyclonedx-npm --package-lock-only --output-file SBOM.json
-        name: Dependency-Track
+      - name: Dependency-Track
+        run: npx @cyclonedx/cyclonedx-npm --package-lock-only --output-file SBOM.json
+        
