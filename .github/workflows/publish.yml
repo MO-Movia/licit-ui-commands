@@ -1,14 +1,14 @@
 # This workflow will do scan of dependencies to check for issues like vulnerabilities.
 # This check needs to be seperate to not block dependabot.
 
-name: dependencycheck
+name: publish
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, pipeline/test]
 
 jobs:
-  dependencycheck:
+  publish:
     runs-on: self-hosted
 
     strategy:
@@ -16,10 +16,21 @@ jobs:
         node-version: [20.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          registry-url: 'https://registry.npmjs.org'
+          # generates a '//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}'' >> .npmrc
+      - run: npm ci
       - run: npm run ci:build
-      - run: npm publish ./dist --access public
+
+      # Create npmrc file for next step. Using environment variable instead of token directly to reduce leak risk.
+      #- run: echo '//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}' >> .npmrc
+      #  name: Enable npmrc
+      #- run: npm publish ./dist --provenance --access public
+      - run: npm whoami
+        env: 
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        name: Publish
