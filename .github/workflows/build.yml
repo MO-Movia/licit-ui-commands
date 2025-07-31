@@ -39,8 +39,8 @@ jobs:
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # Ensure your NPM_TOKEN is stored as a GitHub Secret
-      - name: Run npm whoami
-        run: npm whoami
+      - name: Run npm login
+        run: npm login
       - run: npm ci
       - run: npm run lint
       - run: npm run ci:build
