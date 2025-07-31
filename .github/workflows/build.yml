@@ -4,6 +4,16 @@
 name: build
 
 on:
+  push:
+    branches: [ESS-721]
+
+  workflow_dispatch:
+    inputs:
+      branch_name:
+        description: 'Branch to run on'
+        required: true
+        default: 'main'
+
   pull_request:
     branches: [develop]
 
@@ -16,13 +26,14 @@ jobs:
         node-version: [20.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         #with:
         #  fetch-depth: 0 # extra info for sonar
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm'
       - run: npm ci
       - run: npm run lint
       - run: npm run ci:build
