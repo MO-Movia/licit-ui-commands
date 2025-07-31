@@ -34,9 +34,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: npm whoami
+          registry-url: 'https://registry.npmjs.org' # Or your private registry URL
+      - name: Authenticate with npm
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # Ensure your NPM_TOKEN is stored as a GitHub Secret
+      - name: Run npm whoami
+        run: npm whoami
       - run: npm ci
       - run: npm run lint
       - run: npm run ci:build
