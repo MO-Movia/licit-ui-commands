@@ -5,7 +5,7 @@ import { EditorView } from 'prosemirror-view';
 import * as React from 'react';
 import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import {getSelectionRange} from './isNodeSelectionForNodeType';
+import { getSelectionRange, isColumnCellSelected, getSelectedCellPositions } from './isNodeSelectionForNodeType';
 
 export function setTextAlign(
   tr: Transform,
@@ -16,31 +16,48 @@ export function setTextAlign(
   if (!selection || !doc) {
     return tr;
   }
-  const { from, to } = getSelectionRange(selection);
+  const tasks = [];
   const { nodes } = schema;
-
   const blockquote = nodes[BLOCKQUOTE];
   const listItem = nodes[LIST_ITEM];
   const heading = nodes[HEADING];
   const paragraph = nodes[PARAGRAPH];
-
-  const tasks = [];
   alignment = alignment || null;
-
   const allowedNodeTypes = new Set([blockquote, heading, listItem, paragraph]);
 
-  doc.nodesBetween(from, to, (node, pos, _parentNode) => {
-    const nodeType = node.type;
-    const align = node.attrs.align || null;
-    if (align !== alignment && allowedNodeTypes.has(nodeType)) {
-      tasks.push({
-        node,
-        pos,
-        nodeType,
-      });
+  if (isColumnCellSelected(selection)) {
+    const positions = getSelectedCellPositions(selection);
+    if (positions.length > 0) {
+      for (let i = 0; i < positions.length; i++) {
+        const pos = positions[i]+1;
+        const node = tr.doc.nodeAt(pos);
+        const nodeType = node.type;
+        const align = node.attrs.align || null;
+        if (align !== alignment && allowedNodeTypes.has(nodeType)) {
+          tasks.push({
+            node,
+            pos,
+            nodeType,
+          });
+        }
+      }
     }
-    return true;
-  });
+  }
+  else {
+    const { from, to } = getSelectionRange(selection);
+    doc.nodesBetween(from, to, (node, pos, _parentNode) => {
+      const nodeType = node.type;
+      const align = node.attrs.align || null;
+      if (align !== alignment && allowedNodeTypes.has(nodeType)) {
+        tasks.push({
+          node,
+          pos,
+          nodeType,
+        });
+      }
+      return true;
+    });
+  }
 
   if (!tasks.length) {
     return tr;

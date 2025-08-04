@@ -10,7 +10,7 @@ import {
   LINE_SPACING_115,
   LINE_SPACING_150,
 } from './ui/toCSSLineSpacing';
-import {getSelectionRange} from './isNodeSelectionForNodeType';
+import { getSelectionRange, isColumnCellSelected, getSelectedCellPositions } from './isNodeSelectionForNodeType';
 import * as React from 'react';
 
 export function setTextLineSpacing(
@@ -22,7 +22,7 @@ export function setTextLineSpacing(
   if (!selection || !doc) {
     return tr;
   }
-  const { from, to } = getSelectionRange(selection);
+
   const paragraph = schema.nodes[PARAGRAPH];
   const heading = schema.nodes[HEADING];
   const listItem = schema.nodes[LIST_ITEM];
@@ -34,26 +34,54 @@ export function setTextLineSpacing(
   const tasks = [];
   const lineSpacingValue = lineSpacing || null;
 
-  doc.nodesBetween(from, to, (node, pos, _parentNode) => {
-    const nodeType = node.type;
-    if (
-      nodeType === paragraph ||
-      nodeType === heading ||
-      nodeType === listItem ||
-      nodeType === blockquote
-    ) {
-      const lineSpacing = node.attrs.lineSpacing || null;
-      if (lineSpacing !== lineSpacingValue) {
-        tasks.push({
-          node,
-          pos,
-          nodeType,
-        });
+  if (isColumnCellSelected(selection)) {
+    const positions = getSelectedCellPositions(selection);
+    if (positions.length > 0) {
+      for (let i = 0; i < positions.length; i++) {
+        const pos = positions[i] + 1;
+        const node = tr.doc.nodeAt(pos);
+        const nodeType = node.type;
+        if (
+          nodeType === paragraph ||
+          nodeType === heading ||
+          nodeType === listItem ||
+          nodeType === blockquote
+        ) {
+          const lineSpacing = node.attrs.lineSpacing || null;
+          if (lineSpacing !== lineSpacingValue) {
+            tasks.push({
+              node,
+              pos,
+              nodeType,
+            });
+          }
+        }
       }
-      return nodeType === listItem;
     }
-    return true;
-  });
+  }
+  else {
+    const { from, to } = getSelectionRange(selection);
+    doc.nodesBetween(from, to, (node, pos, _parentNode) => {
+      const nodeType = node.type;
+      if (
+        nodeType === paragraph ||
+        nodeType === heading ||
+        nodeType === listItem ||
+        nodeType === blockquote
+      ) {
+        const lineSpacing = node.attrs.lineSpacing || null;
+        if (lineSpacing !== lineSpacingValue) {
+          tasks.push({
+            node,
+            pos,
+            nodeType,
+          });
+        }
+        return nodeType === listItem;
+      }
+      return true;
+    });
+  }
 
   if (!tasks.length) {
     return tr;
