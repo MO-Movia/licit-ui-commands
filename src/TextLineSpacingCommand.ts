@@ -94,6 +94,8 @@ export function setTextLineSpacing(
       attrs = {
         ...attrs,
         lineSpacing: lineSpacingValue,
+        overriddenLineSpacing: true,
+        overriddenLineSpacingValue: lineSpacing
       };
     } else {
       const isOverriddenLineSpacing = attrs.overriddenLineSpacing ?? null;

@@ -70,6 +70,8 @@ export function setTextAlign(
       attrs = {
         ...attrs,
         align: alignment,
+        overriddenAlign: true,
+        overriddenAlignValue: alignment
       };
     } else {
       const isOverridden = attrs.overriddenAlign ?? null;

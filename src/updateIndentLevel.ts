@@ -216,6 +216,8 @@ export function setNodeIndentMarkup(
   const nodeAttrs = {
     ...node.attrs,
     indent,
+    overriddenIndent:(indent != node.attrs.indent)?true : false,
+    overriddenIndentValue: (indent != node.attrs.indent)?indent : null
   };
   tr = tr.setNodeMarkup(pos, node.type, nodeAttrs, node.marks);
   return { tr, docChanged: true };
