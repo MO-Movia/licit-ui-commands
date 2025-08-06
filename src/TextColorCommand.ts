@@ -72,8 +72,8 @@ export class TextColorCommand extends UICommand {
   ): boolean => {
     if (dispatch && color?.color !== undefined) {
       const { schema } = state;
-      const markType = schema?.marks[MARK_TEXT_COLOR];
-      const attrs = color ? { color: color.color, overridden: true } : null;
+      const markType = schema?.marks?.[MARK_TEXT_COLOR];
+      const attrs = { color: color.color, overridden: true };
       const tr = applyMark(state.tr, schema, markType, attrs);
       updateMarksAttrs(markType, tr, state, color.color);
       if (tr.docChanged || (tr as Transaction).storedMarksSet) {
