@@ -1,5 +1,5 @@
 import { Selection, NodeSelection } from 'prosemirror-state';
-import { NodeType } from 'prosemirror-model';
+import { Node, NodeType } from 'prosemirror-model';
 import { CellSelection, TableMap } from 'prosemirror-tables';
 
 // Whether the selection is a node for the node type provided.
@@ -68,4 +68,22 @@ export function isColumnCellSelected(selection: Selection): boolean {
 
   const isFullHeight = rect.top === 0 && rect.bottom === map.height;
   return isFullHeight;
+}
+
+export function findParagraphsInNode(
+  node: Node,
+  pos: number,
+  callback: (paragraphNode: Node, paragraphPos: number) => void
+) {
+  let offset = 0;
+  node.forEach((child, _childOffset) => {
+    const childPos = pos + 1 + offset;
+    if (child.type.name === 'paragraph') {
+      callback(child, childPos);
+    }
+    if (child.content && child.content.size > 0) {
+      findParagraphsInNode(child, childPos, callback);
+    }
+    offset += child.nodeSize;
+  });
 }

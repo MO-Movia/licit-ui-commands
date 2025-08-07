@@ -5,7 +5,9 @@ import { EditorView } from 'prosemirror-view';
 import * as React from 'react';
 import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import { getSelectionRange, isColumnCellSelected, getSelectedCellPositions } from './isNodeSelectionForNodeType';
+import { getSelectionRange, isColumnCellSelected, getSelectedCellPositions,findParagraphsInNode } from './isNodeSelectionForNodeType';
+
+
 
 export function setTextAlign(
   tr: Transform,
@@ -29,17 +31,18 @@ export function setTextAlign(
     const positions = getSelectedCellPositions(selection);
     if (positions.length > 0) {
       for (let i = 0; i < positions.length; i++) {
-        const pos = positions[i]+1;
+        const pos = positions[i];
         const node = tr.doc.nodeAt(pos);
-        const nodeType = node.type;
-        const align = node.attrs.align || null;
-        if (align !== alignment && allowedNodeTypes.has(nodeType)) {
-          tasks.push({
-            node,
-            pos,
-            nodeType,
-          });
-        }
+        findParagraphsInNode(node, pos, (paraNode, paraPos) => {
+          const align = paraNode.attrs.align || null;
+          if (align !== alignment && allowedNodeTypes.has(paraNode.type)) {
+            tasks.push({
+              node: paraNode,
+              pos: paraPos,
+              nodeType: paraNode.type,
+            });
+          }
+        });
       }
     }
   }

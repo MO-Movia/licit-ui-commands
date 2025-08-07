@@ -9,7 +9,7 @@ import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { Fragment, Schema } from 'prosemirror-model';
 import { Transform } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
-import { getSelectionRange, isColumnCellSelected, getSelectedCellPositions } from './isNodeSelectionForNodeType';
+import { getSelectionRange, isColumnCellSelected, getSelectedCellPositions, findParagraphsInNode } from './isNodeSelectionForNodeType';
 
 const MIN_INDENT_LEVEL = 0;
 const MAX_INDENT_LEVEL = 7;
@@ -40,19 +40,20 @@ export function updateIndentLevel(
     const positions = getSelectedCellPositions(selection);
     if (positions.length > 0) {
       for (let i = 0; i < positions.length; i++) {
-        const pos = positions[i] + 1;
+        const pos = positions[i];
         const node = tr.doc.nodeAt(pos);
-        const nodeType = node.type;
-        if (
-          nodeType === paragraph ||
-          nodeType === heading ||
-          nodeType === blockquote
-        ) {
-          tr = setNodeIndentMarkup(state, tr, pos, delta, view).tr;
-        } else if (isListNode(node)) {
-          // List is tricky, we'll handle it later.
-          listNodePoses.push(pos);
-        }
+        findParagraphsInNode(node, pos, (paraNode, paraPos) => {
+          if (
+            paraNode.type === paragraph ||
+            paraNode.type === heading ||
+            paraNode.type === blockquote
+          ) {
+            tr = setNodeIndentMarkup(state, tr, paraPos, delta, view).tr;
+          } else if (isListNode(paraNode)) {
+            // List is tricky, we'll handle it later.
+            listNodePoses.push(paraPos);
+          }
+        });
       }
     }
   }
@@ -216,8 +217,8 @@ export function setNodeIndentMarkup(
   const nodeAttrs = {
     ...node.attrs,
     indent,
-    overriddenIndent:(indent != node.attrs.indent)?true : false,
-    overriddenIndentValue: (indent != node.attrs.indent)?indent : null
+    overriddenIndent: (indent != node.attrs.indent) ? true : false,
+    overriddenIndentValue: (indent != node.attrs.indent) ? indent : null
   };
   tr = tr.setNodeMarkup(pos, node.type, nodeAttrs, node.marks);
   return { tr, docChanged: true };
