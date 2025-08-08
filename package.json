@@ -9,7 +9,7 @@
   "style": "styles.css",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MO-Movia/licit-ui-components.git"
+    "url": "https://github.com/MO-Movia/licit-ui-commands"
   },
   "scripts": {
     "build:clean": "rm -rf dist/ && rm -f modusoperandi-licit-ui-commands-*.*.*.tgz",
