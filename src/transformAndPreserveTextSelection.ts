@@ -31,7 +31,7 @@ export function transformAndPreserveTextSelection(
   }
 
   const { selection, doc } = tr as Transaction;
-  const markType = schema.marks[MARK_TEXT_SELECTION];
+  const markType = schema.marks?.[MARK_TEXT_SELECTION];
   if (!markType || !selection || !doc) {
     return tr;
   }

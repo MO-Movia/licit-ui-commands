@@ -1,11 +1,13 @@
-import { Schema } from 'prosemirror-model';
+import { Node, NodeType, Schema } from 'prosemirror-model';
 import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
 import * as React from 'react';
 import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import {getSelectionRange} from './isNodeSelectionForNodeType';
+import { getSelectionRange, isColumnCellSelected, getSelectedCellPositions, findParagraphsInNode } from './isNodeSelectionForNodeType';
+
+
 
 export function setTextAlign(
   tr: Transform,
@@ -16,31 +18,52 @@ export function setTextAlign(
   if (!selection || !doc) {
     return tr;
   }
-  const { from, to } = getSelectionRange(selection);
+  const tasks: {
+    node: Node;
+    pos: number;
+    nodeType: NodeType;
+  }[] = [];
   const { nodes } = schema;
-
   const blockquote = nodes[BLOCKQUOTE];
   const listItem = nodes[LIST_ITEM];
   const heading = nodes[HEADING];
   const paragraph = nodes[PARAGRAPH];
-
-  const tasks = [];
   alignment = alignment || null;
-
   const allowedNodeTypes = new Set([blockquote, heading, listItem, paragraph]);
 
-  doc.nodesBetween(from, to, (node, pos, _parentNode) => {
-    const nodeType = node.type;
-    const align = node.attrs.align || null;
-    if (align !== alignment && allowedNodeTypes.has(nodeType)) {
-      tasks.push({
-        node,
-        pos,
-        nodeType,
+  if (isColumnCellSelected(selection)) {
+    const positions = getSelectedCellPositions(selection);
+    if (positions.length > 0) {
+      positions.forEach(pos => {
+        const node = tr.doc.nodeAt(pos);
+        findParagraphsInNode(node, pos, (paraNode, paraPos) => {
+          const align = paraNode.attrs.align || null;
+          if (align !== alignment && allowedNodeTypes.has(paraNode.type)) {
+            tasks.push({
+              node: paraNode,
+              pos: paraPos,
+              nodeType: paraNode.type,
+            });
+          }
+        });
       });
     }
-    return true;
-  });
+  }
+  else {
+    const { from, to } = getSelectionRange(selection);
+    doc.nodesBetween(from, to, (node, pos, _parentNode) => {
+      const nodeType = node.type;
+      const align = node.attrs.align || null;
+      if (align !== alignment && allowedNodeTypes.has(nodeType)) {
+        tasks.push({
+          node,
+          pos,
+          nodeType,
+        });
+      }
+      return true;
+    });
+  }
 
   if (!tasks.length) {
     return tr;
@@ -53,6 +76,8 @@ export function setTextAlign(
       attrs = {
         ...attrs,
         align: alignment,
+        overriddenAlign: true,
+        overriddenAlignValue: alignment
       };
     } else {
       const isOverridden = attrs.overriddenAlign ?? null;

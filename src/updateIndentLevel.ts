@@ -9,7 +9,7 @@ import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { Fragment, Schema } from 'prosemirror-model';
 import { Transform } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
-import {getSelectionRange} from './isNodeSelectionForNodeType';
+import { getSelectionRange, isColumnCellSelected, getSelectedCellPositions, findParagraphsInNode } from './isNodeSelectionForNodeType';
 
 const MIN_INDENT_LEVEL = 0;
 const MAX_INDENT_LEVEL = 7;
@@ -32,28 +32,44 @@ export function updateIndentLevel(
   }
 
   const { nodes } = schema;
-  const { from, to } = getSelectionRange(selection);
   const listNodePoses = [];
   const blockquote = nodes[BLOCKQUOTE];
   const heading = nodes[HEADING];
   const paragraph = nodes[PARAGRAPH];
-
-  doc.nodesBetween(from, to, (node, pos) => {
-    const nodeType = node.type;
-    if (
-      nodeType === paragraph ||
-      nodeType === heading ||
-      nodeType === blockquote
-    ) {
-      tr = setNodeIndentMarkup(state, tr, pos, delta, view).tr;
-      return false;
-    } else if (isListNode(node)) {
-      // List is tricky, we'll handle it later.
-      listNodePoses.push(pos);
-      return false;
+  const allowedNodeTypes = new Set([blockquote, heading, paragraph]);
+  if (isColumnCellSelected(selection)) {
+    const positions = getSelectedCellPositions(selection);
+    if (positions.length > 0) {
+      positions.forEach(pos => {
+        const node = tr.doc.nodeAt(pos);
+        if (!node) return;
+        findParagraphsInNode(node, pos, (paraNode, paraPos) => {
+          if (allowedNodeTypes.has(paraNode.type)) {
+            tr = setNodeIndentMarkup(state, tr, paraPos, delta, view).tr;
+          } else if (isListNode(paraNode)) {
+            // List is tricky, we'll handle it later.
+            listNodePoses.push(paraPos);
+          }
+        });
+      });
     }
-    return true;
-  });
+  }
+  else {
+    const { from, to } = getSelectionRange(selection);
+    doc.nodesBetween(from, to, (node, pos) => {
+      const nodeType = node.type;
+      if (allowedNodeTypes.has(nodeType)) {
+        tr = setNodeIndentMarkup(state, tr, pos, delta, view).tr;
+        return false;
+      } else if (isListNode(node)) {
+        // List is tricky, we'll handle it later.
+        listNodePoses.push(pos);
+        return false;
+      }
+      return true;
+    });
+  }
+
 
   if (!listNodePoses.length) {
     return { tr, docChanged: true };
@@ -88,10 +104,10 @@ export function setListNodeIndent(
     return tr;
   }
 
-  const indentNew = clamp(
+  const indentNew = String(clamp(
     MIN_INDENT_LEVEL,
-    listNode.attrs.indent + delta,
-    MAX_INDENT_LEVEL
+    Number(listNode.attrs.indent) + delta,
+    MAX_INDENT_LEVEL)
   );
   if (indentNew === listNode.attrs.indent) {
     return tr;
@@ -182,10 +198,10 @@ export function setNodeIndentMarkup(
   if (!node) {
     return { tr, docChanged: retVal };
   }
-  const indent = clamp(
+  const indent = String(clamp(
     MIN_INDENT_LEVEL,
-    (node.attrs.indent || 0) + delta,
-    MAX_INDENT_LEVEL
+    Number(node.attrs.indent || 0) + delta,
+    MAX_INDENT_LEVEL)
   );
 
   if (indent === node.attrs.indent) {
@@ -194,6 +210,8 @@ export function setNodeIndentMarkup(
   const nodeAttrs = {
     ...node.attrs,
     indent,
+    overriddenIndent: (indent != node.attrs.indent) ? true : false,
+    overriddenIndentValue: (indent != node.attrs.indent) ? indent : null
   };
   tr = tr.setNodeMarkup(pos, node.type, nodeAttrs, node.marks);
   return { tr, docChanged: true };
