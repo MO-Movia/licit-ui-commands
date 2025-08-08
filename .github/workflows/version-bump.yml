@@ -47,6 +47,6 @@ jobs:
           git checkout -b "Release/${TAG}"
           git commit -a -m "Bump version to ${TAG}"
           git push -u origin "Release/${TAG}"
-          gh pr create -B main --title "${TAG} Release" --fill
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        # PR must be done manually to trigger workflows
