@@ -2,7 +2,7 @@ import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 import { Transaction, EditorState } from 'prosemirror-state';
 import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { EditorView } from 'prosemirror-view';
-import { Schema } from 'prosemirror-model';
+import { Node, NodeType, Schema } from 'prosemirror-model';
 import { Transform } from 'prosemirror-transform';
 import {
   DOUBLE_LINE_SPACING,
@@ -10,7 +10,7 @@ import {
   LINE_SPACING_115,
   LINE_SPACING_150,
 } from './ui/toCSSLineSpacing';
-import {getSelectionRange} from './isNodeSelectionForNodeType';
+import { getSelectionRange, isColumnCellSelected, getSelectedCellPositions } from './isNodeSelectionForNodeType';
 import * as React from 'react';
 
 export function setTextLineSpacing(
@@ -22,7 +22,7 @@ export function setTextLineSpacing(
   if (!selection || !doc) {
     return tr;
   }
-  const { from, to } = getSelectionRange(selection);
+
   const paragraph = schema.nodes[PARAGRAPH];
   const heading = schema.nodes[HEADING];
   const listItem = schema.nodes[LIST_ITEM];
@@ -31,29 +31,53 @@ export function setTextLineSpacing(
     return tr;
   }
 
-  const tasks = [];
+  const tasks: {
+    node: Node;
+    pos: number;
+    nodeType: NodeType;
+  }[] = [];
   const lineSpacingValue = lineSpacing || null;
+  const allowedNodeTypes = new Set([blockquote, heading, listItem, paragraph]);
 
-  doc.nodesBetween(from, to, (node, pos, _parentNode) => {
-    const nodeType = node.type;
-    if (
-      nodeType === paragraph ||
-      nodeType === heading ||
-      nodeType === listItem ||
-      nodeType === blockquote
-    ) {
-      const lineSpacing = node.attrs.lineSpacing || null;
-      if (lineSpacing !== lineSpacingValue) {
-        tasks.push({
-          node,
-          pos,
-          nodeType,
-        });
-      }
-      return nodeType === listItem;
+  if (isColumnCellSelected(selection)) {
+    const positions = getSelectedCellPositions(selection);
+    if (positions.length > 0) {
+      positions.forEach(originalPos => {
+        const pos = originalPos + 1;
+        const node = tr.doc.nodeAt(pos);
+        if (!node) return;
+        const nodeType = node.type;
+        if (allowedNodeTypes.has(nodeType)) {
+          const lineSpacing = node.attrs.lineSpacing || null;
+          if (lineSpacing !== lineSpacingValue) {
+            tasks.push({
+              node,
+              pos,
+              nodeType,
+            });
+          }
+        }
+      });
     }
-    return true;
-  });
+  }
+  else {
+    const { from, to } = getSelectionRange(selection);
+    doc.nodesBetween(from, to, (node, pos, _parentNode) => {
+      const nodeType = node.type;
+      if (allowedNodeTypes.has(nodeType)) {
+        const lineSpacing = node.attrs.lineSpacing || null;
+        if (lineSpacing !== lineSpacingValue) {
+          tasks.push({
+            node,
+            pos,
+            nodeType,
+          });
+        }
+        return nodeType === listItem;
+      }
+      return true;
+    });
+  }
 
   if (!tasks.length) {
     return tr;
@@ -66,6 +90,8 @@ export function setTextLineSpacing(
       attrs = {
         ...attrs,
         lineSpacing: lineSpacingValue,
+        overriddenLineSpacing: true,
+        overriddenLineSpacingValue: lineSpacing
       };
     } else {
       const isOverriddenLineSpacing = attrs.overriddenLineSpacing ?? null;

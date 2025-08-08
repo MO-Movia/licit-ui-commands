@@ -58,7 +58,11 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
     return tr;
   }
 
-  const tasks = [];
+  const tasks: {
+    node: Node;
+    pos: number;
+    mark: Mark;
+  }[] = [];
   const marksToAdd = [];
   const overrideMarkstoRemove = [];
   let style: Style = null;
@@ -228,7 +232,10 @@ export function clearHeading(tr: Transform, schema: Schema): Transform {
   const heading = nodes[HEADING];
   const paragraph = nodes[PARAGRAPH];
 
-  const tasks = [];
+  const tasks: {
+    node: Node;
+    pos: number;
+  }[] = [];
 
   doc.nodesBetween(from, to, (node, pos) => {
     if (heading === node.type) {

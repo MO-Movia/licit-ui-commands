@@ -11,7 +11,7 @@ import { RuntimeService } from './runtime.service';
 import { ColorEditor } from '@modusoperandi/color-picker';
 
 export class TextHighlightCommand extends UICommand {
-  _popUp = null;
+  _popUp:unknown = null;
   _color = '';
 
   constructor(color?: string) {
@@ -74,8 +74,8 @@ export class TextHighlightCommand extends UICommand {
     if (dispatch && color?.color !== undefined) {
       const { schema } = state;
       let { tr } = state;
-      const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
-      const attrs = color ? { highlightColor: color.color, overridden: true } : null;
+      const markType = schema.marks?.[MARK_TEXT_HIGHLIGHT];
+      const attrs = { highlightColor: color.color, overridden: true };
       (tr as Transform) = applyMark(tr, schema, markType, attrs);
       updateMarksAttrs(markType, tr, state, color.color);
       if (tr.docChanged || tr.storedMarksSet) {

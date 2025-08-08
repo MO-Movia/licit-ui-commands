@@ -1,8 +1,9 @@
-import { TextAlignCommand } from './TextAlignCommand';
+import { TextAlignCommand, setTextAlign } from './TextAlignCommand';
 import { EditorState, TextSelection } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
 import { schema } from 'prosemirror-test-builder';
 import { Transform } from 'prosemirror-transform';
+import { CellSelection,tableNodes } from 'prosemirror-tables';
 
 describe('TextAlignCommand', () => {
   let plugin!: TextAlignCommand;
@@ -154,6 +155,13 @@ describe('TextAlignCommand', () => {
 
     expect(result).toBe(false);
   });
+
+  it('should handle execute when selection.$head.parent.attrs.align !== this._alignment', () => {
+    plugin._alignment = 'right';
+    const test = plugin.execute({ schema: {}, selection: { $head: { parent: { attrs: { align: 'left' } } } }, tr: { setSelection: () => { return {}; } } } as unknown as EditorState);
+    expect(test).toBeDefined();
+  });
+
   it('should handle executecustom', () => {
     jest
       .spyOn(TextSelection, 'create')
@@ -215,5 +223,121 @@ describe('TextAlignCommand', () => {
   });
   it('should not render label', () => {
     expect(command.renderLabel()).toBeNull();
+  });
+
+  it('should handle setTextAlign', () => {
+    const test = setTextAlign({ selection: {} as unknown as CellSelection, doc: { nodesBetween: () => { return {}; } } } as unknown as Transform, { nodes: { 'blockquote': null, 'heading': null, 'paragraph': null } } as unknown as Schema);
+    expect(test).toBeDefined();
+  });
+    it('should handle setTextAlign when align !== alignment && allowedNodeTypes.has(nodeType)', () => {
+          const schema = new Schema({
+      nodes: {
+        doc: { content: 'block+' },
+        text: {},
+        paragraph: {
+          content: 'text*',
+          group: 'block',
+          toDOM: () => ['p', 0],
+          parseDOM: [{ tag: 'p' }],
+        },
+        ...tableNodes({
+          tableGroup: 'block',
+          cellContent: 'paragraph',
+          cellAttributes: {}
+        }),
+      },
+    });
+
+    const doc = schema.node('doc', null, [
+      schema.node('table', null, [
+        schema.node('table_row', null, [
+          schema.node('table_cell', null, [
+            schema.node('paragraph', null, [schema.text('A')]),
+          ]),
+          schema.node('table_cell', null, [
+            schema.node('paragraph', null, [schema.text('B')]),
+          ]),
+        ]),
+      ]),
+    ]);
+
+    const test = setTextAlign({ selection: {from:0,to:6} as unknown as CellSelection,setNodeMarkup:()=>{return {};},
+       doc: doc } as unknown as Transform,
+        { nodes: { 'blockquote': null, 'heading': null, 'paragraph': schema.nodes.paragraph } } as unknown as Schema,'left');
+    expect(test).toBeDefined();
+  });
+  it('should handle setTextAlign when selection instance of cellselection', () => {
+    const schema = new Schema({
+      nodes: {
+        doc: { content: 'block+' },
+        text: {},
+        paragraph: {
+          content: 'text*',
+          group: 'block',
+          toDOM: () => ['p', 0],
+          parseDOM: [{ tag: 'p' }],
+        },
+        ...tableNodes({
+          tableGroup: 'block',
+          cellContent: 'paragraph',
+          cellAttributes: {}
+        }),
+      },
+    });
+
+    const doc = schema.node('doc', null, [
+      schema.node('table', null, [
+        schema.node('table_row', null, [
+          schema.node('table_cell', null, [
+            schema.node('paragraph', null, [schema.text('A')]),
+          ]),
+          schema.node('table_cell', null, [
+            schema.node('paragraph', null, [schema.text('B')]),
+          ]),
+        ]),
+      ]),
+    ]);
+
+    const selection = CellSelection.create(doc, 2, 2);
+    const test = setTextAlign({ selection: selection, doc: doc } as unknown as Transform, { nodes: { 'blockquote': null, 'heading': null, 'paragraph': null } } as unknown as Schema);
+    expect(test).toBeDefined();
+  });
+  it('should handle setTextAlign when selection instance of cellselection when alignment not null', () => {
+    const schema = new Schema({
+      nodes: {
+        doc: { content: 'block+' },
+        text: {},
+        paragraph: {
+          content: 'text*',
+          group: 'block',
+          toDOM: () => ['p', 0],
+          parseDOM: [{ tag: 'p' }],
+        },
+        ...tableNodes({
+          tableGroup: 'block',
+          cellContent: 'paragraph',
+          cellAttributes: {}
+        }),
+      },
+    });
+
+    const doc = schema.node('doc', null, [
+      schema.node('table', null, [
+        schema.node('table_row', null, [
+          schema.node('table_cell', null, [
+            schema.node('paragraph', null, [schema.text('A')]),
+          ]),
+          schema.node('table_cell', null, [
+            schema.node('paragraph', null, [schema.text('B')]),
+          ]),
+        ]),
+      ]),
+    ]);
+
+    const selection = CellSelection.create(doc, 2, 2);
+    const test = setTextAlign({ selection: selection, doc: doc,setNodeMarkup:()=>{return {};} } as unknown as Transform,
+      { nodes: { 'blockquote': {}, 'heading': {},
+       'paragraph': schema.nodes.paragraph} } as unknown as Schema,'left');
+    expect(test).toBeDefined();
   });
 });
