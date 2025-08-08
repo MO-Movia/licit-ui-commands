@@ -41,7 +41,7 @@ jobs:
           npx npm-check-updates --peer --target semver -u
           npm update
           npm i
-      - name: Prepare Release
+      - name: Prepare Release Branch
         run: |
           TAG=v$(npm pkg get version --workspaces=false | tr -d \")
           git checkout -b "Release/${TAG}"
@@ -49,4 +49,4 @@ jobs:
           git push -u origin "Release/${TAG}"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        # PR must be done manually to trigger workflows
+        # PR must be done manually. PR with GITHUB_TOKEN won't trigger workflows.
