@@ -1,4 +1,4 @@
-import { Schema } from 'prosemirror-model';
+import { Node, NodeType, Schema } from 'prosemirror-model';
 import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
@@ -18,7 +18,11 @@ export function setTextAlign(
   if (!selection || !doc) {
     return tr;
   }
-  const tasks = [];
+  const tasks: {
+    node: Node;
+    pos: number;
+    nodeType: NodeType;
+  }[] = [];
   const { nodes } = schema;
   const blockquote = nodes[BLOCKQUOTE];
   const listItem = nodes[LIST_ITEM];

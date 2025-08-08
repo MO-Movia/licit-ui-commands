@@ -2,7 +2,7 @@ import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 import { Transaction, EditorState } from 'prosemirror-state';
 import { BLOCKQUOTE, HEADING, LIST_ITEM, PARAGRAPH } from './NodeNames';
 import { EditorView } from 'prosemirror-view';
-import { Schema } from 'prosemirror-model';
+import { Node, NodeType, Schema } from 'prosemirror-model';
 import { Transform } from 'prosemirror-transform';
 import {
   DOUBLE_LINE_SPACING,
@@ -31,7 +31,11 @@ export function setTextLineSpacing(
     return tr;
   }
 
-  const tasks = [];
+  const tasks: {
+    node: Node;
+    pos: number;
+    nodeType: NodeType;
+  }[] = [];
   const lineSpacingValue = lineSpacing || null;
   const allowedNodeTypes = new Set([blockquote, heading, listItem, paragraph]);
 
