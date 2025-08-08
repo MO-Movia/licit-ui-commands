@@ -36,36 +36,29 @@ export function updateIndentLevel(
   const blockquote = nodes[BLOCKQUOTE];
   const heading = nodes[HEADING];
   const paragraph = nodes[PARAGRAPH];
+  const allowedNodeTypes = new Set([blockquote, heading, paragraph]);
   if (isColumnCellSelected(selection)) {
     const positions = getSelectedCellPositions(selection);
     if (positions.length > 0) {
-      for (let i = 0; i < positions.length; i++) {
-        const pos = positions[i];
+      positions.forEach(pos => {
         const node = tr.doc.nodeAt(pos);
+        if (!node) return;
         findParagraphsInNode(node, pos, (paraNode, paraPos) => {
-          if (
-            paraNode.type === paragraph ||
-            paraNode.type === heading ||
-            paraNode.type === blockquote
-          ) {
+          if (allowedNodeTypes.has(paraNode.type)) {
             tr = setNodeIndentMarkup(state, tr, paraPos, delta, view).tr;
           } else if (isListNode(paraNode)) {
             // List is tricky, we'll handle it later.
             listNodePoses.push(paraPos);
           }
         });
-      }
+      });
     }
   }
   else {
     const { from, to } = getSelectionRange(selection);
     doc.nodesBetween(from, to, (node, pos) => {
       const nodeType = node.type;
-      if (
-        nodeType === paragraph ||
-        nodeType === heading ||
-        nodeType === blockquote
-      ) {
+      if (allowedNodeTypes.has(nodeType)) {
         tr = setNodeIndentMarkup(state, tr, pos, delta, view).tr;
         return false;
       } else if (isListNode(node)) {

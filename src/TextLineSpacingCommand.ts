@@ -33,20 +33,17 @@ export function setTextLineSpacing(
 
   const tasks = [];
   const lineSpacingValue = lineSpacing || null;
+  const allowedNodeTypes = new Set([blockquote, heading, listItem, paragraph]);
 
   if (isColumnCellSelected(selection)) {
     const positions = getSelectedCellPositions(selection);
     if (positions.length > 0) {
-      for (let i = 0; i < positions.length; i++) {
-        const pos = positions[i] + 1;
+      positions.forEach(originalPos => {
+        const pos = originalPos + 1;
         const node = tr.doc.nodeAt(pos);
+        if (!node) return;
         const nodeType = node.type;
-        if (
-          nodeType === paragraph ||
-          nodeType === heading ||
-          nodeType === listItem ||
-          nodeType === blockquote
-        ) {
+        if (allowedNodeTypes.has(nodeType)) {
           const lineSpacing = node.attrs.lineSpacing || null;
           if (lineSpacing !== lineSpacingValue) {
             tasks.push({
@@ -56,19 +53,14 @@ export function setTextLineSpacing(
             });
           }
         }
-      }
+      });
     }
   }
   else {
     const { from, to } = getSelectionRange(selection);
     doc.nodesBetween(from, to, (node, pos, _parentNode) => {
       const nodeType = node.type;
-      if (
-        nodeType === paragraph ||
-        nodeType === heading ||
-        nodeType === listItem ||
-        nodeType === blockquote
-      ) {
+      if (allowedNodeTypes.has(nodeType)) {
         const lineSpacing = node.attrs.lineSpacing || null;
         if (lineSpacing !== lineSpacingValue) {
           tasks.push({
