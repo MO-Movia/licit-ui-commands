@@ -279,7 +279,7 @@ describe('TextLineSpacingCommand', () => {
 
     // Convert JSON into a ProseMirror Node
     const docNode = mySchema.nodeFromJSON(jsonDoc);
-    expect(command.isActive({selection:{from:0,to:25},doc:docNode,schema:mySchema} as unknown as EditorState));
+    expect(command.isActive({selection:{from:0,to:25},doc:docNode,schema:mySchema} as unknown as EditorState)).toBeTruthy();
   });
   it('should handle isActive ',()=>{
     command._lineSpacing = '2.0'; // Change this to test different values
@@ -316,7 +316,7 @@ describe('TextLineSpacingCommand', () => {
 
     // Convert JSON into a ProseMirror Node
     const docNode = mySchema.nodeFromJSON(jsonDoc);
-    expect(command.isActive({selection:{from:0,to:25},doc:docNode,schema:mySchema} as unknown as EditorState));
+    expect(command.isActive({selection:{from:0,to:25},doc:docNode,schema:mySchema} as unknown as EditorState)).toBeTruthy();
   });
   it('should handle setTextLineSpacing',()=>{
     const mySchema = new Schema({
@@ -337,6 +337,6 @@ describe('TextLineSpacingCommand', () => {
         return {doc: dummyDoc, selection: {from: 1, to: 2}};
       },
     } as unknown as Transform;
-    expect(setTextLineSpacing(tr,mySchema,null));
+    expect(setTextLineSpacing(tr,mySchema,null!)).toBeTruthy();
   });
 });
