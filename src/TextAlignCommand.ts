@@ -195,6 +195,23 @@ export class TextAlignCommand extends UICommand {
     return tr;
   };
 
+  executeCustomStyleForTable = (
+    state: EditorState,
+    tr: Transform,
+    _from: number,
+    _to: number
+  ): Transform => {
+    const { schema, selection } = state;
+    if (isColumnCellSelected(selection)) {
+      tr = setTextAlign(
+        tr,
+        schema,
+        this._alignment
+      );
+    }
+    return tr;
+  };
+
   renderLabel() {
     return null;
   }

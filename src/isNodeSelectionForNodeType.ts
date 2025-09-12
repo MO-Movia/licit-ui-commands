@@ -66,8 +66,13 @@ export function isColumnCellSelected(selection: Selection): boolean {
 
   const rect = map.rectBetween($anchor.pos - tableStart, $head.pos - tableStart);
 
-  const isFullHeight = rect.top === 0 && rect.bottom === map.height;
-  return isFullHeight;
+  // Row selection = full width across columns
+  const isRowSelection = rect.left === 0 && rect.right === map.width;
+
+  // Column selection = one or more full columns (but not full row selection)
+  const isColumnSelection = rect.left < rect.right && !isRowSelection;
+
+  return isColumnSelection;
 }
 
 export function findParagraphsInNode(

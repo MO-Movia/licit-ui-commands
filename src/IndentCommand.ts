@@ -34,12 +34,12 @@ export class IndentCommand extends UICommand {
         if (
           Number(selection.$head.parent.attrs.indent) !== Number(paraNode.attrs.indent)
         ) {
-            const newAttrs = {
-              ...paraNode.attrs,
-              overriddenIndent: true,
-              overriddenIndentValue: paraNode.attrs.indent
-            };
-            tr = tr.setNodeMarkup(nodePos, null, newAttrs);
+          const newAttrs = {
+            ...paraNode.attrs,
+            overriddenIndent: true,
+            overriddenIndentValue: paraNode.attrs.indent
+          };
+          tr = tr.setNodeMarkup(nodePos, null, newAttrs);
         }
       }
 
@@ -59,6 +59,17 @@ export class IndentCommand extends UICommand {
     tr = (tr as Transaction).setSelection(
       TextSelection.create(tr.doc, from, to)
     );
+    const trx = updateIndentLevel(state, tr, schema, this._delta, null);
+    return trx.tr;
+  };
+
+  executeCustomStyleForTable = (
+    state: EditorState,
+    tr: Transform,
+    _from: number,
+    _to: number
+  ): Transform => {
+    const { schema } = state;
     const trx = updateIndentLevel(state, tr, schema, this._delta, null);
     return trx.tr;
   };

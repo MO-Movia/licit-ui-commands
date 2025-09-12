@@ -14,7 +14,7 @@ function setFontSize(tr: Transform, state: EditorState, schema: Schema, pt: numb
     return tr;
   }
 
-  const attrs = pt ? { pt: pt, overridden: !isCustomStyleApplied} : null;
+  const attrs = pt ? { pt: pt, overridden: !isCustomStyleApplied } : null;
 
   tr = applyMark(tr, schema, markType, attrs, isCustomStyleApplied);
   if (undefined === isCustomStyleApplied) {
@@ -80,6 +80,23 @@ export class FontSizeCommand extends UICommand {
   // [FS] IRAD-1087 2020-10-01
   // Method to execute custom styling implementation of font size
   executeCustom = (
+    state: EditorState,
+    tr: Transform,
+    from: number,
+    to: number
+  ): Transform => {
+    const { schema } = state;
+    tr = setFontSize(
+      (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),
+      state,
+      schema,
+      this._pt,
+      true
+    );
+    return tr;
+  };
+
+  executeCustomStyleForTable = (
     state: EditorState,
     tr: Transform,
     from: number,

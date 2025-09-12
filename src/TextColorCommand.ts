@@ -112,6 +112,30 @@ export class TextColorCommand extends UICommand {
     return tr;
   };
 
+  executeCustomStyleForTable = (
+    state: EditorState,
+    tr: Transform,
+    from: number,
+    to: number
+  ): Transform => {
+    const { schema } = state;
+    const markType = schema.marks[MARK_TEXT_COLOR];
+    const attrs = { color: this._color };
+    const storedmarks = (tr as Transaction).storedMarks;
+    // [FS] IRAD-1043 2020-10-27
+    // Issue fix on removing the  custom style if user click on the same style menu multiple times
+    tr = applyMark(
+      (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),
+      schema,
+      markType,
+      attrs,
+      true
+    );
+
+    (tr as Transaction).storedMarks = storedmarks;
+    return tr;
+  };
+
   cancel(): void {
     return null;
   }

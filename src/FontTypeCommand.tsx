@@ -15,7 +15,7 @@ function setFontType(tr: Transform, state: EditorState, schema: Schema, name: st
     return tr;
   }
 
-  const attrs = name ? { name: name, overridden: !isCustomStyleApplied} : null;
+  const attrs = name ? { name: name, overridden: !isCustomStyleApplied } : null;
   tr = applyMark(tr, schema, markType, attrs, isCustomStyleApplied);
   if (undefined === isCustomStyleApplied) {
     updateMarksAttrs(markType, tr, state, name);
@@ -80,6 +80,22 @@ export class FontTypeCommand extends UICommand {
   // [FS] IRAD-1087 2020-10-01
   // Method to execute custom styling implementation of font type
   executeCustom = (
+    state: EditorState,
+    tr: Transform,
+    from: number,
+    to: number
+  ): Transform => {
+    const { schema } = state;
+    tr = setFontType(
+      (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)), state,
+      schema,
+      this._name,
+      true
+    );
+    return tr;
+  };
+
+  executeCustomStyleForTable = (
     state: EditorState,
     tr: Transform,
     from: number,

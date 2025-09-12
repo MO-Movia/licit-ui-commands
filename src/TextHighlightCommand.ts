@@ -11,7 +11,7 @@ import { RuntimeService } from './runtime.service';
 import { ColorEditor } from '@modusoperandi/color-picker';
 
 export class TextHighlightCommand extends UICommand {
-  _popUp:unknown = null;
+  _popUp: unknown = null;
   _color = '';
 
   constructor(color?: string) {
@@ -97,6 +97,24 @@ export class TextHighlightCommand extends UICommand {
     to: number
   ): Transform => {
     const { schema } = state;
+    const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
+    const attrs = { highlightColor: this._color };
+    tr = applyMark(
+      (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),
+      schema,
+      markType,
+      attrs, true
+    );
+    return tr;
+  };
+
+  executeCustomStyleForTable = (
+    state: EditorState,
+    tr: Transform,
+    from: number,
+    to: number
+  ): Transform => {
+        const { schema } = state;
     const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
     const attrs = { highlightColor: this._color };
     tr = applyMark(
