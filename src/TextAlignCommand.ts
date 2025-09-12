@@ -37,7 +37,7 @@ export function setTextAlign(
       positions.forEach(pos => {
         const node = tr.doc.nodeAt(pos);
         findParagraphsInNode(node, pos, (paraNode, paraPos) => {
-          const align = paraNode.attrs.align || null;
+          const align = paraNode.attrs.align ?? null;
           if (align !== alignment && allowedNodeTypes.has(paraNode.type)) {
             tasks.push({
               node: paraNode,

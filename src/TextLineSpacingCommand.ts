@@ -48,7 +48,7 @@ export function setTextLineSpacing(
         if (!node) return;
         const nodeType = node.type;
         if (allowedNodeTypes.has(nodeType)) {
-          const lineSpacing = node.attrs.lineSpacing || null;
+          const lineSpacing = node.attrs.lineSpacing ?? null;
           if (lineSpacing !== lineSpacingValue) {
             tasks.push({
               node,
