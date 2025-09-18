@@ -46,6 +46,38 @@ describe('MarkToggleCommand', () => {
     expect(test).toBe(false);
   });
 
+   it('should call when executeCustom function return first false', () => {
+    const state = {
+      selection: {
+        node: null,
+        anchor: 0,
+        head: 0,
+        from: 1,
+        to: 2,
+      },
+      plugins: [],
+      tr: {
+        doc: {
+          nodeAt: (_x) => {
+            return { isAtom: true, isLeaf: true, isText: false };
+          },
+        },
+      },
+      schema: { marks: { 'mark-font-type': undefined } },
+    } as unknown as EditorState;
+
+    const tr = {
+      doc: {
+        nodeAt: (_x) => {
+          return { isAtom: true, isLeaf: true, isText: false };
+        },
+      },
+    } as unknown as Transform;
+
+    const test = plugin.executeCustomStyleForTable(state, tr, 2, 2);
+    expect(test).toBe(false);
+  });
+
   it('should call when executeCustom function return second false', () => {
     const state = {
       selection: {

@@ -108,6 +108,29 @@ export class MarkToggleCommand extends UICommand {
     return toggleCustomStyle(markType, null, state, tr, posfrom, posto);
   };
 
+  executeCustomStyleForTable = (
+    state: EditorState,
+    tr: Transform,
+    from: number,
+    to: number
+  )=> {
+   const { schema } = state;
+    const markType = schema.marks[this._markName];
+    if (!markType) {
+      return false;
+    }
+
+    if (tr && to === from + 1) {
+      const node = tr.doc.nodeAt(from);
+      if (node.isAtom && !node.isText && node.isLeaf) {
+        // An atomic node (e.g. Image) is selected.
+        return false;
+      }
+    }
+
+    return toggleCustomStyle(markType, null, state, tr, from, to);
+  };
+
   renderLabel() {
     return null;
   }
