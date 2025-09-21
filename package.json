@@ -40,7 +40,7 @@
     "@modusoperandi/color-picker": "^1.0.6",
     "classnames": "^2.5.1",
     "color": "^5.0.0",
-    "uuid": "^11.1.0"
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@cfaester/enzyme-adapter-react-18": "^0.8.0",
