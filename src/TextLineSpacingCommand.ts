@@ -48,7 +48,7 @@ export function setTextLineSpacing(
         if (!node) return;
         const nodeType = node.type;
         if (allowedNodeTypes.has(nodeType)) {
-          const lineSpacing = node.attrs.lineSpacing || null;
+          const lineSpacing = node.attrs.lineSpacing ?? null;
           if (lineSpacing !== lineSpacingValue) {
             tasks.push({
               node,
@@ -217,6 +217,15 @@ export class TextLineSpacingCommand extends UICommand {
   }
 
   executeCustom = (_state: EditorState, tr: Transform): Transform => {
+    return tr;
+  };
+
+  executeCustomStyleForTable = (
+    _state: EditorState,
+    tr: Transform,
+    _from: number,
+    _to: number
+  ): Transform => {
     return tr;
   };
 }

@@ -37,7 +37,7 @@ export function setTextAlign(
       positions.forEach(pos => {
         const node = tr.doc.nodeAt(pos);
         findParagraphsInNode(node, pos, (paraNode, paraPos) => {
-          const align = paraNode.attrs.align || null;
+          const align = paraNode.attrs.align ?? null;
           if (align !== alignment && allowedNodeTypes.has(paraNode.type)) {
             tasks.push({
               node: paraNode,
@@ -192,6 +192,23 @@ export class TextAlignCommand extends UICommand {
       schema,
       this._alignment
     );
+    return tr;
+  };
+
+  executeCustomStyleForTable = (
+    state: EditorState,
+    tr: Transform,
+    _from: number,
+    _to: number
+  ): Transform => {
+    const { schema, selection } = state;
+    if (isColumnCellSelected(selection)) {
+      tr = setTextAlign(
+        tr,
+        schema,
+        this._alignment
+      );
+    }
     return tr;
   };
 
