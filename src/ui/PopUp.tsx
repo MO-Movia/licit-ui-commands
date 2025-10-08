@@ -20,6 +20,7 @@ export type PopUpParams = {
   position?: PositionHandler;
   IsChildDialog?: boolean;
   popUpId?: string;
+  contextPos?;
 };
 
 export type PopUpProps = {
@@ -63,7 +64,7 @@ export class PopUp extends React.PureComponent<PopUpProps> {
 
   _getDetails = (): PopUpDetails => {
     const {close, popUpParams} = this.props;
-    const {anchor, autoDismiss, position, modal, popUpId} = popUpParams;
+    const {anchor, autoDismiss, position, modal, popUpId, contextPos} = popUpParams;
     return {
       anchor,
       autoDismiss: autoDismiss !== false,
@@ -72,6 +73,7 @@ export class PopUp extends React.PureComponent<PopUpProps> {
       modal: modal === true,
       position: position || (modal ? atViewportCenter : atAnchorBottomLeft),
       popupId: popUpId,
+      contextPos,
     };
   };
 }

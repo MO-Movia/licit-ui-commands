@@ -13,6 +13,7 @@ export type PopUpDetails = {
   modal: boolean;
   position: PositionHandler;
   popupId: string;
+  contextPos?: any;
 };
 
 export type PopUpBridge = {
@@ -146,7 +147,8 @@ export class PopUpManager {
     const pointer = fromXY(this._mx, this._my, 2);
     const hoveredAnchors = new Set();
     for (const [bridge, details] of bridgeToDetails) {
-      const { anchor, bodyRect, anchorRect, position, body } = details;
+      const {anchor, bodyRect, anchorRect, position, body, contextPos} =
+        details;
       if (!bodyRect && !anchorRect) {
         continue;
       }
@@ -165,10 +167,17 @@ export class PopUpManager {
         this._positions.set(bridge, positionKey);
         const bodyStyle = body.style;
         bodyStyle.position = 'absolute';
-        bodyStyle.left = `${x}px`;
-        bodyStyle.top = `${y}px`;
-        bodyRect.x = x;
-        bodyRect.y = y;
+        if (contextPos) {
+          bodyStyle.left = `${contextPos.x}px`;
+          bodyStyle.top = `${contextPos.y}px`;
+          bodyRect.x = contextPos.x;
+          bodyRect.y = contextPos.y;
+        } else {
+          bodyStyle.left = `${x}px`;
+          bodyStyle.top = `${y}px`;
+          bodyRect.x = x;
+          bodyRect.y = y;
+        }
         bodyStyle.setProperty('--czi-pop-up-anchor-offset-left', `${ax}px`);
       }
 
