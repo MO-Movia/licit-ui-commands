@@ -7,7 +7,6 @@ import {PopUp} from './PopUp';
 // eslint-disable-next-line no-unused-vars
 import * as React from 'react';
 import ReactDOM from 'react-dom';
-// import ReactDOM from 'react-dom/client';
 import {uuid} from './uuid';
 
 export type PopUpHandle = {
@@ -131,9 +130,7 @@ function renderPopUp(
       />
     );
     ReactDOM.render(component, rootNode);
-    // const root = ReactDOM.createRoot(rootNode);
-    // root.render(component);
-  
+
   }
 
   if (modalsCount > 0) {
@@ -148,7 +145,6 @@ export function unrenderPopUp(rootId: string): void {
   if (rootNode) {
     ReactDOM.unmountComponentAtNode(rootNode);
     rootNode.parentElement?.removeChild(rootNode);
-    // rootNode.remove();
   }
 
   if (modalsCount === 0) {

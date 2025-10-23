@@ -15,7 +15,7 @@ import * as React from 'react';
 export function setTextLineSpacing(
   tr: Transform,
   schema: Schema,
-  lineSpacing?: string
+  lineSpacing?: string | null
 ): Transform {
   const {selection, doc} = tr as Transaction;
   if (!selection || !doc) {
@@ -32,7 +32,7 @@ export function setTextLineSpacing(
   }
 
   const tasks = [];
-  const lineSpacingValue = lineSpacing || null;
+  const lineSpacingValue = lineSpacing;
 
   doc.nodesBetween(from, to, (node, pos, _parentNode) => {
     const nodeType = node.type;
