@@ -137,12 +137,12 @@ export function toggleCustomStyle(
       to = from + node.nodeSize;
       if (node && 0 < node.marks.length) {
         const result = node.marks.find(mark => mark.type.name === markType.name);
-        if (!result) {
-          attrs = { overridden: false };
+        if (result) {
+          attrs = { overridden: true };
           tr = tr.addMark(from, to, markType.create(attrs));
         }
         else {
-          attrs = { overridden: true };
+          attrs = { overridden: false };
           tr = tr.addMark(from, to, markType.create(attrs));
         }
         from = to;

@@ -2,7 +2,6 @@ import cx from 'classnames';
 import * as React from 'react';
 
 import {preventEventDefault} from './preventEventDefault';
-import {EditorView} from 'prosemirror-view';
 
 export type PointerSurfaceProps = {
   active?: boolean;
@@ -13,10 +12,8 @@ export type PointerSurfaceProps = {
   onClick?: (val, e: React.SyntheticEvent) => void;
   onMouseEnter?: (val, e: React.SyntheticEvent) => void;
   style?: Record<string, unknown>;
-  target?: string;
   title?: string;
   value?: any;
-  hasChild?: boolean;
 };
 
 export class PointerSurface extends React.PureComponent {
@@ -25,8 +22,6 @@ export class PointerSurface extends React.PureComponent {
   _clicked = false;
   _mul = false;
   _pressedTarget = null;
-  _unmounted = false;
-
   state = {pressed: false};
 
   render(): React.ReactElement {
@@ -35,7 +30,7 @@ export class PointerSurface extends React.PureComponent {
     const {pressed} = this.state;
 
     const buttonClassName = cx(className, {
-      // active: active,
+      active: active,
       disabled: disabled,
       pressed: pressed,
     });
@@ -62,7 +57,6 @@ export class PointerSurface extends React.PureComponent {
   }
 
   componentWillUnmount(): void {
-    this._unmounted = true;
     if (this._mul) {
       this._mul = false;
       document.removeEventListener('mouseup', this._onMouseUpCapture, true);

@@ -8,7 +8,6 @@ import {uuid} from './uuid';
 
 type TooltipSurfaceProps = {
   tooltip: string;
-  children?;
 };
 
 class TooltipView extends React.PureComponent<TooltipSurfaceProps> {
@@ -52,8 +51,8 @@ export class TooltipSurface extends React.PureComponent<TooltipSurfaceProps> {
   }
 
   _onMouseEnter = (e): void => {
-    if(e && e.target && e.target.nodeName==='IMG' ||
-       e.target && e.target.className.startsWith('czi-custom-button')){
+    if(e?.target?.nodeName==='IMG' ||
+        e?.target?.className.startsWith('czi-custom-button')){
     if (!this._popUp) {
       const { tooltip } = this.props;
       this._popUp = createPopUp(
@@ -69,12 +68,10 @@ export class TooltipSurface extends React.PureComponent<TooltipSurfaceProps> {
   }
   };
 
-  _onMouseLeave = (e): void => {
- //   if(e && e.target && e.target.nodeName!=='IMG'){
+  _onMouseLeave = (_e): void => {
     this._popUp?.close();
     this._popUp = null;
-    }
-//  };
+    };
 
   _onClose = (): void => {
     this._popUp = null;
