@@ -20,7 +20,7 @@ export type PopUpParams = {
   position?: PositionHandler;
   IsChildDialog?: boolean;
   popUpId?: string;
-  contextPos?;
+  contextPos?: {x: number; y: number};
 };
 
 export type PopUpProps = {

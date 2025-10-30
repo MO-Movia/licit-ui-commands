@@ -13,7 +13,7 @@ export type PopUpDetails = {
   modal: boolean;
   position: PositionHandler;
   popupId: string;
-  contextPos?: any;
+  contextPos?: {x: number; y: number};
 };
 
 export type PopUpBridge = {
