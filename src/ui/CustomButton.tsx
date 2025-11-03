@@ -1,5 +1,4 @@
-import './czi-custom-button.css';
-import { PointerSurface } from './PointerSurface';
+import {PointerSurface} from './PointerSurface';
 import * as React from 'react';
 import { TooltipSurface } from './TooltipSurface';
 import cx from 'classnames';
@@ -18,6 +17,7 @@ export class CustomButton extends React.PureComponent<CustomButtonProps> {
 
   render(): React.ReactNode {
     const {icon, label, className, title, theme, ...pointerProps} = this.props;
+    // const { theme, setTheme } = useTheme();
     const klass = cx(className, 'czi-custom-button', theme);
     return (
       <ThemeProvider theme={theme}>

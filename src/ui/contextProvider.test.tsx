@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import   
- { ThemeProvider, ThemeContext } from '../index'; 
+import
+ { ThemeProvider, ThemeContext } from '../index';
 
 describe('ThemeProvider', () => {
   test('renders children with provided theme', () => {

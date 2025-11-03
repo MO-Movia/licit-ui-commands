@@ -43,7 +43,12 @@ describe('FontSizeCommand', () => {
         nodeAt: (_x) => {
           return {isAtom: true, isLeaf: true, isText: false};
         },
+        resolve:()=>{
+          return {pos:0};
+        },
+        nodesBetween:()=>{}
       },
+
     },
   } as unknown as EditorState;
 

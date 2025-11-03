@@ -1,4 +1,4 @@
-@import url("./czi-vars.css");
+@import url('./czi-vars.css');
 
 .czi-color-editor {
   background: #fff;
@@ -9,7 +9,9 @@
 }
 
 .czi-color-editor .czi-custom-button {
-  border: solid 1px #fff;
+  border-color: #fff;
+  border-style: solid;
+  border-width: 1px;
   box-sizing: border-box;
   height: 18px;
   margin: 1px;

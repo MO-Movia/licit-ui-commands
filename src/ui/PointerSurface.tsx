@@ -2,6 +2,8 @@ import cx from 'classnames';
 import * as React from 'react';
 
 import {preventEventDefault} from './preventEventDefault';
+import {EditorView} from 'prosemirror-view';
+import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
 
 export type PointerSurfaceProps = {
   active?: boolean;
@@ -13,7 +15,9 @@ export type PointerSurfaceProps = {
   onMouseEnter?: (val, e: React.SyntheticEvent) => void;
   style?: Record<string, unknown>;
   title?: string;
-  value?: any;
+  // value?: any;
+  value?: string | number | Record<string, unknown> | EditorView | UICommand;
+  hasChild?: boolean;
 };
 
 export class PointerSurface extends React.PureComponent {
@@ -22,15 +26,14 @@ export class PointerSurface extends React.PureComponent {
   _clicked = false;
   _mul = false;
   _pressedTarget = null;
+
   state = {pressed: false};
 
   render(): React.ReactElement {
-    const {className, disabled, active, id, style, title, children} =
-      this.props;
+    const {className, disabled, id, style, title, children} = this.props;
     const {pressed} = this.state;
 
     const buttonClassName = cx(className, {
-      active: active,
       disabled: disabled,
       pressed: pressed,
     });
@@ -101,7 +104,7 @@ export class PointerSurface extends React.PureComponent {
     e.preventDefault();
 
     if (this._clicked || e.type === 'keypress') {
-      const { onClick, value, disabled } = this.props;
+      const {onClick, value, disabled} = this.props;
       if (!disabled && onClick) {
         onClick(value, e);
       }

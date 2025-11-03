@@ -1,10 +1,6 @@
-import './czi-vars.css';
-import './czi-pop-up.css';
-
-import type { PopUpParams, ViewProps } from './PopUp';
+import type {PopUpParams, ViewProps} from './PopUp';
 
 import {PopUp} from './PopUp';
-// eslint-disable-next-line no-unused-vars
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import {uuid} from './uuid';
@@ -73,7 +69,7 @@ function getRootElement(
 ): HTMLElement | null {
   const root =
     popUpParams?.container ||
-      document?.getElementsByClassName('czi-editor-frameset')?.[0] ||
+    document?.getElementsByClassName('czi-editor-frameset')?.[0] ||
     document.documentElement;
   let element = document.getElementById(id);
   if (!element && forceCreation) {
@@ -130,7 +126,6 @@ function renderPopUp(
       />
     );
     ReactDOM.render(component, rootNode);
-
   }
 
   if (modalsCount > 0) {
@@ -157,7 +152,7 @@ export function createPopUp(
   viewProps?: ViewProps,
   popUpParams?: PopUpParams
 ): PopUpHandle {
-  const rootId = popUpParams.popUpId ? popUpParams.popUpId : uuid();
+  const rootId = popUpParams.popUpId ?? uuid();
 
   let handle = null;
   let currentViewProps = viewProps || {};

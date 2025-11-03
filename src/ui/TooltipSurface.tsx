@@ -1,6 +1,3 @@
-import './czi-tooltip-surface.css';
-import './czi-animations.css';
-
 import * as React from 'react';
 import {createPopUp} from './createPopUp';
 import {atAnchorBottomCenter} from './PopUpPosition';
@@ -8,6 +5,7 @@ import {uuid} from './uuid';
 
 type TooltipSurfaceProps = {
   tooltip: string;
+  children?;
 };
 
 class TooltipView extends React.PureComponent<TooltipSurfaceProps> {
@@ -51,8 +49,8 @@ export class TooltipSurface extends React.PureComponent<TooltipSurfaceProps> {
   }
 
   _onMouseEnter = (e): void => {
-    if(e?.target?.nodeName==='IMG' ||
-        e?.target?.className.startsWith('czi-custom-button')){
+    if(e && e.target && e.target.nodeName==='IMG' ||
+       e.target && e.target.className.startsWith('czi-custom-button')){
     if (!this._popUp) {
       const { tooltip } = this.props;
       this._popUp = createPopUp(
@@ -68,10 +66,10 @@ export class TooltipSurface extends React.PureComponent<TooltipSurfaceProps> {
   }
   };
 
-  _onMouseLeave = (_e): void => {
+  _onMouseLeave = (): void => {
     this._popUp?.close();
     this._popUp = null;
-    };
+  };
 
   _onClose = (): void => {
     this._popUp = null;

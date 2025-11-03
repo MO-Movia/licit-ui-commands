@@ -134,7 +134,12 @@ describe('FontTypeCommand', () => {
           nodeAt: (_x) => {
             return {isAtom: true, isLeaf: true, isText: false};
           },
+          resolve:()=>{
+            return {pos:0};
+          },
+          nodesBetween:()=>{}
         },
+
       },
       schema: {marks: {'mark-font-type': MARK_FONT_TYPE}},
     } as unknown as EditorState;
@@ -201,7 +206,12 @@ describe('FontTypeCommand', () => {
           nodeAt: (_x) => {
             return {isAtom: true, isLeaf: true, isText: false};
           },
+          resolve:()=>{
+            return {pos:0};
+          },
+          nodesBetween:()=>{}
         },
+
       },
     } as unknown as EditorState;
 
@@ -229,6 +239,9 @@ describe('FontTypeCommand', () => {
             return {isAtom: true, isLeaf: true, isText: false};
           },
         },
+        resolve:()=>{
+          return {pos:0};
+        }
       },
     } as unknown as EditorState;
 
@@ -255,9 +268,12 @@ describe('FontTypeCommand', () => {
             return {isAtom: true, isLeaf: true, isText: false};
           },
         },
+        resolve:()=>{
+          return {pos:0};
+        }
       },
     } as unknown as EditorState;
-    plugin = new FontTypeCommand(null);
+    plugin = new FontTypeCommand(null as unknown as string);
     const test = plugin.execute(state, (_x) => {
       return '';
     });
@@ -282,6 +298,9 @@ describe('FontTypeCommand', () => {
           nodeAt: (_x) => {
             return {isAtom: true, isLeaf: true, isText: false};
           },
+          resolve:()=>{
+            return {pos:0};
+          }
         },
       },
     } as unknown as EditorState;

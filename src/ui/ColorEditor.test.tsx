@@ -30,7 +30,7 @@ describe('ColorEditor', () => {
   });
 
   it('sets the correct button as active when selectedColor matches a color', () => {
-    const selectedHex = '#f20d96'; 
+    const selectedHex = '#f20d96';
     const { getByTestId } = render(<ColorEditor close={mockClose} hex={selectedHex} />);
 
     const selectedButton = getByTestId(`color-button-${selectedHex}`);

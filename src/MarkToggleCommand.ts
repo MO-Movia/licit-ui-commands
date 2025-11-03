@@ -5,10 +5,11 @@ import { EditorView } from 'prosemirror-view';
 import { findNodesWithSameMark } from './findNodesWithSameMark';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 import * as React from 'react';
+import { updateToggleMarks } from './applyMark';
 
 export class MarkToggleCommand extends UICommand {
   _markName: string;
-
+  doUpdate: boolean = false;
   constructor(markName: string) {
     super();
     this._markName = markName;
@@ -53,6 +54,7 @@ export class MarkToggleCommand extends UICommand {
   ): boolean => {
     const { schema, selection, tr } = state;
     const markType = schema.marks[this._markName];
+
     if (!markType) {
       return false;
     }
@@ -68,7 +70,17 @@ export class MarkToggleCommand extends UICommand {
 
     //Replace `toggleMark` with transform that does not change scroll
     // position.
-    return toggleMark(markType)(state, dispatch);
+    const newattrs = { overridden: true };
+    if (this.doUpdate) {
+      updateToggleMarks(markType, tr, state);
+      this.doUpdate = false;
+      _view?.dispatch(tr);
+    }
+    if (dispatch) {
+      this.doUpdate = true;
+      return toggleMark(markType, newattrs)(state, dispatch);
+    }
+    return true;
   };
 
   // [FS] IRAD-1087 2020-09-30
@@ -77,7 +89,7 @@ export class MarkToggleCommand extends UICommand {
     state: EditorState,
     tr: Transform,
     posfrom: number,
-    posto: number
+    posto: number,
   ) => {
     const { schema } = state;
     const markType = schema.marks[this._markName];
@@ -94,6 +106,29 @@ export class MarkToggleCommand extends UICommand {
     }
 
     return toggleCustomStyle(markType, null, state, tr, posfrom, posto);
+  };
+
+  executeCustomStyleForTable = (
+    state: EditorState,
+    tr: Transform,
+    from: number,
+    to: number
+  )=> {
+   const { schema } = state;
+    const markType = schema.marks[this._markName];
+    if (!markType) {
+      return false;
+    }
+
+    if (tr && to === from + 1) {
+      const node = tr.doc.nodeAt(from);
+      if (node.isAtom && !node.isText && node.isLeaf) {
+        // An atomic node (e.g. Image) is selected.
+        return false;
+      }
+    }
+
+    return toggleCustomStyle(markType, null, state, tr, from, to);
   };
 
   renderLabel() {
@@ -135,13 +170,10 @@ export function toggleCustomStyle(
     tr.doc.nodesBetween(posfrom, posto, (node, pos) => {
       from = pos;
       to = from + node.nodeSize;
-      if (node && 0 < node.marks.length) {
-        const result = node.marks.find(mark => mark.type.name === markType.name);
-        if (result) {
-          attrs = { overridden: true };
-          tr = tr.addMark(from, to, markType.create(attrs));
-        }
-        else {
+      if (node && 0 < node.marks?.length) {
+        const overridden = node.marks.find(mark => mark.type.name === 'override');
+        const skip = overridden?.attrs[markType.name] === true;
+        if (!skip) {
           attrs = { overridden: false };
           tr = tr.addMark(from, to, markType.create(attrs));
         }

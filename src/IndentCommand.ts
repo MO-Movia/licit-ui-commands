@@ -27,6 +27,22 @@ export class IndentCommand extends UICommand {
     tr = tr.setSelection(selection);
     const trx = updateIndentLevel(state, tr, schema, this._delta, _view);
     if (trx.docChanged) {
+      // set the value of overriddenIndent to true if the user override the indent style.
+      const nodePos = (trx.tr as Transaction).selection.$from.before(1);
+      const paraNode = trx.tr.doc.nodeAt(nodePos);
+      if (paraNode) {
+        if (
+          Number(selection.$head.parent.attrs.indent) !== Number(paraNode.attrs.indent)
+        ) {
+          const newAttrs = {
+            ...paraNode.attrs,
+            overriddenIndent: true,
+            overriddenIndentValue: paraNode.attrs.indent
+          };
+          tr = tr.setNodeMarkup(nodePos, null, newAttrs);
+        }
+      }
+
       dispatch?.(trx.tr);
     }
     return true;
@@ -43,6 +59,17 @@ export class IndentCommand extends UICommand {
     tr = (tr as Transaction).setSelection(
       TextSelection.create(tr.doc, from, to)
     );
+    const trx = updateIndentLevel(state, tr, schema, this._delta, null);
+    return trx.tr;
+  };
+
+  executeCustomStyleForTable = (
+    state: EditorState,
+    tr: Transform,
+    _from: number,
+    _to: number
+  ): Transform => {
+    const { schema } = state;
     const trx = updateIndentLevel(state, tr, schema, this._delta, null);
     return trx.tr;
   };

@@ -1,5 +1,5 @@
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import { applyMark } from './applyMark';
+import { applyMark, updateMarksAttrs } from './applyMark';
 import { createPopUp } from './ui/createPopUp';
 import { findNodesWithSameMark } from './findNodesWithSameMark';
 import { isTextStyleMarkCommandEnabled } from './isTextStyleMarkCommandEnabled';
@@ -11,7 +11,7 @@ import { RuntimeService } from './runtime.service';
 import { ColorEditor } from '@modusoperandi/color-picker';
 
 export class TextHighlightCommand extends UICommand {
-  _popUp = null;
+  _popUp: unknown = null;
   _color = '';
 
   constructor(color?: string) {
@@ -69,14 +69,15 @@ export class TextHighlightCommand extends UICommand {
     state: EditorState,
     dispatch?: (tr: Transform) => void,
     _view?: EditorView,
-    color?: string
+    color?: { color, selectedOption }
   ): boolean => {
-    if (dispatch && color !== undefined) {
+    if (dispatch && color?.color !== undefined) {
       const { schema } = state;
       let { tr } = state;
-      const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
-      const attrs = color ? { highlightColor: color } : null;
+      const markType = schema.marks?.[MARK_TEXT_HIGHLIGHT];
+      const attrs = { highlightColor: color.color, overridden: true };
       (tr as Transform) = applyMark(tr, schema, markType, attrs);
+      updateMarksAttrs(markType, tr, state, color.color);
       if (tr.docChanged || tr.storedMarksSet) {
         // If selection is empty, the color is added to `storedMarks`, which
         // works like `toggleMark`
@@ -96,6 +97,24 @@ export class TextHighlightCommand extends UICommand {
     to: number
   ): Transform => {
     const { schema } = state;
+    const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
+    const attrs = { highlightColor: this._color };
+    tr = applyMark(
+      (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),
+      schema,
+      markType,
+      attrs, true
+    );
+    return tr;
+  };
+
+  executeCustomStyleForTable = (
+    state: EditorState,
+    tr: Transform,
+    from: number,
+    to: number
+  ): Transform => {
+        const { schema } = state;
     const markType = schema.marks[MARK_TEXT_HIGHLIGHT];
     const attrs = { highlightColor: this._color };
     tr = applyMark(
