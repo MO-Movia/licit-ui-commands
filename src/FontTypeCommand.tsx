@@ -1,21 +1,27 @@
-import { Schema } from 'prosemirror-model';
-import { TextSelection, EditorState, Transaction } from 'prosemirror-state';
+import {Schema} from 'prosemirror-model';
+import {TextSelection, EditorState, Transaction} from 'prosemirror-state';
 
-import { Transform } from 'prosemirror-transform';
-import { EditorView } from 'prosemirror-view';
+import {Transform} from 'prosemirror-transform';
+import {EditorView} from 'prosemirror-view';
 import * as React from 'react';
 
-import { MARK_FONT_TYPE } from './MarkNames';
-import { applyMark, updateMarksAttrs } from './applyMark';
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import {MARK_FONT_TYPE} from './MarkNames';
+import {applyMark, updateMarksAttrs} from './applyMark';
+import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
 
-function setFontType(tr: Transform, state: EditorState, schema: Schema, name: string, isCustomStyleApplied?: boolean): Transform {
+function setFontType(
+  tr: Transform,
+  state: EditorState,
+  schema: Schema,
+  name: string,
+  isCustomStyleApplied?: boolean
+): Transform {
   const markType = schema.marks[MARK_FONT_TYPE];
   if (!markType) {
     return tr;
   }
 
-  const attrs = name ? { name: name, overridden: !isCustomStyleApplied } : null;
+  const attrs = name ? {name: name, overridden: !isCustomStyleApplied} : null;
   tr = applyMark(tr, schema, markType, attrs, isCustomStyleApplied);
   if (undefined === isCustomStyleApplied) {
     updateMarksAttrs(markType, tr, state, name);
@@ -31,22 +37,22 @@ export class FontTypeCommand extends UICommand {
   constructor(name: string) {
     super();
     this._name = name;
-    this._label = name ? <span style={{ fontFamily: name }}>{name}</span> : null;
+    this._label = name ? <span style={{fontFamily: name}}>{name}</span> : null;
   }
 
-  renderLabel = (_state: EditorState): HTMLElement => {
+  renderLabel = (_state: EditorState) => {
     return this._label;
   };
 
   isEnabled = (state: EditorState): boolean => {
-    const { schema, selection, tr } = state;
+    const {schema, selection, tr} = state;
 
     const markType = schema.marks[MARK_FONT_TYPE];
     if (!markType) {
       return false;
     }
 
-    const { from, to } = selection;
+    const {from, to} = selection;
     if (to === from + 1) {
       const node = tr.doc.nodeAt(from);
       if (node.isAtom && !node.isText && node.isLeaf) {
@@ -63,7 +69,7 @@ export class FontTypeCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    const { schema } = state;
+    const {schema} = state;
     // commnted selection because selection removes the storedMarks;
     // {selection}
 
@@ -85,9 +91,10 @@ export class FontTypeCommand extends UICommand {
     from: number,
     to: number
   ): Transform => {
-    const { schema } = state;
+    const {schema} = state;
     tr = setFontType(
-      (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)), state,
+      (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),
+      state,
       schema,
       this._name,
       true
@@ -101,9 +108,10 @@ export class FontTypeCommand extends UICommand {
     from: number,
     to: number
   ): Transform => {
-    const { schema } = state;
+    const {schema} = state;
     tr = setFontType(
-      (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)), state,
+      (tr as Transaction).setSelection(TextSelection.create(tr.doc, from, to)),
+      state,
       schema,
       this._name,
       true
