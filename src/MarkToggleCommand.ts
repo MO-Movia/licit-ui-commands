@@ -1,21 +1,23 @@
-import {toggleMark} from 'prosemirror-commands';
-import {EditorState} from 'prosemirror-state';
-import {Transform} from 'prosemirror-transform';
-import {EditorView} from 'prosemirror-view';
-import {findNodesWithSameMark} from './findNodesWithSameMark';
-import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import { toggleMark } from 'prosemirror-commands';
+import { EditorState } from 'prosemirror-state';
+import { Transform } from 'prosemirror-transform';
+import { EditorView } from 'prosemirror-view';
+import { findNodesWithSameMark } from './findNodesWithSameMark';
+import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 import * as React from 'react';
+import { updateToggleMarks } from './applyMark';
 
 export class MarkToggleCommand extends UICommand {
   _markName: string;
+  doUpdate: boolean = false;
   constructor(markName: string) {
     super();
     this._markName = markName;
   }
 
   isActive = (state: EditorState): boolean => {
-    const {schema, doc, selection} = state;
-    const {from, to} = selection;
+    const { schema, doc, selection } = state;
+    const { from, to } = selection;
     const markType = schema.marks[this._markName];
     if (markType && from < to) {
       return !!findNodesWithSameMark(doc, from, to - 1, markType);
@@ -50,14 +52,14 @@ export class MarkToggleCommand extends UICommand {
     dispatch?: (tr: Transform) => void,
     _view?: EditorView
   ): boolean => {
-    const {schema, selection, tr} = state;
+    const { schema, selection, tr } = state;
     const markType = schema.marks[this._markName];
 
     if (!markType) {
       return false;
     }
 
-    const {from, to} = selection;
+    const { from, to } = selection;
     if (tr && to === from + 1) {
       const node = tr.doc.nodeAt(from);
       if (node.isAtom && !node.isText && node.isLeaf) {
@@ -68,9 +70,14 @@ export class MarkToggleCommand extends UICommand {
 
     //Replace `toggleMark` with transform that does not change scroll
     // position.
-    const newattrs = {overridden: true};
-
+    const newattrs = { overridden: true };
+    if (this.doUpdate) {
+      updateToggleMarks(markType, tr, state);
+      this.doUpdate = false;
+      _view?.dispatch(tr);
+    }
     if (dispatch) {
+      this.doUpdate = true;
       return toggleMark(markType, newattrs)(state, dispatch);
     }
     return true;
@@ -82,9 +89,9 @@ export class MarkToggleCommand extends UICommand {
     state: EditorState,
     tr: Transform,
     posfrom: number,
-    posto: number
+    posto: number,
   ) => {
-    const {schema} = state;
+    const { schema } = state;
     const markType = schema.marks[this._markName];
     if (!markType) {
       return false;
@@ -106,8 +113,8 @@ export class MarkToggleCommand extends UICommand {
     tr: Transform,
     from: number,
     to: number
-  ) => {
-    const {schema} = state;
+  )=> {
+   const { schema } = state;
     const markType = schema.marks[this._markName];
     if (!markType) {
       return false;
@@ -150,10 +157,12 @@ export function toggleCustomStyle(
   if ($cursor && $cursor.parentOffset === 0 && posfrom === posto) {
     if (markType.isInSet(state.storedMarks || $cursor.marks())) {
       tr = state.tr.removeStoredMark(markType);
-    } else {
+    }
+    else {
       tr = state.tr.addStoredMark(markType.create(attrs));
     }
-  } else {
+  }
+  else {
     // [FS] IRAD-1043 2020-10-27
     // No need to remove the applied custom style, if user select the same style multiple times.
     let from = posfrom;
@@ -162,12 +171,10 @@ export function toggleCustomStyle(
       from = pos;
       to = from + node.nodeSize;
       if (node && 0 < node.marks?.length) {
-        const overridden = node.marks.find(
-          (mark) => mark.type.name === 'override'
-        );
+        const overridden = node.marks.find(mark => mark.type.name === 'override');
         const skip = overridden?.attrs[markType.name] === true;
         if (!skip) {
-          attrs = {overridden: false};
+          attrs = { overridden: false };
           tr = tr.addMark(from, to, markType.create(attrs));
         }
         from = to;
