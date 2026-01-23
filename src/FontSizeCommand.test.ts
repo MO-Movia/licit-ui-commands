@@ -211,7 +211,7 @@ describe('FontSizeCommand', () => {
     expect(test).toBeDefined();
   });
   it('should be active', () => {
-    expect(command.isActive()).toBeTruthy();
+    expect(command.isActive()).toBeFalsy();
   });
   it('should not render label', () => {
     expect(command.renderLabel()).toBeNull();

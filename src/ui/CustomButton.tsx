@@ -17,7 +17,9 @@ export class CustomButton extends React.PureComponent<CustomButtonProps> {
 
   render(): React.ReactNode {
     const {icon, label, className, title, theme, ...pointerProps} = this.props;
-    const klass = cx(className, 'czi-custom-button', theme);
+    const klass = cx(className, 'czi-custom-button', theme, {
+       'is-active': pointerProps.active === true,
+    });
     return (
       <ThemeProvider theme={theme}>
         <TooltipSurface tooltip={title}>

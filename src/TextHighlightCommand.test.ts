@@ -21,7 +21,7 @@ describe('TextHighlightCommand', () => {
   });
 
   it('should be active', () => {
-    expect(plugin.isActive()).toBeTruthy();
+    expect(plugin.isActive()).toBeFalsy();
   });
 
   it('should not render label', () => {

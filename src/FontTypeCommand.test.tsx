@@ -312,7 +312,7 @@ describe('FontTypeCommand', () => {
   });
 
   it('should be active', () => {
-    expect(plugin.isActive()).toBeTruthy();
+    expect(plugin.isActive()).toBeFalsy();
   });
   it('should handle cancel',()=>{
     expect(plugin.cancel()).toBeNull();

@@ -19,7 +19,7 @@ export class MarkToggleCommand extends UICommand {
     const { schema, doc, selection } = state;
     const { from, to } = selection;
     const markType = schema.marks[this._markName];
-    if (markType && from < to) {
+    if (markType && from <= to) {
       return !!findNodesWithSameMark(doc, from, to - 1, markType);
     }
     return false;

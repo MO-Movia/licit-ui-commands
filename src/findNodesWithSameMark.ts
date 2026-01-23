@@ -21,9 +21,21 @@ function findFirstMark(
   let firstMark = null;
   let fromNode = null;
   let toNode = null;
-
+  if (from > to) {
+    to = from;
+  }
+  let iterationIndex = 0;
   for (let ii = from; ii <= to; ii++) {
+    iterationIndex++;
     const node = doc.nodeAt(ii);
+    if (
+      iterationIndex > 1 &&
+      ii === to &&
+      node?.isText &&
+      node.text?.startsWith(' ')
+    ) {
+      break;
+    }
     if (!node?.marks) {
       return null;
     }
