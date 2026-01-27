@@ -49,8 +49,8 @@ export class TooltipSurface extends React.PureComponent<TooltipSurfaceProps> {
   }
 
   _onMouseEnter = (e): void => {
-    if(e && e.target && e.target.nodeName==='IMG' ||
-       e.target && e.target.className.startsWith('czi-custom-button')){
+    if(e?.target && e.target?.nodeName==='IMG' ||
+       e.target?.className.startsWith('czi-custom-button')|| e.target?.className.startsWith('width-100 czi-dropdown-border') || e.target?.className.startsWith('width-100 czi-custom-menu-button')){
     if (!this._popUp) {
       const { tooltip } = this.props;
       this._popUp = createPopUp(

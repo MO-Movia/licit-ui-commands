@@ -142,6 +142,6 @@ export class FontTypeCommand extends UICommand {
   }
 
   isActive(): boolean {
-    return true;
+    return false;
   }
 }

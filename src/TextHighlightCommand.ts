@@ -131,7 +131,7 @@ export class TextHighlightCommand extends UICommand {
   }
 
   isActive(): boolean {
-    return true;
+    return false;
   }
 
   renderLabel() {
