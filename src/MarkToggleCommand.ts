@@ -1,4 +1,3 @@
-import {toggleMark} from 'prosemirror-commands';
 import {EditorState} from 'prosemirror-state';
 import {Transform} from 'prosemirror-transform';
 import {EditorView} from 'prosemirror-view';
@@ -92,7 +91,7 @@ export class MarkToggleCommand extends UICommand {
       }
     } else {
       // For range selections
-      let hasMark = state.doc.rangeHasMark(from, to, markType);
+      const hasMark = state.doc.rangeHasMark(from, to, markType);
 
       if (hasMark) {
         tr = tr.removeMark(from, to, markType);

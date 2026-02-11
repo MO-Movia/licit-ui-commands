@@ -1,9 +1,9 @@
-import { Mark, Schema } from 'prosemirror-model';
-import { EditorState } from 'prosemirror-state';
-import { Transform } from 'prosemirror-transform';
-import { EditorView } from 'prosemirror-view';
+import {Mark, Schema} from 'prosemirror-model';
+import {EditorState} from 'prosemirror-state';
+import {Transform} from 'prosemirror-transform';
+import {EditorView} from 'prosemirror-view';
 import React from 'react';
-import { MarkToggleCommand, toggleCustomStyle } from './MarkToggleCommand';
+import {MarkToggleCommand, toggleCustomStyle} from './MarkToggleCommand';
 
 describe('MarkToggleCommand', () => {
   let plugin!: MarkToggleCommand;
@@ -27,17 +27,17 @@ describe('MarkToggleCommand', () => {
       tr: {
         doc: {
           nodeAt: (_x) => {
-            return { isAtom: true, isLeaf: true, isText: false };
+            return {isAtom: true, isLeaf: true, isText: false};
           },
         },
       },
-      schema: { marks: { 'mark-font-type': undefined } },
+      schema: {marks: {'mark-font-type': undefined}},
     } as unknown as EditorState;
 
     const tr = {
       doc: {
         nodeAt: (_x) => {
-          return { isAtom: true, isLeaf: true, isText: false };
+          return {isAtom: true, isLeaf: true, isText: false};
         },
       },
     } as unknown as Transform;
@@ -46,7 +46,7 @@ describe('MarkToggleCommand', () => {
     expect(test).toBe(false);
   });
 
-   it('should call when executeCustom function return first false', () => {
+  it('should call when executeCustom function return first false', () => {
     const state = {
       selection: {
         node: null,
@@ -59,17 +59,17 @@ describe('MarkToggleCommand', () => {
       tr: {
         doc: {
           nodeAt: (_x) => {
-            return { isAtom: true, isLeaf: true, isText: false };
+            return {isAtom: true, isLeaf: true, isText: false};
           },
         },
       },
-      schema: { marks: { 'mark-font-type': undefined } },
+      schema: {marks: {'mark-font-type': undefined}},
     } as unknown as EditorState;
 
     const tr = {
       doc: {
         nodeAt: (_x) => {
-          return { isAtom: true, isLeaf: true, isText: false };
+          return {isAtom: true, isLeaf: true, isText: false};
         },
       },
     } as unknown as Transform;
@@ -91,17 +91,17 @@ describe('MarkToggleCommand', () => {
       tr: {
         doc: {
           nodeAt: (_x) => {
-            return { isAtom: true, isLeaf: true, isText: false };
+            return {isAtom: true, isLeaf: true, isText: false};
           },
         },
       },
-      schema: { marks: 'vlaue' },
+      schema: {marks: 'vlaue'},
     } as unknown as EditorState;
 
     const tr = {
       doc: {
         nodeAt: (_x) => {
-          return { isAtom: true, isLeaf: true, isText: false };
+          return {isAtom: true, isLeaf: true, isText: false};
         },
       },
     } as unknown as Transform;
@@ -123,11 +123,11 @@ describe('MarkToggleCommand', () => {
       tr: {
         doc: {
           nodeAt: (_x) => {
-            return { isAtom: true, isLeaf: true, isText: false };
+            return {isAtom: true, isLeaf: true, isText: false};
           },
         },
       },
-      schema: { marks: 'value' },
+      schema: {marks: 'value'},
     } as unknown as EditorState;
 
     const test = plugin.isActive(state);
@@ -138,16 +138,16 @@ describe('MarkToggleCommand', () => {
     const mySchema = new Schema({
       nodes: {
         doc: {
-          attrs: { lineSpacing: { default: 'test' } },
+          attrs: {lineSpacing: {default: 'test'}},
           content: 'block+',
         },
         paragraph: {
-          attrs: { lineSpacing: { default: 'test' } },
+          attrs: {lineSpacing: {default: 'test'}},
           content: 'text*',
           group: 'block',
         },
         heading: {
-          attrs: { lineSpacing: { default: 'test' } },
+          attrs: {lineSpacing: {default: 'test'}},
           content: 'text*',
           group: 'block',
           defining: true,
@@ -157,12 +157,12 @@ describe('MarkToggleCommand', () => {
           group: 'block',
         },
         list_item: {
-          attrs: { lineSpacing: { default: 'test' } },
+          attrs: {lineSpacing: {default: 'test'}},
           content: 'paragraph',
           defining: true,
         },
         blockquote: {
-          attrs: { lineSpacing: { default: 'test' } },
+          attrs: {lineSpacing: {default: 'test'}},
           content: 'block+',
           group: 'block',
         },
@@ -172,24 +172,24 @@ describe('MarkToggleCommand', () => {
       },
     });
     const dummyDoc = mySchema.node('doc', null, [
-      mySchema.node('heading', { marks: [] }, [mySchema.text('Heading 1')]),
-      mySchema.node('paragraph', { marks: [] }, [
+      mySchema.node('heading', {marks: []}, [mySchema.text('Heading 1')]),
+      mySchema.node('paragraph', {marks: []}, [
         mySchema.text('This is a paragraph'),
       ]),
-      mySchema.node('bullet_list', { marks: [] }, [
-        mySchema.node('list_item', { marks: [] }, [
-          mySchema.node('paragraph', { marks: [] }, [
+      mySchema.node('bullet_list', {marks: []}, [
+        mySchema.node('list_item', {marks: []}, [
+          mySchema.node('paragraph', {marks: []}, [
             mySchema.text('List item 1'),
           ]),
         ]),
-        mySchema.node('list_item', { marks: [] }, [
-          mySchema.node('paragraph', { marks: [] }, [
+        mySchema.node('list_item', {marks: []}, [
+          mySchema.node('paragraph', {marks: []}, [
             mySchema.text('List item 2'),
           ]),
         ]),
       ]),
-      mySchema.node('blockquote', { marks: [] }, [
-        mySchema.node('paragraph', { marks: [] }, [
+      mySchema.node('blockquote', {marks: []}, [
+        mySchema.node('paragraph', {marks: []}, [
           mySchema.text('This is a blockquote'),
         ]),
       ]),
@@ -201,11 +201,11 @@ describe('MarkToggleCommand', () => {
         head: 0,
         from: 5,
         to: 2,
-        ranges: [{ $from: { depth: 1, pos: 0 }, $to: { pos: 1 } }],
+        ranges: [{$from: {depth: 1, pos: 0}, $to: {pos: 1}}],
       },
       plugins: [],
       tr: null,
-      schema: { marks: 'value' },
+      schema: {marks: 'value'},
       doc: dummyDoc,
     } as unknown as EditorState;
 
@@ -216,16 +216,16 @@ describe('MarkToggleCommand', () => {
     const mySchema = new Schema({
       nodes: {
         doc: {
-          attrs: { lineSpacing: { default: 'test' } },
+          attrs: {lineSpacing: {default: 'test'}},
           content: 'block+',
         },
         paragraph: {
-          attrs: { lineSpacing: { default: 'test' } },
+          attrs: {lineSpacing: {default: 'test'}},
           content: 'text*',
           group: 'block',
         },
         heading: {
-          attrs: { lineSpacing: { default: 'test' } },
+          attrs: {lineSpacing: {default: 'test'}},
           content: 'text*',
           group: 'block',
           defining: true,
@@ -235,12 +235,12 @@ describe('MarkToggleCommand', () => {
           group: 'block',
         },
         list_item: {
-          attrs: { lineSpacing: { default: 'test' } },
+          attrs: {lineSpacing: {default: 'test'}},
           content: 'paragraph',
           defining: true,
         },
         blockquote: {
-          attrs: { lineSpacing: { default: 'test' } },
+          attrs: {lineSpacing: {default: 'test'}},
           content: 'block+',
           group: 'block',
         },
@@ -250,24 +250,24 @@ describe('MarkToggleCommand', () => {
       },
     });
     const dummyDoc = mySchema.node('doc', null, [
-      mySchema.node('heading', { marks: [] }, [mySchema.text('Heading 1')]),
-      mySchema.node('paragraph', { marks: [] }, [
+      mySchema.node('heading', {marks: []}, [mySchema.text('Heading 1')]),
+      mySchema.node('paragraph', {marks: []}, [
         mySchema.text('This is a paragraph'),
       ]),
-      mySchema.node('bullet_list', { marks: [] }, [
-        mySchema.node('list_item', { marks: [] }, [
-          mySchema.node('paragraph', { marks: [] }, [
+      mySchema.node('bullet_list', {marks: []}, [
+        mySchema.node('list_item', {marks: []}, [
+          mySchema.node('paragraph', {marks: []}, [
             mySchema.text('List item 1'),
           ]),
         ]),
-        mySchema.node('list_item', { marks: [] }, [
-          mySchema.node('paragraph', { marks: [] }, [
+        mySchema.node('list_item', {marks: []}, [
+          mySchema.node('paragraph', {marks: []}, [
             mySchema.text('List item 2'),
           ]),
         ]),
       ]),
-      mySchema.node('blockquote', { marks: [] }, [
-        mySchema.node('paragraph', { marks: [] }, [
+      mySchema.node('blockquote', {marks: []}, [
+        mySchema.node('paragraph', {marks: []}, [
           mySchema.text('This is a blockquote'),
         ]),
       ]),
@@ -279,25 +279,36 @@ describe('MarkToggleCommand', () => {
         head: 0,
         from: 5,
         to: 2,
-        ranges: [{ $from: { depth: 1, pos: 0 }, $to: { pos: 1 } }],
+        ranges: [{$from: {depth: 1, pos: 0}, $to: {pos: 1}}],
       },
       plugins: [],
-      tr: { doc: { resolve: () => { return { parent: { type: {} } }; }, nodesBetween: () => { } } },
-      schema: { marks: 'value' },
+      tr: {
+        doc: {
+          resolve: () => {
+            return {parent: {type: {}}};
+          },
+          nodesBetween: () => {},
+        },
+      },
+      schema: {marks: 'value'},
       doc: dummyDoc,
     } as unknown as EditorState;
     plugin.doUpdate = true;
-    const test = plugin.execute(state, null as unknown as ((tr: Transform) => void) | undefined, { dispatch: () => { } } as unknown as EditorView);
+    const test = plugin.execute(
+      state,
+      null as unknown as ((tr: Transform) => void) | undefined,
+      {dispatch: () => {}} as unknown as EditorView
+    );
     expect(test).toBe(true);
   });
   it('executeWithUserInput function() should be return false', () => {
     const state = {
       plugins: [],
-      schema: { marks: { 'mark-font-type': undefined } },
+      schema: {marks: {'mark-font-type': undefined}},
       tr: {
         doc: {
           nodeAt: (_x) => {
-            return { isAtom: true, isLeaf: true, isText: false };
+            return {isAtom: true, isLeaf: true, isText: false};
           },
         },
       },
@@ -310,17 +321,17 @@ describe('MarkToggleCommand', () => {
   it('waitForUserInput function() should be return undefined', () => {
     const state = {
       plugins: [],
-      selection: { from: 1, to: 2 },
-      schema: { marks: { 'mark-font-type': undefined } },
+      selection: {from: 1, to: 2},
+      schema: {marks: {'mark-font-type': undefined}},
       doc: {
         nodeAt: (_x) => {
-          return { isAtom: true, isLeaf: true, isText: false };
+          return {isAtom: true, isLeaf: true, isText: false};
         },
       },
       tr: {
         doc: {
           nodeAt: (_x) => {
-            return { isAtom: true, isLeaf: true, isText: false, marks: [] };
+            return {isAtom: true, isLeaf: true, isText: false, marks: []};
           },
         },
       },
@@ -357,39 +368,44 @@ describe('MarkToggleCommand', () => {
       tr: {
         doc: {
           nodeAt: (_x) => {
-            return { isAtom: true, isLeaf: true, isText: false };
+            return {isAtom: true, isLeaf: true, isText: false};
           },
         },
       },
-      schema: { marks: { 'mark-font-type': undefined } },
+      schema: {marks: {'mark-font-type': undefined}},
     } as unknown as EditorState;
 
     const test = plugin.execute(state);
     expect(test).toBe(false);
   });
 
-  it('should call when excute function return false', () => {
+  it('should return false when atomic node is selected', () => {
+    const plugin = new MarkToggleCommand('bold');
+
     const state = {
-      doc: {},
       selection: {
-        node: null,
-        anchor: 0,
-        head: 0,
         from: 1,
         to: 2,
+        empty: false,
       },
-      plugins: [],
-      tr: {
-        doc: {
-          nodeAt: (_x) => {
-            return { isAtom: true, isLeaf: true, isText: false };
-          },
+      schema: {
+        marks: {
+          bold: {}, // mark exists
         },
       },
-      schema: { marks: 'value' },
+      doc: {
+        nodeAt: () => ({
+          isAtom: true,
+          isLeaf: true,
+          isText: false,
+        }),
+      },
+      tr: {},
     } as unknown as EditorState;
-    const test = plugin.execute(state);
-    expect(test).toBe(false);
+
+    const result = plugin.execute(state);
+
+    expect(result).toBe(false);
   });
 
   it('should call when excute function return tr', () => {
@@ -409,17 +425,17 @@ describe('MarkToggleCommand', () => {
       tr: {
         doc: {
           nodeAt: (_x) => {
-            return { isAtom: true, isLeaf: true, isText: false };
+            return {isAtom: true, isLeaf: true, isText: false};
           },
         },
       },
-      schema: { marks: 'vlaue' },
+      schema: {marks: 'vlaue'},
     } as unknown as EditorState;
 
     const tr = {
       doc: {
         nodeAt: (_x) => {
-          return { isAtom: true, isLeaf: true, isText: false };
+          return {isAtom: true, isLeaf: true, isText: false};
         },
       },
     } as unknown as Transform;
@@ -431,11 +447,11 @@ describe('MarkToggleCommand', () => {
   it('should call when executeCustom function returns false', () => {
     const state = {
       doc: {
-        type: { allowsMarkType: (_x) => false },
+        type: {allowsMarkType: (_x) => false},
 
         nodesBetween: (from, to, callback) => {
           const node = state.doc;
-          const { $from, $to } = state.selection.ranges[0];
+          const {$from, $to} = state.selection.ranges[0];
 
           if (from <= $from.pos && to >= $to.pos) {
             // If the range from 'from' to 'to' covers the entire doc, call the callback with the doc node.
@@ -465,17 +481,17 @@ describe('MarkToggleCommand', () => {
             to: 5,
           },
         ],
-        $cursor: { parentOffset: 0 },
+        $cursor: {parentOffset: 0},
       },
       plugins: [],
       tr: {
-        doc: { nodeAt: (_x) => ({ isAtom: true, isLeaf: true, isText: false }) },
+        doc: {nodeAt: (_x) => ({isAtom: true, isLeaf: true, isText: false})},
       },
-      schema: { marks: 'value' },
+      schema: {marks: 'value'},
     } as unknown as EditorState;
 
     const tr = {
-      doc: { nodeAt: (_x) => ({ isAtom: true, isLeaf: true, isText: false }) },
+      doc: {nodeAt: (_x) => ({isAtom: true, isLeaf: true, isText: false})},
     } as unknown as Transform;
 
     const test = plugin.executeCustom(state, tr, 1, 21);
@@ -491,7 +507,7 @@ describe('MarkToggleCommand', () => {
           },
         },
 
-        nodesBetween: (_x, _y, _z: (node) => { return }) => {
+        nodesBetween: (_x, _y, _z: (node) => {return}) => {
           ('');
         },
       },
@@ -515,13 +531,13 @@ describe('MarkToggleCommand', () => {
             to: 5,
           },
         ],
-        $cursor: { parentOffset: 0 },
+        $cursor: {parentOffset: 0},
       },
       plugins: [],
       tr: {
         doc: {
           nodeAt: (_x) => {
-            return { isAtom: true, isLeaf: true, isText: false };
+            return {isAtom: true, isLeaf: true, isText: false};
           },
         },
       },
@@ -543,7 +559,7 @@ describe('MarkToggleCommand', () => {
             isAtom: true,
             isLeaf: true,
             isText: false,
-            descendants: () => { },
+            descendants: () => {},
           };
         },
         rangeHasMark: (_X) => {
@@ -561,6 +577,477 @@ describe('MarkToggleCommand', () => {
     const test = plugin.executeCustom(state, tr, 1, 21);
     expect(test).toBeDefined();
   });
+
+  it('should return false when single atomic node is selected (to === from + 1)', () => {
+  const plugin = new MarkToggleCommand('bold');
+
+  const mySchema = new Schema({
+    nodes: {
+      doc: { content: 'block+' },
+      paragraph: { content: 'text*', group: 'block' },
+      image: {
+        inline: false,
+        atom: true,
+        group: 'block',
+        attrs: { src: { default: '' } },
+      },
+      text: { inline: true },
+    },
+    marks: {
+      bold: {},
+    },
+  });
+
+  const imageNode = mySchema.node('image', { src: 'test.jpg' });
+
+  const state = {
+    selection: {
+      from: 1,
+      to: 2, // to === from + 1
+      empty: false,
+    },
+    schema: mySchema,
+    doc: {
+      nodeAt: () => imageNode,
+    },
+    tr: {},
+  } as unknown as EditorState;
+
+  const result = plugin.execute(state);
+  expect(result).toBe(false);
+});
+
+it('should return true when dispatch is not provided', () => {
+  const plugin = new MarkToggleCommand('bold');
+
+  const mySchema = new Schema({
+    nodes: {
+      doc: { content: 'text*' },
+      text: { inline: true },
+    },
+    marks: {
+      bold: {},
+    },
+  });
+
+  const dummyDoc = mySchema.node('doc', null, [
+    mySchema.text('Test text'),
+  ]);
+
+  const state = {
+    selection: {
+      from: 1,
+      to: 5,
+      empty: false,
+      $from: { marks: () => [] },
+    },
+    schema: mySchema,
+    doc: dummyDoc,
+    tr: {},
+  } as unknown as EditorState;
+
+  const result = plugin.execute(state); // No dispatch parameter
+  expect(result).toBe(true);
+});
+
+it('should return false for atomic node in executeCustom when to === from + 1', () => {
+  const plugin = new MarkToggleCommand('bold');
+
+  const mySchema = new Schema({
+    nodes: {
+      doc: { content: 'block+' },
+      paragraph: { content: 'text*', group: 'block' },
+      image: { atom: true, group: 'block', attrs: { src: { default: '' } } },
+      text: { inline: true },
+    },
+    marks: {
+      bold: {},
+    },
+  });
+
+  const state = {
+    schema: mySchema,
+  } as unknown as EditorState;
+
+  const tr = {
+    doc: {
+      nodeAt: () => ({
+        isAtom: true,
+        isText: false,
+        isLeaf: true,
+      }),
+    },
+  } as unknown as Transform;
+
+  const result = plugin.executeCustom(state, tr, 1, 2);
+  expect(result).toBe(false);
+});
+
+it('should return false in executeCustomStyleForTable when mark type does not exist', () => {
+  const plugin = new MarkToggleCommand('nonexistent');
+
+  const mySchema = new Schema({
+    nodes: {
+      doc: { content: 'text*' },
+      text: { inline: true },
+    },
+    marks: {
+      bold: {},
+    },
+  });
+
+  const state = {
+    schema: mySchema,
+  } as unknown as EditorState;
+
+  const tr = {} as unknown as Transform;
+
+  const result = plugin.executeCustomStyleForTable(state, tr, 1, 5);
+  expect(result).toBe(false);
+});
+
+it('should remove stored mark when cursor is at parentOffset 0 with mark present', () => {
+  const mySchema = new Schema({
+    nodes: {
+      doc: { content: 'text*' },
+      text: { inline: true },
+    },
+    marks: {
+      bold: {},
+    },
+  });
+
+  const dummyDoc = mySchema.node('doc', null, [
+    mySchema.text('Test'),
+  ]);
+
+  const boldMark = mySchema.marks.bold.create();
+  const mockRemoveStoredMark = jest.fn().mockReturnThis();
+
+  const state = {
+    selection: {
+      empty: true,
+      $cursor: {
+        parentOffset: 0,
+        marks: () => [boldMark],
+      },
+      ranges: [{ $from: { depth: 0, pos: 0 }, $to: { pos: 0 } }],
+    },
+    storedMarks: null,
+    doc: dummyDoc,
+    tr: {
+      removeStoredMark: mockRemoveStoredMark,
+      addStoredMark: jest.fn().mockReturnThis(),
+    },
+  } as unknown as EditorState;
+
+  const tr = state.tr as unknown as Transform;
+  const markType = mySchema.marks.bold;
+
+  toggleCustomStyle(markType, null, state, tr, 0, 0);
+
+  expect(mockRemoveStoredMark).toHaveBeenCalled();
+});
+
+it('should add stored mark when cursor is at parentOffset 0 without mark', () => {
+  const mySchema = new Schema({
+    nodes: {
+      doc: { content: 'text*' },
+      text: { inline: true },
+    },
+    marks: {
+      bold: {},
+    },
+  });
+
+  const dummyDoc = mySchema.node('doc', null, [
+    mySchema.text('Test'),
+  ]);
+
+  const mockAddStoredMark = jest.fn().mockReturnThis();
+
+  const state = {
+    selection: {
+      empty: true,
+      $cursor: {
+        parentOffset: 0,
+        marks: () => [],
+      },
+      ranges: [{ $from: { depth: 0, pos: 0 }, $to: { pos: 0 } }],
+    },
+    storedMarks: null,
+    doc: dummyDoc,
+    tr: {
+      removeStoredMark: jest.fn().mockReturnThis(),
+      addStoredMark: mockAddStoredMark,
+    },
+  } as unknown as EditorState;
+
+  const tr = state.tr as unknown as Transform;
+  const markType = mySchema.marks.bold;
+
+  toggleCustomStyle(markType, null, state, tr, 0, 0);
+
+  expect(mockAddStoredMark).toHaveBeenCalled();
+});
+
+it('should skip nodes with override mark attribute set to true', () => {
+  const mySchema = new Schema({
+    nodes: {
+      doc: { content: 'text*' },
+      text: { inline: true },
+    },
+    marks: {
+      bold: {},
+      override: {
+        attrs: { bold: { default: null } },
+      },
+    },
+  });
+
+  const dummyDoc = mySchema.node('doc', null, [
+    mySchema.text('Test', [
+      mySchema.marks.override.create({ bold: true }),
+    ]),
+  ]);
+
+  const mockAddMark = jest.fn().mockReturnThis();
+
+  const state = {
+    selection: {
+      empty: false,
+      $cursor: null,
+      ranges: [{ $from: { depth: 0, pos: 0 }, $to: { pos: 4 } }],
+    },
+    doc: dummyDoc,
+  } as unknown as EditorState;
+
+  const tr = {
+    doc: dummyDoc,
+    addMark: mockAddMark,
+  } as unknown as Transform;
+
+  const markType = mySchema.marks.bold;
+
+  toggleCustomStyle(markType, null, state, tr, 0, 4);
+
+  // Should not add mark because override.bold === true
+  expect(mockAddMark).not.toHaveBeenCalled();
+});
+
+it('should apply mark to nodes without override or with override.bold !== true', () => {
+  const mySchema = new Schema({
+    nodes: {
+      doc: { content: 'text*' },
+      text: { inline: true },
+    },
+    marks: {
+      bold: {},
+      override: {
+        attrs: { bold: { default: null } },
+      },
+    },
+  });
+
+  const dummyDoc = mySchema.node('doc', null, [
+    mySchema.text('Test', [
+      mySchema.marks.override.create({ bold: false }),
+    ]),
+  ]);
+
+  const mockAddMark = jest.fn().mockReturnThis();
+
+  const state = {
+    selection: {
+      empty: false,
+      $cursor: null,
+      ranges: [{ $from: { depth: 0, pos: 0 }, $to: { pos: 4 } }],
+    },
+    doc: dummyDoc,
+  } as unknown as EditorState;
+
+  const tr = {
+    doc: dummyDoc,
+    addMark: mockAddMark,
+  } as unknown as Transform;
+
+  const markType = mySchema.marks.bold;
+
+  toggleCustomStyle(markType, null, state, tr, 0, 4);
+
+  expect(mockAddMark).toHaveBeenCalled();
+});
+
+it('should handle markApplies when node does not allow marks', () => {
+  const mySchema = new Schema({
+    nodes: {
+      doc: { content: 'block+' },
+      paragraph: {
+        content: 'text*',
+        group: 'block',
+        marks: '', // Does not allow marks
+      },
+      text: { inline: true },
+    },
+    marks: {
+      bold: {},
+    },
+  });
+
+  const plugin = new MarkToggleCommand('bold');
+
+  const dummyDoc = mySchema.node('doc', null, [
+    mySchema.node('paragraph', null, [mySchema.text('Test')]),
+  ]);
+
+  const state = {
+    schema: mySchema,
+    doc: dummyDoc,
+    selection: {
+      ranges: [
+        {
+          $from: { depth: 1, pos: 1 },
+          $to: { pos: 5 },
+        },
+      ],
+    },
+  } as unknown as EditorState;
+
+  const tr = {
+    doc: dummyDoc,
+  } as unknown as Transform;
+
+  const result = plugin.executeCustom(state, tr, 1, 5);
+
+  expect(result).toBeDefined();
+});
+
+it('should handle markApplies when node has inline content and allows mark', () => {
+  const mySchema = new Schema({
+    nodes: {
+      doc: { content: 'block+' },
+      paragraph: {
+        content: 'text*',
+        group: 'block',
+        marks: 'bold',
+      },
+      text: { inline: true },
+    },
+    marks: {
+      bold: {},
+    },
+  });
+
+  const plugin = new MarkToggleCommand('bold');
+
+  const dummyDoc = mySchema.node('doc', null, [
+    mySchema.node('paragraph', null, [mySchema.text('Test')]),
+  ]);
+
+  const state = {
+    schema: mySchema,
+    doc: dummyDoc,
+    selection: {
+      ranges: [
+        {
+          $from: { depth: 1, pos: 1 },
+          $to: { pos: 5 },
+        },
+      ],
+    },
+  } as unknown as EditorState;
+
+  const tr = {
+    doc: dummyDoc,
+    addMark: jest.fn().mockReturnThis(),
+  } as unknown as Transform;
+
+  const result = plugin.executeCustom(state, tr, 1, 5);
+
+  expect(result).toBeDefined();
+});
+
+it('should check depth 0 and verify doc type allowsMarkType', () => {
+  const mySchema = new Schema({
+    nodes: {
+      doc: {
+        content: 'text*',
+        marks: 'bold', // Doc allows bold marks
+      },
+      text: { inline: true },
+    },
+    marks: {
+      bold: {},
+    },
+  });
+
+  const plugin = new MarkToggleCommand('bold');
+
+  const dummyDoc = mySchema.node('doc', null, [
+    mySchema.text('Test'),
+  ]);
+
+  const state = {
+    schema: mySchema,
+    doc: dummyDoc,
+    selection: {
+      ranges: [
+        {
+          $from: { depth: 0, pos: 0 },
+          $to: { pos: 4 },
+        },
+      ],
+    },
+  } as unknown as EditorState;
+
+  const tr = {
+    doc: dummyDoc,
+    addMark: jest.fn().mockReturnThis(),
+  } as unknown as Transform;
+
+  const result = plugin.executeCustom(state, tr, 0, 4);
+
+  expect(result).toBeDefined();
+});
+
+it('should return false in executeCustomStyleForTable for atomic node', () => {
+  const plugin = new MarkToggleCommand('bold');
+
+  const mySchema = new Schema({
+    nodes: {
+      doc: { content: 'block+' },
+      paragraph: { content: 'text*', group: 'block' },
+      image: { atom: true, group: 'block', attrs: { src: { default: '' } } },
+      text: { inline: true },
+    },
+    marks: {
+      bold: {},
+    },
+  });
+
+  const dummyDoc = mySchema.node('doc', null, [
+    mySchema.node('paragraph', null, [mySchema.text('Test')]),
+  ]);
+
+  const state = {
+    schema: mySchema,
+    doc: dummyDoc,
+  } as unknown as EditorState;
+
+  const tr = {
+    doc: {
+      nodeAt: () => ({
+        isAtom: true,
+        isText: false,
+        isLeaf: true,
+      }),
+    },
+  } as unknown as Transform;
+
+  const result = plugin.executeCustomStyleForTable(state, tr, 1, 2);
+  expect(result).toBe(false);
+});
+
   it('should call when isActive function return false', () => {
     const state = {
       doc: {
@@ -579,7 +1066,7 @@ describe('MarkToggleCommand', () => {
       tr: {
         doc: {
           nodeAt: (_x) => {
-            return { isAtom: true, isLeaf: true, isText: false };
+            return {isAtom: true, isLeaf: true, isText: false};
           },
         },
       },
@@ -601,16 +1088,16 @@ describe('MarkToggleCommand', () => {
     const mySchema = new Schema({
       nodes: {
         doc: {
-          attrs: { lineSpacing: { default: 'test' } },
+          attrs: {lineSpacing: {default: 'test'}},
           content: 'block+',
         },
         paragraph: {
-          attrs: { lineSpacing: { default: 'test' } },
+          attrs: {lineSpacing: {default: 'test'}},
           content: 'text*',
           group: 'block',
         },
         heading: {
-          attrs: { lineSpacing: { default: 'test' } },
+          attrs: {lineSpacing: {default: 'test'}},
           content: 'text*',
           group: 'block',
           defining: true,
@@ -620,12 +1107,12 @@ describe('MarkToggleCommand', () => {
           group: 'block',
         },
         list_item: {
-          attrs: { lineSpacing: { default: 'test' } },
+          attrs: {lineSpacing: {default: 'test'}},
           content: 'paragraph',
           defining: true,
         },
         blockquote: {
-          attrs: { lineSpacing: { default: 'test' } },
+          attrs: {lineSpacing: {default: 'test'}},
           content: 'block+',
           group: 'block',
         },
@@ -635,24 +1122,24 @@ describe('MarkToggleCommand', () => {
       },
     });
     const dummyDoc = mySchema.node('doc', null, [
-      mySchema.node('heading', { marks: [] }, [mySchema.text('Heading 1')]),
-      mySchema.node('paragraph', { marks: [] }, [
+      mySchema.node('heading', {marks: []}, [mySchema.text('Heading 1')]),
+      mySchema.node('paragraph', {marks: []}, [
         mySchema.text('This is a paragraph'),
       ]),
-      mySchema.node('bullet_list', { marks: [] }, [
-        mySchema.node('list_item', { marks: [] }, [
-          mySchema.node('paragraph', { marks: [] }, [
+      mySchema.node('bullet_list', {marks: []}, [
+        mySchema.node('list_item', {marks: []}, [
+          mySchema.node('paragraph', {marks: []}, [
             mySchema.text('List item 1'),
           ]),
         ]),
-        mySchema.node('list_item', { marks: [] }, [
-          mySchema.node('paragraph', { marks: [] }, [
+        mySchema.node('list_item', {marks: []}, [
+          mySchema.node('paragraph', {marks: []}, [
             mySchema.text('List item 2'),
           ]),
         ]),
       ]),
-      mySchema.node('blockquote', { marks: [] }, [
-        mySchema.node('paragraph', { marks: [] }, [
+      mySchema.node('blockquote', {marks: []}, [
+        mySchema.node('paragraph', {marks: []}, [
           mySchema.text('This is a blockquote'),
         ]),
       ]),
@@ -679,8 +1166,8 @@ describe('MarkToggleCommand', () => {
           },
           ranges: [
             {
-              $from: { depth: 1, pos: 0 },
-              $to: { pos: 1 },
+              $from: {depth: 1, pos: 0},
+              $to: {pos: 1},
             },
           ],
         },
@@ -717,7 +1204,7 @@ describe('MarkToggleCommand', () => {
             parentOffset: 0,
             marks: () => [] as Mark[], // Use Mark[] instead of any[]
           },
-          ranges: [{ $from: { depth: 1, pos: 0 }, $to: { pos: 1 } }],
+          ranges: [{$from: {depth: 1, pos: 0}, $to: {pos: 1}}],
         },
         doc: dummyDoc,
         tr: {

@@ -32,4 +32,5 @@ export * from './clearMarks';
 export * from './NodeNames';
 export * from './MarkNames';
 export * from './runtime.service';
+export type {ViewProps} from './ui/PopUp';
 export { ThemeProvider,ThemeContext } from './ui/contextProvider';
