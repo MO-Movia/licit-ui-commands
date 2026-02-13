@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {createPopUp} from './createPopUp';
-import {atAnchorBottomCenter} from './PopUpPosition';
+import {atAnchorBottomCenter, atAnchorRight} from './PopUpPosition';
 import {uuid} from './uuid';
 
 type TooltipSurfaceProps = {
@@ -53,13 +53,17 @@ export class TooltipSurface extends React.PureComponent<TooltipSurfaceProps> {
        e.target?.className.startsWith('czi-custom-button')|| e.target?.className.startsWith('width-100 czi-dropdown-border') || e.target?.className.startsWith('width-100 czi-custom-menu-button')){
     if (!this._popUp) {
       const { tooltip } = this.props;
+      const alignmentTooltips = ['center align', 'right align', 'left align', 'justify'];
+      const position = alignmentTooltips.includes(tooltip?.toLowerCase())
+        ? atAnchorRight
+        : atAnchorBottomCenter;
       this._popUp = createPopUp(
         TooltipView,
         { tooltip },
         {
           anchor: document.getElementById(this._id),
           onClose: this._onClose,
-          position: atAnchorBottomCenter,
+          position: position,
         }
       );
     }
