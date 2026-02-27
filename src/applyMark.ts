@@ -325,17 +325,17 @@ export function updateToggleMarks(
       if (pos <= _startPos) {
         const overrideMarkType = schema.marks[MARK_OVERRIDE];
         if (hasMarks) {
-          tr.removeMark(pos, pos + node.nodeSize, overrideMarkType);
+          tr.removeMark(pos, endPos.pos, overrideMarkType);
         }
         switch (markType.name) {
           case 'strong':
-            attrs = {strong: style?.styles?.strike ?? true};
+            attrs = { strong: style?.styles?.strong ?? true };
             break;
           case 'em':
-            attrs = {em: style?.styles?.strike ?? true};
+            attrs = { em: style?.styles?.em ?? true };
             break;
           case 'underline':
-            attrs = {underline: style?.styles?.strike ?? true};
+            attrs = { underline: style?.styles?.underline ?? true };
             break;
           case 'strike':
             attrs = {strike: style?.styles?.strike ?? true};
@@ -348,7 +348,7 @@ export function updateToggleMarks(
           if (overridenMark) {
             attrs = {...overridenMark.attrs, ...attrs};
           }
-          tr.addMark(pos, pos + node.nodeSize, overrideMarkType?.create(attrs));
+          tr.addMark(_startPos, endPos.pos, overrideMarkType?.create(attrs));
         }
       }
     }

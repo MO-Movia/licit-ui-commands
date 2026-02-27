@@ -39,6 +39,8 @@ const FORMAT_MARK_NAMES = [
   MARK_SUPER,
 ];
 
+type StyleObject = Record<string, unknown>;
+
 export function clearMarks(tr: Transform, schema: Schema): Transform {
   const { doc, selection } = tr as Transaction;
   if (!selection || !doc) {
@@ -88,7 +90,6 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
       node.marks.some((mark) => {
         if (mark?.type?.name === MarkNames.MARK_OVERRIDE) {
           overrideMarkstoRemove.push({ node, from: pos, to: pos + node.nodeSize, mark });
-          addOverrideMarksToNode(mark, marksToAdd, pos, node, schema);
 
         } else if (comapreMarks(style, mark, marksToAdd, pos, node, schema)) {
           if (markTypesToRemove.has(mark.type)) {
@@ -96,6 +97,8 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
           }
         }
       });
+      const styleMarks = getMissingMarks_Styles(style?.styles, node.marks);
+      AddMissingMarks_Styles(styleMarks, marksToAdd, pos, node, schema);
 
     }
     return true;
@@ -205,13 +208,47 @@ export function comapreMarks(style: Style, mark: Mark, marksToAdd, pos: number, 
   }
 }
 
-function addOverrideMarksToNode(mark: Mark, marksToAdd, pos: number, node: Node, schema: Schema) {
-  for (const key in mark.attrs) {
-    if (mark.attrs[key]) {
-      const markType = schema.marks[key];
-      marksToAdd.push({ node, from: pos, to: pos + node.nodeSize, markType });
-    }
+function getMissingMarks_Styles(
+  styleObj: StyleObject,
+  marks: readonly Mark[]
+): string[] {
+  if (styleObj) {
+    const availableTypes = new Set(marks.map(m => m.type.name));
+
+    return Object.entries(styleObj)
+      .filter(
+        ([key, value]) =>
+          typeof value === 'boolean' &&
+          !availableTypes.has(key)
+      )
+      .map(([key]) => key);
   }
+  return [];
+}
+
+function AddMissingMarks_Styles(styleMarks: string[], marksToAdd, pos: number, node: Node, schema: Schema) {
+
+  styleMarks?.forEach((styleKey) => {
+    const markType = schema.marks[styleKey];
+    if (!markType) return;
+
+    switch (markType.name) {
+      case MarkNames.MARK_STRONG:
+      case MarkNames.MARK_EM:
+      case MarkNames.MARK_UNDERLINE:
+      case MarkNames.MARK_STRIKE:
+        marksToAdd.push({
+          node,
+          from: pos,
+          to: pos + node.nodeSize,
+          markType: markType,
+          attrs: {}
+        });
+        break;
+      default:
+        break;
+    }
+  });
 
 }
 
