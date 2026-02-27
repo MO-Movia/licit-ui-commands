@@ -492,6 +492,85 @@ describe('clearMarks', () => {
       expect(clearmarks).toBeTruthy();
     });
   });
+
+  it('clearMarks: should return tr when slice has multiple children containing a non-Normal/non-null styleName paragraph', () => {
+  const mySchema2 = new Schema({
+    nodes: {
+      doc: { content: 'block+' },
+      paragraph: {
+        content: 'text*',
+        group: 'block',
+        attrs: { styleName: { default: null } },
+        toDOM: () => ['p', 0],
+      },
+      text: { group: 'inline' },
+    },
+    marks: {
+      strong: { toDOM: () => ['strong'] },
+    },
+  });
+
+  const doc1 = mySchema2.node('doc', null, [
+    mySchema2.node('paragraph', { styleName: 'header1' }, [mySchema2.text('Hello')]),
+    mySchema2.node('paragraph', { styleName: 'header2' }, [mySchema2.text('World')]),
+  ]);
+
+  // Build a real TextSelection so slice is produced with childCount > 1
+  const state = EditorState.create({ doc: doc1 });
+  const sel = TextSelection.create(doc1, 1, doc1.content.size - 1);
+  const tr = state.tr;
+  tr.setSelection(sel);
+
+  const result = clearMarks(tr, mySchema2);
+  expect(result).toBe(tr);
+});
+
+it('clearMarks: should call addMark when marksToAdd is populated (MARK_TEXT_COLOR overridden)', () => {
+  const mySchema2 = new Schema({
+    nodes: {
+      doc: { content: 'block+' },
+      paragraph: {
+        content: 'text*',
+        group: 'block',
+        attrs: { styleName: { default: null } },
+        toDOM: () => ['p', 0],
+      },
+      text: { group: 'inline' },
+    },
+    marks: {
+      'mark-text-color': {
+        attrs: { color: { default: '#000000' }, overridden: { default: false } },
+        toDOM: () => ['span'],
+      },
+    },
+  });
+
+  const doc1 = mySchema2.node('doc', null, [
+    mySchema2.node('paragraph', { styleName: null }, [
+      mySchema2.text('Hello', [
+        mySchema2.marks['mark-text-color'].create({ color: '#ff0000', overridden: true }),
+      ]),
+    ]),
+  ]);
+
+  const addMarkCalls: unknown[] = [];
+  const removeMarkCalls: unknown[] = [];
+  const fakeTr = {
+    doc: doc1,
+    selection: { empty: false, from: 0, to: doc1.content.size },
+    removeMark: (...args: unknown[]) => {
+      removeMarkCalls.push(args);
+      return fakeTr;
+    },
+    addMark: (...args: unknown[]) => {
+      addMarkCalls.push(args);
+      return fakeTr;
+    },
+  } as unknown as Transform;
+
+  clearMarks(fakeTr, mySchema2);
+  expect(addMarkCalls.length).toBeGreaterThan(0);
+});
 });
 describe('comapreMarks', () => {
   it('should handle comapreMarks', () => {
