@@ -119,6 +119,45 @@ export function clearMarks(tr: Transform, schema: Schema): Transform {
     tr = tr.addMark(from, to, attrs ? markType.create(attrs) : markType.create());
 
   });
+
+  // Reset indent and align attributes for nodes inside the selection when clearing formats.
+  const nodesToReset: { node: Node; pos: number }[] = [];
+  doc.nodesBetween(from, to, (node, pos) => {
+    if (node?.attrs) {
+      const indentVal = node.attrs.indent;
+      const overriddenIndent = !!node.attrs.overriddenIndent;
+      const overriddenIndentVal = node.attrs.overriddenIndentValue;
+
+      const alignVal = node.attrs.align;
+      const overriddenAlign = node.attrs.overriddenAlign;
+      const overriddenAlignVal = node.attrs.overriddenAlignValue;
+
+      const needsIndentReset = (indentVal !== undefined && String(indentVal) !== '0') || overriddenIndent || (overriddenIndentVal !== undefined && overriddenIndentVal !== null);
+      const needsAlignReset = (alignVal !== undefined && String(alignVal) !== 'left') || (overriddenAlign !== undefined && overriddenAlign !== null) || (overriddenAlignVal !== undefined && overriddenAlignVal !== null);
+
+      if (needsIndentReset || needsAlignReset) {
+        nodesToReset.push({ node, pos });
+      }
+    }
+    return true;
+
+  });
+
+  nodesToReset.forEach(({ node, pos }) => {
+    const newAttrs = {
+      ...node.attrs,
+      // indent defaults
+      indent: '0',
+      overriddenIndent: false,
+      overriddenIndentValue: null,
+      // align defaults
+      align: 'left',
+      overriddenAlign: null,
+      overriddenAlignValue: null,
+    };
+    tr = tr.setNodeMarkup(pos, node.type, newAttrs, node.marks);
+  });
+
   return tr;
 }
 
