@@ -76,7 +76,7 @@
     "stylelint-prettier": "^5.0.3",
     "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
-    "typescript": "5.9.3"
+    "typescript": "6.0.3"
   },
   "importSort": {
     ".js": {
