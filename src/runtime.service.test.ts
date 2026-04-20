@@ -1,4 +1,9 @@
-import {RuntimeService, setRuntime} from './runtime.service';
+import {
+  RuntimeService,
+  getStyleByName,
+  setCustomStyles,
+  setRuntime,
+} from './runtime.service';
 
 describe('RuntimeService', () => {
   beforeEach(() => {
@@ -21,5 +26,29 @@ describe('RuntimeService', () => {
 
   test('should return null initially if runtime is not set', () => {
     expect(RuntimeService.Runtime).toBeNull();
+  });
+
+  test('should return style by name when custom styles contain a matching style', () => {
+    setCustomStyles([
+      {styleName: 'Heading 1', styles: {fontName: 'Arial'}},
+      {styleName: 'Body', styles: {fontSize: '12pt'}},
+    ]);
+
+    expect(getStyleByName('Heading 1')).toEqual({
+      styleName: 'Heading 1',
+      styles: {fontName: 'Arial'},
+    });
+  });
+
+  test('should return null when requested style name does not exist', () => {
+    setCustomStyles([{styleName: 'Body', styles: {fontSize: '12pt'}}]);
+
+    expect(getStyleByName('Missing')).toBeNull();
+  });
+
+  test('should return null when custom styles are reset to an empty list', () => {
+    setCustomStyles();
+
+    expect(getStyleByName('Anything')).toBeNull();
   });
 });
