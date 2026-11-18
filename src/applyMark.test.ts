@@ -1,5 +1,5 @@
 import {applyMark,updateMarksAttrs,addMarksToNode,handleTextColorMark,updateToggleMarks} from './index';
-import {EditorState} from 'prosemirror-state';
+import {EditorState, TextSelection} from 'prosemirror-state';
 import {Mark, MarkType, Schema, Node, ResolvedPos} from 'prosemirror-model';
 import {Transform} from 'prosemirror-transform';
 import {doc, p} from 'prosemirror-test-builder';
@@ -1427,5 +1427,54 @@ describe('updateToggleMarks',()=>{
     expect(test2).toBeUndefined();
     const test3 = updateToggleMarks({name:'strike'} as unknown as MarkType,{doc:docNode,addMark:()=>{}} as unknown as Transform,{schema:mySchema,selection:{from:0,to:1}} as unknown as EditorState);
     expect(test3).toBeUndefined();
+  });
+});
+
+describe('selection parent guard (regression: invariant while loop)', () => {
+  // A `while (startPos.parent !== 'paragraph' ...)` loop spun forever when
+  // the resolved parent was any other textblock (code_block, heading,
+  // enhanced_table_figure_notes) or a row for CellSelection anchors. The
+  // ancestor-walk replacement must terminate for all of them.
+  const guardSchema = new Schema({
+    nodes: {
+      doc: { content: 'block+' },
+      paragraph: { content: 'text*', group: 'block' },
+      heading: { content: 'text*', group: 'block' },
+      code_block: { content: 'text*', group: 'block' },
+      text: { inline: true },
+    },
+    marks: {
+      strong: {},
+      override: {},
+    },
+  });
+  const guardDoc = guardSchema.node('doc', null, [
+    guardSchema.node('code_block', null, [guardSchema.text('x = 1;')]),
+    guardSchema.node('heading', null, [guardSchema.text('a title')]),
+    guardSchema.node('paragraph', null, [guardSchema.text('body')]),
+  ]);
+  const { from, to } = { from: 2, to: 12 }; // inside code_block + heading
+  const guardState = EditorState.create({ schema: guardSchema, doc: guardDoc });
+  const guardTr = guardState.tr.setSelection(
+    TextSelection.create(guardState.doc, from, to)
+  );
+
+  it('updateToggleMarks terminates with a non-paragraph textblock parent', () => {
+    updateToggleMarks(
+      guardSchema.marks.strong,
+      guardTr,
+      guardState
+    );
+    expect(true).toBe(true); // reaching this assertion is the regression test
+  });
+
+  it('updateMarksAttrs terminates with a non-paragraph textblock parent', () => {
+    updateMarksAttrs(
+      guardSchema.marks.strong,
+      guardTr,
+      guardState,
+      'test'
+    );
+    expect(true).toBe(true);
   });
 });

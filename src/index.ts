@@ -21,6 +21,7 @@ export * from './transformAndPreserveTextSelection';
 export * from './ui/clamp';
 export * from './isNodeSelectionForNodeType';
 export * from './findNodesWithSameMark';
+export * from './canNodeTypeReplaceBlock';
 export * from './compareNumber';
 export * from './ui/toCSSLineSpacing';
 export * from './ui/TooltipSurface';

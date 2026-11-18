@@ -221,7 +221,9 @@ export function updateMarksAttrs(markType: MarkType, tr: Transform, state: Edito
     const parent = startPos?.node(d);
     if (
       parent?.type.name === 'paragraph' ||
-      parent?.type.name === 'table_cell'
+      parent?.type.name === 'table_cell' ||
+      parent?.type.name === 'table_header' ||
+      parent?.type.name === 'enhanced_table_figure_notes'
     ) {
       _startPos = startPos?.before(d);
       break;
@@ -313,6 +315,7 @@ export function updateToggleMarks(markType: MarkType, tr: Transform, state: Edit
     if (
       parent.type.name === 'paragraph' ||
       parent.type.name === 'table_cell' ||
+      parent.type.name === 'table_header' ||
       parent.type.name === 'enhanced_table_figure_notes'
     ) {
       _startPos = startPos.before(d);
