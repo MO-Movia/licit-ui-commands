@@ -211,9 +211,23 @@ export function updateMarksAttrs(markType: MarkType, tr: Transform, state: Edito
   const endPos = tr.doc?.resolve(state.selection.to);
   let _startPos = startPos?.pos;
 
-  // Traverse upwards to ensure we reach the full paragraph from selection start
-  while (startPos?.parent?.type?.name !== 'paragraph' && startPos?.parent?.type?.name !== 'table_cell' && startPos?.depth > 0) {
-    _startPos = startPos.before();
+  // Traverse upwards to ensure we reach the full paragraph from selection
+  // start. A CellSelection anchor resolves with a row (not a cell or
+  // paragraph) as its direct parent, so a `while (startPos.parent ...)`
+  // loop would have an invariant condition and spin forever. Iterating
+  // ancestors by depth is bounded and robust to any intermediate node
+  // name (row, header, etc.).
+  for (let d = startPos?.depth ?? 0; d > 0; d--) {
+    const parent = startPos?.node(d);
+    if (
+      parent?.type.name === 'paragraph' ||
+      parent?.type.name === 'table_cell' ||
+      parent?.type.name === 'table_header' ||
+      parent?.type.name === 'enhanced_table_figure_notes'
+    ) {
+      _startPos = startPos?.before(d);
+      break;
+    }
   }
 
 
@@ -291,9 +305,23 @@ export function updateToggleMarks(markType: MarkType, tr: Transform, state: Edit
   const endPos = tr.doc.resolve(state.selection.to);
   let _startPos = startPos.pos;
   const { schema } = state;
-  // Traverse upwards to ensure we reach the full paragraph from selection start
-  while (startPos.parent.type.name !== 'paragraph' && startPos?.parent?.type?.name !== 'table_cell' && startPos?.parent?.type?.name !== 'enhanced_table_figure_notes' && startPos.depth > 0) {
-    _startPos = startPos.before();
+  // Traverse upwards to ensure we reach the full paragraph from selection
+  // start. A CellSelection anchor resolves with a row (not a cell or
+  // paragraph) as its direct parent, so a `while (startPos.parent ...)`
+  // loop would have an invariant condition and spin forever. Iterating
+  // ancestors by depth is bounded and robust to any intermediate node
+  // name (row, header, etc.).
+  for (let d = startPos.depth; d > 0; d--) {
+    const parent = startPos.node(d);
+    if (
+      parent.type.name === 'paragraph' ||
+      parent.type.name === 'table_cell' ||
+      parent.type.name === 'table_header' ||
+      parent.type.name === 'enhanced_table_figure_notes'
+    ) {
+      _startPos = startPos.before(d);
+      break;
+    }
   }
 
 

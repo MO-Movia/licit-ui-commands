@@ -231,10 +231,22 @@ describe('toggleList', () => {
           nodeAt: (_b) => {
             return;
           },
+          resolve: (_p) => {
+            return {
+              depth: 1,
+              parentOffset: 0,
+              parent: {
+                canReplaceWith: (_a, _b2, _c) => {
+                  return true;
+                },
+              },
+              index: () => 0,
+            };
+          },
         },
       } as unknown as Transform;
       const sc = { nodes: { paragraph: {}, list_item: {} } } as unknown as Schema;
-      const list_node = {} as unknown as NodeType;
+      const list_node = mySchema.nodes.bullet_list;
 
       const test = wrapItemsWithListInternal(tr, sc, list_node, items, '');
 
@@ -264,7 +276,7 @@ describe('toggleList', () => {
         doc: dummyDoc,
       } as unknown as Transform;
       const sc = { nodes: { paragraph: {}, list_item: {} } } as unknown as Schema;
-      const list_node = {} as unknown as NodeType;
+      const list_node = mySchema.nodes.bullet_list;
 
       const test = wrapItemsWithListInternal(tr, sc, list_node, items, '');
 
@@ -326,11 +338,39 @@ describe('toggleList', () => {
         doc: dummyDoc,
       } as unknown as Transform;
       const sc = { nodes: { paragraph: {}, list_item: {} } } as unknown as Schema;
-      const list_node = {} as unknown as NodeType;
+      const list_node = mySchema.nodes.bullet_list;
 
       const test = wrapItemsWithListInternal(tr, sc, list_node, items, '');
 
       expect(test).toBeDefined();
+    });
+
+    it('should return the transform when the parent cannot accept a list', () => {
+      const tr = {
+        doc: {
+          nodeAt: (_b) => {
+            return;
+          },
+          resolve: (_p) => {
+            return {
+              depth: 1,
+              parentOffset: 0,
+              parent: {
+                canReplaceWith: (_a, _b2, _c) => {
+                  return false;
+                },
+              },
+              index: () => 0,
+            };
+          },
+        },
+      } as unknown as Transform;
+      const sc = { nodes: { paragraph: {}, list_item: {} } } as unknown as Schema;
+      const list_node = mySchema.nodes.bullet_list;
+
+      const test = wrapItemsWithListInternal(tr, sc, list_node, items, '');
+
+      expect(test).toBe(tr);
     });
   });
 });
