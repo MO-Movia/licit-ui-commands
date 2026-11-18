@@ -1,4 +1,5 @@
-import { toggleList, unwrapNodesFromListInternal, wrapItemsWithListInternal, wrapNodesWithList, wrapNodesWithListInternal } from './toggleList';
+import { toggleList, unwrapNodesFromList, unwrapNodesFromListInternal, wrapItemsWithListInternal, wrapNodesWithList, wrapNodesWithListInternal } from './toggleList';
+import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
 import { Node, NodeType, Schema } from 'prosemirror-model';
 import { Transform } from 'prosemirror-transform';
 import { SelectionMemo } from './transformAndPreserveTextSelection';
@@ -766,3 +767,124 @@ describe('wrapNodesWithListInternal with nodetype', () => {
 });
 
 
+
+describe('toggleList real-doc coverage', () => {
+  const realSchema = new Schema({
+    nodes: {
+      doc: { content: 'block+' },
+      paragraph: {
+        attrs: { id: { default: null } },
+        content: 'text*',
+        group: 'block',
+      },
+      bullet_list: { content: 'list_item+', group: 'block' },
+      list_item: { content: 'paragraph', group: 'block' },
+      text: { inline: true },
+    },
+    marks: {
+      'mark-text-selection': {},
+    },
+  });
+  const pN = (t: string) => realSchema.node('paragraph', null, [realSchema.text(t)]);
+  const liN = (t: string) => realSchema.node('list_item', null, [pN(t)]);
+  const blN = (t: string) => realSchema.node('bullet_list', null, [liN(t)]);
+  const mkState = (children) => {
+    const docNode = realSchema.node('doc', null, children);
+    return EditorState.create({ schema: realSchema, doc: docNode });
+  };
+  const listType = realSchema.nodes['bullet_list'];
+
+  it('wraps selected paragraphs into a new list', () => {
+    const state = mkState([pN('a'), pN('b'), pN('c')]);
+    const tr = state.tr.setSelection(
+      TextSelection.create(state.doc, 1, state.doc.content.size - 1)
+    );
+    const out = wrapNodesWithList(tr, realSchema, listType, 'bullet');
+    expect(out.doc.firstChild?.type.name).toBe('bullet_list');
+    expect(out.doc.firstChild?.childCount).toBe(3);
+  });
+
+  it('merges wrapped items into adjacent same-type lists before and after', () => {
+    const state = mkState([blN('x'), pN('mid'), blN('y')]);
+    const listNode = state.doc.child(0);
+    const paraPos = listNode.nodeSize; // start of middle paragraph
+    const tr = state.tr.setSelection(
+      TextSelection.create(state.doc, paraPos + 1, paraPos + 2)
+    );
+    const out = wrapNodesWithList(tr, realSchema, listType, 'bullet');
+    const lists = [];
+    out.doc.forEach((n) => {
+      if (n.type.name === 'bullet_list') lists.push(n);
+    });
+    expect(lists.length).toBe(1); // merged into one list
+    expect(lists[0].childCount).toBe(3);
+  });
+
+  it('unwraps a single list item, splitting before/after into sibling lists', () => {
+    const state = mkState([
+      realSchema.node('bullet_list', null, [liN('one'), liN('two'), liN('three')]),
+    ]);
+    // selection inside second item's paragraph
+    let midParaPos = -1;
+    state.doc.descendants((node, pos) => {
+      if (node.type.name === 'paragraph' && node.textContent === 'two') {
+        midParaPos = pos;
+      }
+    });
+    const tr = state.tr.setSelection(
+      TextSelection.create(state.doc, midParaPos + 1, midParaPos + 3)
+    );
+    const out = unwrapNodesFromList(tr, realSchema, 0);
+    // "one" stays in a list before, "two" becomes a paragraph, "three" in a list after
+    const names = [];
+    out.doc.forEach((n) => names.push(n.type.name));
+    expect(names.slice(0, 3)).toEqual(['bullet_list', 'paragraph', 'bullet_list']);
+  });
+
+  it('unwraps the last list item (before bucket only)', () => {
+    const state = mkState([
+      realSchema.node('bullet_list', null, [liN('one'), liN('two')]),
+    ]);
+    let lastParaPos = -1;
+    state.doc.descendants((node, pos) => {
+      if (node.type.name === 'paragraph' && node.textContent === 'two') {
+        lastParaPos = pos;
+      }
+    });
+    const tr = state.tr.setSelection(
+      TextSelection.create(state.doc, lastParaPos + 1, lastParaPos + 2)
+    );
+    const out = unwrapNodesFromList(tr, realSchema, 0);
+    const names = [];
+    out.doc.forEach((n) => names.push(n.type.name));
+    expect(names.slice(0, 2)).toEqual(['bullet_list', 'paragraph']);
+  });
+
+  it('returns early when target node is not a list', () => {
+    const state = mkState([pN('x')]);
+    const tr = state.tr.setSelection(
+      TextSelection.create(state.doc, 1, 2)
+    );
+    const out = unwrapNodesFromList(tr, realSchema, 0);
+    expect(out.doc.childCount).toBe(1);
+    expect(out.doc.firstChild?.type.name).toBe('paragraph');
+  });
+
+  it('toggleList wraps a paragraph selection end to end', () => {
+    const state = mkState([pN('solo')]);
+    const tr = state.tr.setSelection(
+      TextSelection.create(state.doc, 1, 2)
+    );
+    const out = toggleList(tr, realSchema, listType, 'bullet') as Transaction;
+    expect(out.doc.firstChild?.type.name).toBe('bullet_list');
+  });
+
+  it('toggleList unwraps when selection is inside a list', () => {
+    const state = mkState([blN('x')]);
+    const tr = state.tr.setSelection(
+      TextSelection.create(state.doc, 2, 3)
+    );
+    const out = toggleList(tr, realSchema, listType, 'bullet') as Transaction;
+    expect(out.doc.firstChild?.type.name).toBe('paragraph');
+  });
+});
