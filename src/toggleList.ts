@@ -6,6 +6,7 @@ import {Transform} from 'prosemirror-transform';
 import {findParentNodeOfType} from 'prosemirror-utils';
 
 import {HEADING, LIST_ITEM, PARAGRAPH} from './NodeNames';
+import {canNodeTypeReplaceBlockAt} from './canNodeTypeReplaceBlock';
 import {isListNode} from './isListNode';
 import {transformAndPreserveTextSelection} from './transformAndPreserveTextSelection';
 
@@ -207,6 +208,17 @@ export function wrapItemsWithListInternal(
 
   if (!paragraph || !listItem) {
     return tr;
+  }
+
+  // A list may only replace blocks whose parent accepts list content.
+  // Inside a restrictive parent (e.g. enhanced_table_figure_notes),
+  // replacement fitting would move the new list outside the parent and
+  // split the surrounding structure.
+  const itemsAllowed = items.every((item) =>
+    canNodeTypeReplaceBlockAt(tr.doc, item.pos, listNodeType)
+  );
+  if (!itemsAllowed) {
+    return initialTr;
   }
 
   const paragraphNodes = [];
